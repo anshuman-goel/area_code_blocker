@@ -160,8 +160,10 @@ object PhoneUtils {
         try {
             val uri = ContactsContract.Contacts.CONTENT_URI
             val projection = arrayOf(ContactsContract.Contacts._ID)
-            val selection = "${ContactsContract.Contacts.DISPLAY_NAME} = ? OR ${ContactsContract.Contacts.DISPLAY_NAME_PRIMARY} = ?"
-            val selectionArgs = arrayOf(identifier, identifier)
+            // Use LIKE for case-insensitive matching on some Android versions, or just rely on the selection match
+            // Note: Modern Android contacts providers often handle this case-insensitively, but being explicit helps.
+            val selection = "LOWER(${ContactsContract.Contacts.DISPLAY_NAME}) = ? OR LOWER(${ContactsContract.Contacts.DISPLAY_NAME_PRIMARY}) = ?"
+            val selectionArgs = arrayOf(identifier.lowercase(), identifier.lowercase())
             context.contentResolver.query(uri, projection, selection, selectionArgs, null)?.use { cursor ->
                 if (cursor.moveToFirst()) {
                     Log.d(TAG, "Sender '$identifier' matched a saved contact display name.")

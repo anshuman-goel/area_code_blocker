@@ -106,7 +106,7 @@ class BlockerViewModel(
     }
 
     fun addKeyword(keyword: String) {
-        val clean = keyword.trim()
+        val clean = keyword.trim().lowercase()
         if (clean.isNotEmpty()) {
             viewModelScope.launch {
                 repository.insertKeyword(clean)
