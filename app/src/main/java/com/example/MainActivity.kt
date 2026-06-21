@@ -32,6 +32,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -169,7 +171,7 @@ fun BlockerHomeScreen(viewModel: BlockerViewModel) {
         mutableStateOf(com.example.util.PhoneUtils.isNotificationServiceEnabled(context))
     }
 
-    val lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
             if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
@@ -429,7 +431,7 @@ fun BlockerHomeScreen(viewModel: BlockerViewModel) {
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.List,
+                                    imageVector = Icons.AutoMirrored.Filled.List,
                                     contentDescription = null,
                                     modifier = Modifier.size(20.dp),
                                     tint = logsContentColor
@@ -1355,7 +1357,7 @@ fun BlockedLogCard(
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            imageVector = if (log.type == "CALL") Icons.Default.Phone else Icons.Default.Send,
+                            imageVector = if (log.type == "CALL") Icons.Default.Phone else Icons.AutoMirrored.Filled.Send,
                             contentDescription = log.type,
                             tint = MaterialTheme.colorScheme.error,
                             modifier = Modifier.size(18.dp)
