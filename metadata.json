@@ -1,0 +1,6 @@
+{
+  "name": "Area Code Blocker",
+  "description": "Block phone calls and text messages from specific area codes if they are not in your saved contacts list.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
