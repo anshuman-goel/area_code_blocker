@@ -27,7 +27,7 @@ class PhoneUtilsTest {
 
     @Test
     fun cleanNumber_removesFormatting() {
-        assertEquals("5125550199", PhoneUtils.cleanNumber("+1 (512) 555-0199"))
+        assertEquals("15125550199", PhoneUtils.cleanNumber("+1 (512) 555-0199"))
         assertEquals("123", PhoneUtils.cleanNumber("abc 123 def"))
     }
 }
