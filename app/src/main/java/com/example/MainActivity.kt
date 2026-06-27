@@ -351,7 +351,7 @@ fun BlockerHomeScreen(viewModel: BlockerViewModel) {
             item {
                 StatisticsGrid(
                     callsCount = blockedLogs.count { it.type == "CALL" },
-                    textsCount = blockedLogs.count { it.type == "SMS" }
+                    textsCount = blockedLogs.count { it.type.startsWith("SMS") }
                 )
             }
 
