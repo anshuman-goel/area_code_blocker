@@ -113,16 +113,19 @@ object PhoneUtils {
                 val subscriptionManager = context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as? android.telephony.SubscriptionManager
                 val subId = android.telephony.SubscriptionManager.getDefaultSubscriptionId()
                 if (subId != android.telephony.SubscriptionManager.INVALID_SUBSCRIPTION_ID) {
-                    val number = subscriptionManager?.getPhoneNumber(subId)
-                    if (!number.isNullOrBlank()) return number
+                    try {
+                        val number = subscriptionManager?.getPhoneNumber(subId)
+                        if (!number.isNullOrBlank()) return number
+                    } catch (e: Exception) {
+                        // Fallback to legacy
+                    }
                 }
             }
 
             val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as? android.telephony.TelephonyManager
+            @Suppress("DEPRECATION")
             val line1 = telephonyManager?.line1Number
-            if (!line1.isNullOrBlank()) {
-                return line1
-            }
+            if (!line1.isNullOrBlank()) return line1
         } catch (e: SecurityException) {
             Log.w(TAG, "SecurityException reading phone number", e)
         } catch (e: Exception) {

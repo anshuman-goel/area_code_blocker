@@ -30,10 +30,11 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun AppOnboardingScreen(
     isContactsGranted: Boolean,
-    isSmsGranted: Boolean,
+    isPhoneNumbersGranted: Boolean,
     isCallScreeningGranted: Boolean,
     isNotificationListenerGranted: Boolean,
-    onRequestContactsAndSms: () -> Unit,
+    onRequestContacts: () -> Unit,
+    onRequestPhoneIdentity: () -> Unit,
     onRequestCallScreening: () -> Unit,
     onRequestNotificationListener: () -> Unit,
     onEnterApp: () -> Unit
@@ -44,12 +45,15 @@ fun AppOnboardingScreen(
     // Count how many permissions are granted
     val grantedCount = listOf(
         isContactsGranted,
-        isSmsGranted,
+        isPhoneNumbersGranted,
         isCallScreeningGranted,
         isNotificationListenerGranted
     ).count { it }
 
-    val allGranted = grantedCount == 4
+    // Required permissions for the main button
+    val allRequiredGranted = isContactsGranted && 
+                            isCallScreeningGranted && 
+                            isNotificationListenerGranted
 
     Box(
         modifier = Modifier
@@ -119,11 +123,11 @@ fun AppOnboardingScreen(
             Card(
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = if (allGranted) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
+                    containerColor = if (allRequiredGranted) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
                 ),
                 border = BorderStroke(
                     width = 1.dp,
-                    color = if (allGranted) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outlineVariant
+                    color = if (allRequiredGranted) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outlineVariant
                 ),
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -140,7 +144,7 @@ fun AppOnboardingScreen(
                             .size(52.dp)
                             .clip(CircleShape)
                             .background(
-                                if (allGranted) MaterialTheme.colorScheme.primary 
+                                if (allRequiredGranted) MaterialTheme.colorScheme.primary
                                 else MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
                             )
                     ) {
@@ -148,20 +152,20 @@ fun AppOnboardingScreen(
                             text = "$grantedCount/4",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = if (allGranted) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary
+                            color = if (allRequiredGranted) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary
                         )
                     }
 
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = if (allGranted) "Shield Fully Configured!" else "System Checkpoints",
+                            text = if (allRequiredGranted) "Shield Configuration Ready!" else "System Checkpoints",
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = if (allGranted) 
-                                "All security clearances active. Press the button below to start guarding."
+                            text = if (allRequiredGranted) 
+                                "Required security clearances active. Press below to start guarding."
                                 else "Please authorize the remaining permissions to protect your phone.",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -185,18 +189,18 @@ fun AppOnboardingScreen(
                     icon = Icons.Default.Person,
                     testTag = "setup_contacts_button",
                     actionText = "Grant",
-                    onAction = onRequestContactsAndSms
+                    onAction = onRequestContacts
                 )
 
-                // Item 2: SMS Receiver
+                // Item 2: Phone Identity
                 PermissionItemCard(
-                    title = "SMS Background Filter",
-                    description = "Registers our background processor to identify and parse spam inbound text patterns.",
-                    isGranted = isSmsGranted,
-                    icon = Icons.Default.Add,
-                    testTag = "setup_sms_button",
+                    title = "Phone Identity Guard",
+                    description = "Optionally allows the app to recognize your own area code to suggest blocking spoofed local numbers.",
+                    isGranted = isPhoneNumbersGranted,
+                    icon = Icons.Default.Info,
+                    testTag = "setup_phone_identity_button",
                     actionText = "Authorize",
-                    onAction = onRequestContactsAndSms
+                    onAction = onRequestPhoneIdentity
                 )
 
                 // Item 3: Call Screening Service
@@ -229,7 +233,7 @@ fun AppOnboardingScreen(
             // BOTTOM MAIN CALL-TO-ACTION BUTTON (TACTILE ACTION)
             Button(
                 onClick = onEnterApp,
-                enabled = allGranted,
+                enabled = allRequiredGranted,
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -248,7 +252,7 @@ fun AppOnboardingScreen(
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    if (allGranted) {
+                    if (allRequiredGranted) {
                         Icon(Icons.Default.CheckCircle, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(

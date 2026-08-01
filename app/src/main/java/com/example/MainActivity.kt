@@ -94,15 +94,6 @@ fun BlockerHomeScreen(viewModel: BlockerViewModel) {
         )
     }
 
-    var isSmsPermissionGranted by remember {
-        mutableStateOf(
-            ContextCompat.checkSelfPermission(
-                context,
-                android.Manifest.permission.RECEIVE_SMS
-            ) == PackageManager.PERMISSION_GRANTED
-        )
-    }
-
     var isPhoneNumbersPermissionGranted by remember {
         mutableStateOf(
             ContextCompat.checkSelfPermission(
@@ -128,7 +119,6 @@ fun BlockerHomeScreen(viewModel: BlockerViewModel) {
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         isContactsPermissionGranted = permissions[android.Manifest.permission.READ_CONTACTS] ?: isContactsPermissionGranted
-        isSmsPermissionGranted = permissions[android.Manifest.permission.RECEIVE_SMS] ?: isSmsPermissionGranted
         isPhoneNumbersPermissionGranted = permissions[android.Manifest.permission.READ_PHONE_NUMBERS] ?: isPhoneNumbersPermissionGranted
     }
 
@@ -141,13 +131,15 @@ fun BlockerHomeScreen(viewModel: BlockerViewModel) {
         }
     }
 
-    fun triggerPermissionRequest() {
+    fun triggerContactsPermissionRequest() {
         requestPermissionLauncher.launch(
-            arrayOf(
-                android.Manifest.permission.READ_CONTACTS,
-                android.Manifest.permission.RECEIVE_SMS,
-                android.Manifest.permission.READ_PHONE_NUMBERS
-            )
+            arrayOf(android.Manifest.permission.READ_CONTACTS)
+        )
+    }
+
+    fun triggerPhonePermissionRequest() {
+        requestPermissionLauncher.launch(
+            arrayOf(android.Manifest.permission.READ_PHONE_NUMBERS)
         )
     }
 
@@ -178,11 +170,6 @@ fun BlockerHomeScreen(viewModel: BlockerViewModel) {
                 isContactsPermissionGranted = ContextCompat.checkSelfPermission(
                     context,
                     android.Manifest.permission.READ_CONTACTS
-                ) == PackageManager.PERMISSION_GRANTED
-                
-                isSmsPermissionGranted = ContextCompat.checkSelfPermission(
-                    context,
-                    android.Manifest.permission.RECEIVE_SMS
                 ) == PackageManager.PERMISSION_GRANTED
                 
                 isPhoneNumbersPermissionGranted = ContextCompat.checkSelfPermission(
@@ -222,17 +209,17 @@ fun BlockerHomeScreen(viewModel: BlockerViewModel) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val hasAllRequiredGranted = isContactsPermissionGranted && 
-                               isSmsPermissionGranted && 
                                isCallScreeningRoleGranted && 
                                isNotificationListenerEnabled
 
     if (!hasAllRequiredGranted) {
         com.example.ui.AppOnboardingScreen(
             isContactsGranted = isContactsPermissionGranted,
-            isSmsGranted = isSmsPermissionGranted,
+            isPhoneNumbersGranted = isPhoneNumbersPermissionGranted,
             isCallScreeningGranted = isCallScreeningRoleGranted,
             isNotificationListenerGranted = isNotificationListenerEnabled,
-            onRequestContactsAndSms = { triggerPermissionRequest() },
+            onRequestContacts = { triggerContactsPermissionRequest() },
+            onRequestPhoneIdentity = { triggerPhonePermissionRequest() },
             onRequestCallScreening = { triggerCallScreeningRequest() },
             onRequestNotificationListener = {
                 try {
@@ -335,14 +322,13 @@ fun BlockerHomeScreen(viewModel: BlockerViewModel) {
             item {
                 ProtectionStatusBanner(
                     isContactsGranted = isContactsPermissionGranted,
-                    isSmsGranted = isSmsPermissionGranted,
                     isRoleGranted = isCallScreeningRoleGranted,
                     blockedAreaCodes = blockedAreaCodes,
                     onRemoveAreaCode = { area ->
                         viewModel.removeAreaCode(area)
                         Toast.makeText(context, "Removed $area", Toast.LENGTH_SHORT).show()
                     },
-                    onRequestPermissions = { triggerPermissionRequest() },
+                    onRequestPermissions = { triggerContactsPermissionRequest() },
                     onRequestRole = { triggerCallScreeningRequest() }
                 )
             }
@@ -592,7 +578,7 @@ fun BlockerHomeScreen(viewModel: BlockerViewModel) {
                                                         Toast.makeText(context, "Successfully detected and auto-filled SIM telephone number!", Toast.LENGTH_SHORT).show()
                                                     } else {
                                                         // Ensure permission is prompted
-                                                        triggerPermissionRequest()
+                                                        triggerPhonePermissionRequest()
                                                         val retryDetected = viewModel.tryAutoDetectPhoneNumber(context)
                                                         if (retryDetected) {
                                                             Toast.makeText(context, "Successfully detected and auto-filled SIM telephone number!", Toast.LENGTH_SHORT).show()
@@ -1076,18 +1062,17 @@ fun StatisticsGrid(callsCount: Int, textsCount: Int) {
 @Composable
 fun ProtectionStatusBanner(
     isContactsGranted: Boolean,
-    isSmsGranted: Boolean,
     isRoleGranted: Boolean,
     blockedAreaCodes: List<BlockedAreaCode>,
     onRemoveAreaCode: (String) -> Unit,
     onRequestPermissions: () -> Unit,
     onRequestRole: () -> Unit
 ) {
-    val allActive = isContactsGranted && isSmsGranted && isRoleGranted
+    val allActive = isContactsGranted && isRoleGranted
     val statusDesc = if (allActive) {
         "Your device will screen calls and messages from blocked area codes, cross-checking contacts automatically."
     } else if (isRoleGranted) {
-        "Calls from blocked area codes are screened, but SMS & Contacts check require system permissions."
+        "Calls from blocked area codes are screened, but Contacts check require system permissions."
     } else {
         "Activate Call Screening role below to enable automated ring call blocking."
     }
@@ -1186,7 +1171,7 @@ fun ProtectionStatusBanner(
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Activate Call Screening", fontWeight = FontWeight.Bold, fontSize = 13.sp)
                 }
-            } else if (!isContactsGranted || !isSmsGranted) {
+            } else if (!isContactsGranted) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
                     onClick = onRequestPermissions,
