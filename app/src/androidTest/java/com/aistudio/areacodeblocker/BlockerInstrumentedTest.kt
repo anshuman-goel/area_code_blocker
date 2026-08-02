@@ -1,4 +1,4 @@
-package com.example
+package com.aistudio.areacodeblocker
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -12,11 +12,11 @@ import org.junit.runner.RunWith
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 @RunWith(AndroidJUnit4::class)
-class ExampleInstrumentedTest {
+class BlockerInstrumentedTest {
   @Test
   fun useAppContext() {
     // Context of the app under test.
     val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-    assertEquals("com.example", appContext.packageName)
+    assertEquals("com.aistudio.areacodeblocker.zbyjqw", appContext.packageName)
   }
 }

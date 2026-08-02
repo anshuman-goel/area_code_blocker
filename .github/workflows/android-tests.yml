@@ -1,0 +1,65 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    name: Run Unit Tests & Lint
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Run Lint
+      run: ./gradlew lintDebug
+
+    - name: Run Unit Tests & Verify Screenshots
+      run: ./gradlew verifyRoborazziDebug
+
+    - name: Upload Test Results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: |
+          **/build/reports/tests/
+          **/build/reports/lint-results-debug.xml
+
+  instrumentation-tests:
+    name: Run Instrumentation Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Note: This can be slow and use more GitHub Actions minutes
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Run Instrumentation Tests
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: 29
+        script: ./gradlew connectedCheck
