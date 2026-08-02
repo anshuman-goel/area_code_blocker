@@ -81,31 +81,37 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BlockerHomeScreen(viewModel: BlockerViewModel) {
+fun BlockerHomeScreen(
+    viewModel: BlockerViewModel,
+    initContactsGranted: Boolean? = null,
+    initPhoneNumbersGranted: Boolean? = null,
+    initCallScreeningGranted: Boolean? = null,
+    initNotificationListenerGranted: Boolean? = null
+) {
     val context = LocalContext.current
 
     // Permissions State
     var isContactsPermissionGranted by remember {
         mutableStateOf(
-            ContextCompat.checkSelfPermission(
+            initContactsGranted ?: (ContextCompat.checkSelfPermission(
                 context,
                 android.Manifest.permission.READ_CONTACTS
-            ) == PackageManager.PERMISSION_GRANTED
+            ) == PackageManager.PERMISSION_GRANTED)
         )
     }
 
     var isPhoneNumbersPermissionGranted by remember {
         mutableStateOf(
-            ContextCompat.checkSelfPermission(
+            initPhoneNumbersGranted ?: (ContextCompat.checkSelfPermission(
                 context,
                 android.Manifest.permission.READ_PHONE_NUMBERS
-            ) == PackageManager.PERMISSION_GRANTED
+            ) == PackageManager.PERMISSION_GRANTED)
         )
     }
 
     var isCallScreeningRoleGranted by remember {
         mutableStateOf(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            initCallScreeningGranted ?: if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 val roleManager = context.getSystemService(Context.ROLE_SERVICE) as? RoleManager
                 roleManager?.isRoleHeld(RoleManager.ROLE_CALL_SCREENING) ?: false
             } else {
@@ -160,29 +166,35 @@ fun BlockerHomeScreen(viewModel: BlockerViewModel) {
     }
 
     var isNotificationListenerEnabled by remember {
-        mutableStateOf(com.example.util.PhoneUtils.isNotificationServiceEnabled(context))
+        mutableStateOf(initNotificationListenerGranted ?: com.example.util.PhoneUtils.isNotificationServiceEnabled(context))
     }
 
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
             if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
-                isContactsPermissionGranted = ContextCompat.checkSelfPermission(
-                    context,
-                    android.Manifest.permission.READ_CONTACTS
-                ) == PackageManager.PERMISSION_GRANTED
+                if (initContactsGranted == null) {
+                    isContactsPermissionGranted = ContextCompat.checkSelfPermission(
+                        context,
+                        android.Manifest.permission.READ_CONTACTS
+                    ) == PackageManager.PERMISSION_GRANTED
+                }
                 
-                isPhoneNumbersPermissionGranted = ContextCompat.checkSelfPermission(
-                    context,
-                    android.Manifest.permission.READ_PHONE_NUMBERS
-                ) == PackageManager.PERMISSION_GRANTED
+                if (initPhoneNumbersGranted == null) {
+                    isPhoneNumbersPermissionGranted = ContextCompat.checkSelfPermission(
+                        context,
+                        android.Manifest.permission.READ_PHONE_NUMBERS
+                    ) == PackageManager.PERMISSION_GRANTED
+                }
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                if (initCallScreeningGranted == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     val roleManager = context.getSystemService(Context.ROLE_SERVICE) as? RoleManager
                     isCallScreeningRoleGranted = roleManager?.isRoleHeld(RoleManager.ROLE_CALL_SCREENING) ?: false
                 }
                 
-                isNotificationListenerEnabled = com.example.util.PhoneUtils.isNotificationServiceEnabled(context)
+                if (initNotificationListenerGranted == null) {
+                    isNotificationListenerEnabled = com.example.util.PhoneUtils.isNotificationServiceEnabled(context)
+                }
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
