@@ -9,7 +9,7 @@ import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
 @RunWith(BlockerTestRunner::class)
-@Config(sdk = [34])
+@Config(sdk = [36])
 class BlockerResourcesTest {
 
   @Test
