@@ -32,7 +32,8 @@
         <service
             android:name=".service.CallBlockerScreeningService"
             android:permission="android.permission.BIND_SCREENING_SERVICE"
-            android:exported="true">
+            android:exported="true"
+            tools:targetApi="q">
             <intent-filter>
                 <action android:name="android.telecom.CallScreeningService" />
             </intent-filter>
