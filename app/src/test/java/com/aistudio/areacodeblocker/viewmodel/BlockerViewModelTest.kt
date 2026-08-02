@@ -1,8 +1,8 @@
-package com.example.viewmodel
+package com.aistudio.areacodeblocker.viewmodel
 
 import android.app.Application
-import android.content.Context
 import androidx.test.core.app.ApplicationProvider
+import com.aistudio.areacodeblocker.BlockerTestRunner
 import com.example.data.dao.BlockedAreaCodeDao
 import com.example.data.dao.BlockedKeywordDao
 import com.example.data.dao.BlockedLogDao
@@ -10,11 +10,11 @@ import com.example.data.entity.BlockedAreaCode
 import com.example.data.entity.BlockedKeyword
 import com.example.data.entity.BlockedLog
 import com.example.data.repository.BlockerRepository
+import com.example.viewmodel.BlockerViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -28,11 +28,10 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 @OptIn(ExperimentalCoroutinesApi::class)
-@RunWith(RobolectricTestRunner::class)
+@RunWith(BlockerTestRunner::class)
 @Config(sdk = [36])
 class BlockerViewModelTest {
 

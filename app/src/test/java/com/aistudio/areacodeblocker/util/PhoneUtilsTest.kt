@@ -1,5 +1,6 @@
-package com.example.util
+package com.aistudio.areacodeblocker.util
 
+import com.example.util.PhoneUtils
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
