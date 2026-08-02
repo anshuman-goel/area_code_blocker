@@ -13,7 +13,7 @@ import org.robolectric.annotation.GraphicsMode
 
 @RunWith(BlockerTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(qualifiers = RobolectricDeviceQualifiers.Pixel8, sdk = [36])
+@Config(qualifiers = RobolectricDeviceQualifiers.Pixel8, sdk = [34])
 class BlockerScreenshotTest {
 
   @get:Rule val composeTestRule = createComposeRule()

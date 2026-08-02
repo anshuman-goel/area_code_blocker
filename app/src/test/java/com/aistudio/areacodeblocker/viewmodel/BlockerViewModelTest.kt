@@ -32,7 +32,7 @@ import org.robolectric.annotation.Config
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(BlockerTestRunner::class)
-@Config(sdk = [36])
+@Config(sdk = [34])
 class BlockerViewModelTest {
 
     private lateinit var viewModel: BlockerViewModel
