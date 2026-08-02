@@ -43,9 +43,7 @@ jobs:
     name: Run Instrumentation Tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    # Enable this if you want to run emulator tests on every push
     # Note: This can be slow and use more GitHub Actions minutes
-    if: false 
 
     steps:
     - uses: actions/checkout@v4
