@@ -27,8 +27,8 @@ jobs:
     - name: Run Lint
       run: ./gradlew lintDebug
 
-    - name: Run Unit Tests
-      run: ./gradlew testDebugUnitTest
+    - name: Run Unit Tests & Verify Screenshots
+      run: ./gradlew verifyRoborazziDebug
 
     - name: Upload Test Results
       if: always()
