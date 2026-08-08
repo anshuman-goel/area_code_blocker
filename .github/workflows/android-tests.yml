@@ -41,9 +41,8 @@ jobs:
 
   instrumentation-tests:
     name: Run Instrumentation Tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    # Note: This can be slow and use more GitHub Actions minutes
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
 
     steps:
     - uses: actions/checkout@v4
@@ -58,8 +57,30 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
+    - name: Enable KVM access
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cpu-checker
+        kvm-ok || true
+        if [ -e /dev/kvm ]; then
+          sudo chmod 666 /dev/kvm
+          echo "KVM is available and permissions are set."
+        else
+          echo "KVM device not found. Attempting to load module..."
+          sudo modprobe kvm-intel || sudo modprobe kvm-amd || sudo modprobe kvm || true
+          if [ -e /dev/kvm ]; then
+            sudo chmod 666 /dev/kvm
+            echo "KVM loaded successfully."
+          else
+            echo "KVM still not found. Tests may run slowly or fail."
+          fi
+        fi
+
     - name: Run Instrumentation Tests
       uses: reactivecircus/android-emulator-runner@v2
       with:
         api-level: 29
-        script: ./gradlew connectedCheck
+        arch: x86_64
+        disable-animations: true
+        emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+        script: ./gradlew connectedDebugAndroidTest
