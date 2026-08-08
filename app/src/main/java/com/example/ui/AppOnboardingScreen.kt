@@ -271,6 +271,20 @@ fun AppOnboardingScreen(
                     }
                 }
             }
+            Spacer(modifier = Modifier.height(8.dp))
+
+            val uriHandler = androidx.compose.ui.platform.LocalUriHandler.current
+            Text(
+                text = "Privacy Policy",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier
+                    .clickable { 
+                        uriHandler.openUri("https://github.com/anshuman-goel/area_code_blocker/blob/main/PRIVACY_POLICY.md")
+                    }
+                    .padding(8.dp)
+            )
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
