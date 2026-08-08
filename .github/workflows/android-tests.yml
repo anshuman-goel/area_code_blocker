@@ -2,7 +2,7 @@ name: Android CI
 
 on:
   push:
-    branches: [ "main", "fix-test-npe-exception" ]
+    branches: [ "main", "privacy-policy" ]
   pull_request:
     branches: [ "main" ]
 
