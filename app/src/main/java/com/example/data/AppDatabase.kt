@@ -11,7 +11,7 @@ import com.example.data.entity.BlockedAreaCode
 import com.example.data.entity.BlockedLog
 import com.example.data.entity.BlockedKeyword
 
-@Database(entities = [BlockedAreaCode::class, BlockedLog::class, BlockedKeyword::class], version = 2, exportSchema = false)
+@Database(entities = [BlockedAreaCode::class, BlockedLog::class, BlockedKeyword::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun blockedAreaCodeDao(): BlockedAreaCodeDao
     abstract fun blockedLogDao(): BlockedLogDao

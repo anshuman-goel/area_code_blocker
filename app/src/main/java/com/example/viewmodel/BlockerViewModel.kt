@@ -90,11 +90,22 @@ class BlockerViewModel(
         prefs.edit().putString("app_theme", theme).apply()
     }
 
-    fun addAreaCode(areaCode: String) {
+    fun addAreaCode(areaCode: String, regionLabel: String? = null) {
         val clean = areaCode.trim().filter { it.isDigit() }
         if (clean.isNotEmpty()) {
             viewModelScope.launch {
-                repository.insertAreaCode(clean)
+                repository.insertAreaCode(clean, regionLabel)
+            }
+        }
+    }
+
+    fun addAreaCodes(areaCodes: List<String>, regionLabel: String? = null) {
+        viewModelScope.launch {
+            areaCodes.forEach { code ->
+                val clean = code.trim().filter { it.isDigit() }
+                if (clean.isNotEmpty()) {
+                    repository.insertAreaCode(clean, regionLabel)
+                }
             }
         }
     }
@@ -102,6 +113,12 @@ class BlockerViewModel(
     fun removeAreaCode(areaCode: String) {
         viewModelScope.launch {
             repository.deleteAreaCode(areaCode)
+        }
+    }
+
+    fun removeAreaCodesByRegion(label: String) {
+        viewModelScope.launch {
+            repository.deleteAreaCodesByRegion(label)
         }
     }
 

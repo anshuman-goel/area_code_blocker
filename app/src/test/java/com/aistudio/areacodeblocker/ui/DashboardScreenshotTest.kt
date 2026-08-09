@@ -90,6 +90,31 @@ class DashboardScreenshotTest {
         composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/dashboard_populated.png")
     }
 
+    @Test
+    fun dashboard_with_grouped_regions() {
+        val viewModel = createViewModel(
+            areaCodes = listOf(
+                BlockedAreaCode(areaCode = "205", regionLabel = "United States - Alabama"),
+                BlockedAreaCode(areaCode = "251", regionLabel = "United States - Alabama"),
+                BlockedAreaCode(areaCode = "512", regionLabel = null)
+            )
+        )
+        
+        composeTestRule.setContent {
+            MyApplicationTheme {
+                BlockerHomeScreen(
+                    viewModel = viewModel,
+                    initContactsGranted = true,
+                    initPhoneNumbersGranted = true,
+                    initCallScreeningGranted = true,
+                    initNotificationListenerGranted = true
+                )
+            }
+        }
+
+        composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/dashboard_grouped.png")
+    }
+
     // Reuse Fake DAOs from BlockerViewModelTest logic
     class FakeAreaCodeDao(initial: List<BlockedAreaCode>) : BlockedAreaCodeDao {
         private val flow = MutableStateFlow(initial)
@@ -98,6 +123,7 @@ class DashboardScreenshotTest {
         override suspend fun insert(blockedAreaCode: BlockedAreaCode) {}
         override suspend fun delete(blockedAreaCode: BlockedAreaCode) {}
         override suspend fun deleteByAreaCode(areaCode: String) {}
+        override suspend fun deleteByRegionLabel(label: String) {}
     }
 
     class FakeKeywordDao(initial: List<BlockedKeyword>) : BlockedKeywordDao {

@@ -24,4 +24,7 @@ interface BlockedAreaCodeDao {
 
     @Query("DELETE FROM blocked_area_codes WHERE areaCode = :areaCode")
     suspend fun deleteByAreaCode(areaCode: String)
+
+    @Query("DELETE FROM blocked_area_codes WHERE regionLabel = :label")
+    suspend fun deleteByRegionLabel(label: String)
 }

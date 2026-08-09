@@ -53,6 +53,9 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.data.AreaCodeData
+import com.example.data.AreaCodeCountry
+import com.example.data.AreaCodeState
 import com.example.data.entity.BlockedAreaCode
 import com.example.data.entity.BlockedLog
 import com.example.ui.theme.MyApplicationTheme
@@ -218,6 +221,13 @@ fun BlockerHomeScreen(
 
     var selectedTab by remember { mutableStateOf(0) }
     var showSettingsDialog by remember { mutableStateOf(false) }
+    
+    // Regional Selection State
+    var selectedCountry by remember { mutableStateOf(AreaCodeData.countries[0]) }
+    var selectedState by remember { mutableStateOf<AreaCodeState?>(AreaCodeData.countries[0].states.getOrNull(0)) }
+    var countryExpanded by remember { mutableStateOf(false) }
+    var stateExpanded by remember { mutableStateOf(false) }
+
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val hasAllRequiredGranted = isContactsPermissionGranted && 
@@ -340,6 +350,10 @@ fun BlockerHomeScreen(
                     onRemoveAreaCode = { area ->
                         viewModel.removeAreaCode(area)
                         Toast.makeText(context, "Removed $area", Toast.LENGTH_SHORT).show()
+                    },
+                    onRemoveRegion = { label ->
+                        viewModel.removeAreaCodesByRegion(label)
+                        Toast.makeText(context, "Removed $label", Toast.LENGTH_SHORT).show()
                     },
                     onRequestPermissions = { triggerContactsPermissionRequest() },
                     onRequestRole = { triggerCallScreeningRequest() }
@@ -642,6 +656,156 @@ fun BlockerHomeScreen(
                     }
                 }
 
+                // Regional Block Section (New!)
+                item {
+                    Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(24.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surface
+                            ),
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text(
+                                    text = "Block by Region",
+                                    fontWeight = FontWeight.Bold,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                                Text(
+                                    text = "Select a country and state to quickly block all known area codes from that region.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
+                                    modifier = Modifier.padding(vertical = 4.dp)
+                                )
+
+                                Spacer(modifier = Modifier.height(12.dp))
+
+                                // Country Selection
+                                Box {
+                                    OutlinedTextField(
+                                        value = selectedCountry.name,
+                                        onValueChange = {},
+                                        readOnly = true,
+                                        label = { Text("Country") },
+                                        trailingIcon = { 
+                                            Icon(Icons.Default.ArrowDropDown, contentDescription = null)
+                                        },
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                    Box(
+                                        modifier = Modifier
+                                            .matchParentSize()
+                                            .clickable { countryExpanded = true }
+                                    )
+                                    DropdownMenu(
+                                        expanded = countryExpanded,
+                                        onDismissRequest = { countryExpanded = false },
+                                        modifier = Modifier.fillMaxWidth(0.85f)
+                                    ) {
+                                        AreaCodeData.countries.forEach { country ->
+                                            DropdownMenuItem(
+                                                text = { Text(country.name) },
+                                                onClick = {
+                                                    selectedCountry = country
+                                                    selectedState = if (country.states.isNotEmpty()) country.states[0] else null
+                                                    countryExpanded = false
+                                                }
+                                            )
+                                        }
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(12.dp))
+
+                                if (selectedCountry.isSupported) {
+                                    // State Selection
+                                    Box {
+                                        OutlinedTextField(
+                                            value = selectedState?.name ?: "Select State",
+                                            onValueChange = {},
+                                            readOnly = true,
+                                            label = { Text("State / Province") },
+                                            trailingIcon = {
+                                                Icon(Icons.Default.ArrowDropDown, contentDescription = null)
+                                            },
+                                            modifier = Modifier.fillMaxWidth()
+                                        )
+                                        Box(
+                                            modifier = Modifier
+                                                .matchParentSize()
+                                                .clickable { stateExpanded = true }
+                                        )
+                                        DropdownMenu(
+                                            expanded = stateExpanded,
+                                            onDismissRequest = { stateExpanded = false },
+                                            modifier = Modifier.fillMaxWidth(0.85f)
+                                        ) {
+                                            selectedCountry.states.forEach { state ->
+                                                DropdownMenuItem(
+                                                    text = { Text(state.name) },
+                                                    onClick = {
+                                                        selectedState = state
+                                                        stateExpanded = false
+                                                    }
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                    Spacer(modifier = Modifier.height(16.dp))
+
+                                    selectedState?.let { state ->
+                                        Button(
+                                            onClick = {
+                                                viewModel.addAreaCodes(state.areaCodes, "${selectedCountry.name} - ${state.name}")
+                                                Toast.makeText(context, "Blocked ${state.areaCodes.size} area codes for ${state.name}", Toast.LENGTH_LONG).show()
+                                            },
+                                            modifier = Modifier.fillMaxWidth(),
+                                            shape = RoundedCornerShape(12.dp)
+                                        ) {
+                                            Text("Block All Area Codes in ${state.name}")
+                                        }
+                                        
+                                        Text(
+                                            text = "Includes: ${state.areaCodes.joinToString(", ")}",
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                                            modifier = Modifier.padding(top = 8.dp)
+                                        )
+                                    }
+                                } else {
+                                    // Not supported country message
+                                    Surface(
+                                        color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f),
+                                        shape = RoundedCornerShape(12.dp),
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.padding(12.dp),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Icon(
+                                                Icons.Default.Warning, 
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.error
+                                            )
+                                            Spacer(modifier = Modifier.width(12.dp))
+                                            Text(
+                                                text = "This country does not follow the standard area code pattern supported by this app.",
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onErrorContainer
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 // Custom Single Rule Entry Card
                 item {
                     Box(modifier = Modifier.padding(horizontal = 16.dp)) {
@@ -711,7 +875,8 @@ fun BlockerHomeScreen(
                     }
                 }
 
-                // Restricted area codes title text section
+                // Restricted area codes title text section (Hidden as they are now shown in the Status Banner)
+                /*
                 item {
                     Box(modifier = Modifier.padding(horizontal = 16.dp)) {
                         Text(
@@ -800,6 +965,7 @@ fun BlockerHomeScreen(
                         }
                     }
                 }
+                */
 
 
 
@@ -1078,6 +1244,7 @@ fun ProtectionStatusBanner(
     isRoleGranted: Boolean,
     blockedAreaCodes: List<BlockedAreaCode>,
     onRemoveAreaCode: (String) -> Unit,
+    onRemoveRegion: (String) -> Unit,
     onRequestPermissions: () -> Unit,
     onRequestRole: () -> Unit
 ) {
@@ -1116,8 +1283,9 @@ fun ProtectionStatusBanner(
             )
 
             // Dynamic Counter
+            val uniqueDisplays = blockedAreaCodes.groupBy { it.regionLabel }.keys.size
             Text(
-                text = "${blockedAreaCodes.size} Active",
+                text = "$uniqueDisplays Active",
                 color = MaterialTheme.colorScheme.primary,
                 fontSize = 44.sp,
                 fontWeight = FontWeight.Light,
@@ -1212,7 +1380,9 @@ fun ProtectionStatusBanner(
                     horizontalArrangement = Arrangement.Center,
                     verticalArrangement = Arrangement.Top
                 ) {
-                    blockedAreaCodes.forEach { rule ->
+                    val grouped = blockedAreaCodes.groupBy { it.regionLabel }
+                    
+                    grouped.forEach { (label, codes) ->
                         Box(
                             modifier = Modifier
                                 .padding(4.dp)
@@ -1229,8 +1399,9 @@ fun ProtectionStatusBanner(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
+                                val displayText = label ?: "Area ${codes.first().areaCode}"
                                 Text(
-                                    text = "Area ${rule.areaCode}",
+                                    text = displayText,
                                     color = MaterialTheme.colorScheme.primary,
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Medium
@@ -1242,7 +1413,11 @@ fun ProtectionStatusBanner(
                                     modifier = Modifier
                                         .size(14.dp)
                                         .clickable {
-                                            onRemoveAreaCode(rule.areaCode)
+                                            if (label != null) {
+                                                onRemoveRegion(label)
+                                            } else {
+                                                onRemoveAreaCode(codes.first().areaCode)
+                                            }
                                         }
                                 )
                             }
