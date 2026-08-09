@@ -32,9 +32,11 @@ import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
+private const val TEST_TIMESTAMP = 1715000000000L // Fixed timestamp for screenshots
+
 @RunWith(BlockerTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(qualifiers = RobolectricDeviceQualifiers.Pixel8, sdk = [36])
+@Config(qualifiers = RobolectricDeviceQualifiers.Pixel8, sdk = [34]) // Using SDK 34 for better CI stability
 class BlockerScreenshotTest {
 
     @get:Rule val composeTestRule = createComposeRule()
@@ -77,8 +79,8 @@ class BlockerScreenshotTest {
             areaCodes = listOf(BlockedAreaCode(areaCode = "512"), BlockedAreaCode(areaCode = "212")),
             keywords = listOf(BlockedKeyword(keyword = "lottery"), BlockedKeyword(keyword = "crypto")),
             logs = listOf(
-                BlockedLog(id = 1, phoneNumber = "+15125550199", areaCode = "512", messageBody = null, type = "CALL", senderName = "Unknown (Blocked Area Code)"),
-                BlockedLog(id = 2, phoneNumber = "SpamSender", areaCode = "Unknown", messageBody = "Claim your lottery prize now!", type = "SMS (Silenced)", senderName = "Blocked Content (Keyword)")
+                BlockedLog(id = 1, phoneNumber = "+15125550199", areaCode = "512", messageBody = null, type = "CALL", senderName = "Unknown (Blocked Area Code)", timestamp = TEST_TIMESTAMP),
+                BlockedLog(id = 2, phoneNumber = "SpamSender", areaCode = "Unknown", messageBody = "Claim your lottery prize now!", type = "SMS (Silenced)", senderName = "Blocked Content (Keyword)", timestamp = TEST_TIMESTAMP)
             )
         )
         
@@ -126,8 +128,8 @@ class BlockerScreenshotTest {
     fun dashboard_logs_tab_shows_logs() {
         val viewModel = createViewModel(
             logs = listOf(
-                BlockedLog(id = 3, phoneNumber = "+15125550199", areaCode = "512", messageBody = null, type = "CALL", senderName = "Unknown (Blocked Area Code)"),
-                BlockedLog(id = 4, phoneNumber = "SpamSender", areaCode = "Unknown", messageBody = "Claim your lottery prize now!", type = "SMS (Silenced)", senderName = "Blocked Content (Keyword)")
+                BlockedLog(id = 3, phoneNumber = "+15125550199", areaCode = "512", messageBody = null, type = "CALL", senderName = "Unknown (Blocked Area Code)", timestamp = TEST_TIMESTAMP),
+                BlockedLog(id = 4, phoneNumber = "SpamSender", areaCode = "Unknown", messageBody = "Claim your lottery prize now!", type = "SMS (Silenced)", senderName = "Blocked Content (Keyword)", timestamp = TEST_TIMESTAMP)
             )
         )
 
@@ -154,8 +156,8 @@ class BlockerScreenshotTest {
             areaCodes = listOf(BlockedAreaCode(areaCode = "512"), BlockedAreaCode(areaCode = "212")),
             keywords = listOf(BlockedKeyword(keyword = "lottery"), BlockedKeyword(keyword = "crypto")),
             logs = listOf(
-                BlockedLog(id = 1, phoneNumber = "+15125550199", areaCode = "512", messageBody = null, type = "CALL", senderName = "Unknown (Blocked Area Code)"),
-                BlockedLog(id = 2, phoneNumber = "SpamSender", areaCode = "Unknown", messageBody = "Claim your lottery prize now!", type = "SMS (Silenced)", senderName = "Blocked Content (Keyword)")
+                BlockedLog(id = 1, phoneNumber = "+15125550199", areaCode = "512", messageBody = null, type = "CALL", senderName = "Unknown (Blocked Area Code)", timestamp = TEST_TIMESTAMP),
+                BlockedLog(id = 2, phoneNumber = "SpamSender", areaCode = "Unknown", messageBody = "Claim your lottery prize now!", type = "SMS (Silenced)", senderName = "Blocked Content (Keyword)", timestamp = TEST_TIMESTAMP)
             )
         )
 
@@ -182,8 +184,8 @@ class BlockerScreenshotTest {
             areaCodes = listOf(BlockedAreaCode(areaCode = "512"), BlockedAreaCode(areaCode = "212")),
             keywords = listOf(BlockedKeyword(keyword = "lottery"), BlockedKeyword(keyword = "crypto")),
             logs = listOf(
-                BlockedLog(id = 1, phoneNumber = "+15125550199", areaCode = "512", messageBody = null, type = "CALL", senderName = "Unknown (Blocked Area Code)"),
-                BlockedLog(id = 2, phoneNumber = "SpamSender", areaCode = "Unknown", messageBody = "Claim your lottery prize now!", type = "SMS (Silenced)", senderName = "Blocked Content (Keyword)")
+                BlockedLog(id = 1, phoneNumber = "+15125550199", areaCode = "512", messageBody = null, type = "CALL", senderName = "Unknown (Blocked Area Code)", timestamp = TEST_TIMESTAMP),
+                BlockedLog(id = 2, phoneNumber = "SpamSender", areaCode = "Unknown", messageBody = "Claim your lottery prize now!", type = "SMS (Silenced)", senderName = "Blocked Content (Keyword)", timestamp = TEST_TIMESTAMP)
             )
         )
 
