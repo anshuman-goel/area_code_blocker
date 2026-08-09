@@ -1937,14 +1937,26 @@ fun SettingsDialog(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             TextButton(
-                                onClick = { context.startActivity(intent1) },
+                                onClick = {
+                                    try {
+                                        context.startActivity(intent1)
+                                    } catch (e: Exception) {
+                                        Toast.makeText(context, "No web browser found to open link.", Toast.LENGTH_SHORT).show()
+                                    }
+                                },
                                 contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
                                 modifier = Modifier.height(36.dp)
                             ) {
                                 Text("Area Code Master List", fontSize = 12.sp)
                             }
                             TextButton(
-                                onClick = { context.startActivity(intent2) },
+                                onClick = {
+                                    try {
+                                        context.startActivity(intent2)
+                                    } catch (e: Exception) {
+                                        Toast.makeText(context, "No web browser found to open link.", Toast.LENGTH_SHORT).show()
+                                    }
+                                },
                                 contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
                                 modifier = Modifier.height(36.dp)
                             ) {
