@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -95,7 +96,8 @@ fun SettingsDialog(
             ),
             modifier = Modifier
                 .fillMaxWidth(0.92f)
-                .wrapContentHeight(),
+                .wrapContentHeight()
+                .testTag("settings_dialog_surface"),
             shape = RoundedCornerShape(28.dp),
             containerColor = MaterialTheme.colorScheme.surface,
             tonalElevation = 6.dp,

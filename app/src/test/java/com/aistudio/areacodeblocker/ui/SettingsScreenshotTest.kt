@@ -4,8 +4,10 @@ import android.app.Application
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
 import androidx.test.core.app.ApplicationProvider
@@ -60,9 +62,8 @@ class SettingsScreenshotTest {
             }
         }
 
-        // Use onNode(isRoot()) but specify which root if multiple exist
-        // Or capture the dialog specifically
-        composeTestRule.onNode(isRoot(), useUnmergedTree = true).captureRoboImage(filePath = "src/test/screenshots/settings_dialog.png")
+        // Capture the dialog specifically
+        composeTestRule.onNodeWithTag("settings_dialog_surface", useUnmergedTree = true).captureRoboImage(filePath = "src/test/screenshots/settings_dialog.png")
     }
 
     @Test
@@ -79,12 +80,11 @@ class SettingsScreenshotTest {
             }
         }
 
-        // Targeting the dialog's root specifically by finding a node within it and going up or using useUnmergedTree
-        // For scrolling, we need to target the scrollable column
-        composeTestRule.onNodeWithText("App Appearance").performTouchInput { swipeUp() }
+        // Scroll the bottom section into view to capture the full dialog content
+        composeTestRule.onNodeWithText("Data Sources & Attributions").performScrollTo()
         
-        // Capture the whole root that contains the dialog
-        composeTestRule.onNode(hasText("Settings"), useUnmergedTree = true).captureRoboImage(filePath = "src/test/screenshots/settings_dialog_dark_bottom.png")
+        // Capture the whole dialog surface
+        composeTestRule.onNodeWithTag("settings_dialog_surface", useUnmergedTree = true).captureRoboImage(filePath = "src/test/screenshots/settings_dialog_dark_bottom.png")
     }
 
     // Fakes
