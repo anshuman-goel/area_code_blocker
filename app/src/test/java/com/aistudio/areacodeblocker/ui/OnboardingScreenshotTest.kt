@@ -1,8 +1,9 @@
 package com.aistudio.areacodeblocker.ui
 
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
 import com.aistudio.areacodeblocker.BlockerTestRunner
@@ -84,7 +85,7 @@ class OnboardingScreenshotTest {
     }
 
     // Scroll to the bottom to see the launch button and privacy policy
-    composeTestRule.onRoot().performTouchInput { swipeUp() }
+    composeTestRule.onNodeWithText("Privacy Policy").performScrollTo()
     composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/onboarding_none_granted_bottom.png")
   }
 
@@ -107,7 +108,7 @@ class OnboardingScreenshotTest {
     }
 
     // Scroll to the bottom
-    composeTestRule.onRoot().performTouchInput { swipeUp() }
+    composeTestRule.onNodeWithText("Privacy Policy").performScrollTo()
     composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/onboarding_all_granted_bottom.png")
   }
 

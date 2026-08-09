@@ -145,8 +145,6 @@ class BlockerScreenshotTest {
 
         // Switch to Logs tab and capture the logs UI
         composeTestRule.onNodeWithTag("logs_tab").performClick()
-        // Ensure the list content is visible by doing a small swipe up
-        composeTestRule.onRoot().performTouchInput { swipeUp() }
         composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/blocker_logs.png")
     }
 
