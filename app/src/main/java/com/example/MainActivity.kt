@@ -1272,20 +1272,13 @@ fun ProtectionStatusBanner(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // Label
-            Text(
-                text = "PROTECTED COVERAGE",
-                color = MaterialTheme.colorScheme.outline,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 2.sp,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-
             // Dynamic Counter
-            val uniqueDisplays = blockedAreaCodes.groupBy { it.regionLabel }.keys.size
+            val uniqueRegions = blockedAreaCodes.filter { it.regionLabel != null }.map { it.regionLabel }.distinct().size
+            val manualCodes = blockedAreaCodes.filter { it.regionLabel == null }.size
+            val totalActiveRules = uniqueRegions + manualCodes
+            
             Text(
-                text = "$uniqueDisplays Active",
+                text = "$totalActiveRules Active",
                 color = MaterialTheme.colorScheme.primary,
                 fontSize = 44.sp,
                 fontWeight = FontWeight.Light,
