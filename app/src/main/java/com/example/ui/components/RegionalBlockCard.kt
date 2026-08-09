@@ -20,12 +20,16 @@ import com.example.data.AreaCodeState
 
 @Composable
 fun RegionalBlockCard(
+    selectedCountryIndex: Int,
+    selectedStateIndex: Int,
+    onSelectedCountryIndexChange: (Int) -> Unit,
+    onSelectedStateIndexChange: (Int) -> Unit,
     onBlockAreaCodes: (List<String>, String) -> Unit
 ) {
     val context = LocalContext.current
-    
-    var selectedCountry by remember { mutableStateOf(AreaCodeData.countries[0]) }
-    var selectedState by remember { mutableStateOf<AreaCodeState?>(AreaCodeData.countries[0].states.getOrNull(0)) }
+
+    val selectedCountry = AreaCodeData.countries.getOrElse(selectedCountryIndex) { AreaCodeData.countries[0] }
+    val selectedState = selectedCountry.states.getOrNull(selectedStateIndex)
     var countryExpanded by remember { mutableStateOf(false) }
     var stateExpanded by remember { mutableStateOf(false) }
 
@@ -76,12 +80,12 @@ fun RegionalBlockCard(
                         onDismissRequest = { countryExpanded = false },
                         modifier = Modifier.fillMaxWidth(0.85f)
                     ) {
-                        AreaCodeData.countries.forEach { country ->
+                            AreaCodeData.countries.forEachIndexed { idx, country ->
                             DropdownMenuItem(
                                 text = { Text(country.name) },
                                 onClick = {
-                                    selectedCountry = country
-                                    selectedState = if (country.states.isNotEmpty()) country.states[0] else null
+                                    onSelectedCountryIndexChange(idx)
+                                    onSelectedStateIndexChange(0)
                                     countryExpanded = false
                                 }
                             )
@@ -114,11 +118,11 @@ fun RegionalBlockCard(
                             onDismissRequest = { stateExpanded = false },
                             modifier = Modifier.fillMaxWidth(0.85f)
                         ) {
-                            selectedCountry.states.forEach { state ->
+                                                    selectedCountry.states.forEachIndexed { idx, state ->
                                 DropdownMenuItem(
                                     text = { Text(state.name) },
                                     onClick = {
-                                        selectedState = state
+                                        onSelectedStateIndexChange(idx)
                                         stateExpanded = false
                                     }
                                 )

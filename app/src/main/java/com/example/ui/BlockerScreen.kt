@@ -180,7 +180,7 @@ fun AppTopBar(onSettingsClick: () -> Unit) {
                         modifier = Modifier.size(36.dp).clip(RoundedCornerShape(10.dp)).background(MaterialTheme.colorScheme.primaryContainer),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(Icons.Default.Lock, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+                        Icon(Icons.Default.Lock, contentDescription = "Open settings", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
                     }
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(text = "Area Code Blocker", fontWeight = FontWeight.Bold, fontSize = 19.sp, letterSpacing = (-0.5).sp)
