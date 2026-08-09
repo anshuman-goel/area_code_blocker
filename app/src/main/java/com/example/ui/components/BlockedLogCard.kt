@@ -30,7 +30,11 @@ fun BlockedLogCard(
     log: BlockedLog,
     onDelete: () -> Unit
 ) {
-    val sdf = remember { SimpleDateFormat("MMM dd, yyyy - hh:mm a", Locale.US) }
+    val sdf = remember { 
+        SimpleDateFormat("MMM dd, yyyy - hh:mm a", Locale.US).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }
+    }
     val timeStr = remember(log.timestamp) { sdf.format(Date(log.timestamp)) }
 
     Card(
