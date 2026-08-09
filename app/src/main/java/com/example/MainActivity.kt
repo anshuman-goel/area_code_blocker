@@ -1929,24 +1929,27 @@ fun SettingsDialog(
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
                         
                         val intent1 = remember { Intent(Intent.ACTION_VIEW, Uri.parse("https://en.wikipedia.org/wiki/List_of_North_American_Numbering_Plan_area_codes")) }
                         val intent2 = remember { Intent(Intent.ACTION_VIEW, Uri.parse("https://en.wikipedia.org/wiki/North_American_Numbering_Plan#Countries_and_territories")) }
 
-                        TextButton(
-                            onClick = { context.startActivity(intent1) },
-                            contentPadding = PaddingValues(0.dp),
-                            modifier = Modifier.height(32.dp)
+                        FlowRow(
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text("NANP Area Code List", fontSize = 12.sp)
-                        }
-                        TextButton(
-                            onClick = { context.startActivity(intent2) },
-                            contentPadding = PaddingValues(0.dp),
-                            modifier = Modifier.height(32.dp)
-                        ) {
-                            Text("NANP Countries & Territories", fontSize = 12.sp)
+                            TextButton(
+                                onClick = { context.startActivity(intent1) },
+                                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
+                                modifier = Modifier.height(36.dp)
+                            ) {
+                                Text("Area Code Master List", fontSize = 12.sp)
+                            }
+                            TextButton(
+                                onClick = { context.startActivity(intent2) },
+                                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
+                                modifier = Modifier.height(36.dp)
+                            ) {
+                                Text("Countries & Territories", fontSize = 12.sp)
+                            }
                         }
                     }
                 }
