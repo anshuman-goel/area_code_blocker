@@ -213,8 +213,8 @@ class BlockerScreenshotTest {
             areaCodes = listOf(BlockedAreaCode(areaCode = "512"), BlockedAreaCode(areaCode = "212")),
             keywords = listOf(BlockedKeyword(keyword = "lottery"), BlockedKeyword(keyword = "crypto")),
             logs = listOf(
-                BlockedLog(id = 1, phoneNumber = "+15125550199", areaCode = "512", messageBody = null, type = "CALL", senderName = "Unknown (Blocked Area Code)"),
-                BlockedLog(id = 2, phoneNumber = "SpamSender", areaCode = "Unknown", messageBody = "Claim your lottery prize now!", type = "SMS (Silenced)", senderName = "Blocked Content (Keyword)")
+                BlockedLog(id = 1, phoneNumber = "+15125550199", areaCode = "512", messageBody = null, type = "CALL", senderName = "Unknown (Blocked Area Code)", timestamp = TEST_TIMESTAMP),
+                BlockedLog(id = 2, phoneNumber = "SpamSender", areaCode = "Unknown", messageBody = "Claim your lottery prize now!", type = "SMS (Silenced)", senderName = "Blocked Content (Keyword)", timestamp = TEST_TIMESTAMP)
             )
         )
 
