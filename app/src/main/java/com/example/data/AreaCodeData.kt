@@ -48,7 +48,7 @@ object AreaCodeData {
             AreaCodeState("Rhode Island", listOf("401")),
             AreaCodeState("South Carolina", listOf("803", "821", "839", "843", "854", "864")),
             AreaCodeState("South Dakota", listOf("605")),
-            AreaCodeState("Tennessee", listOf("353", "423", "615", "629", "729", "731", "865", "901", "931")),
+            AreaCodeState("Tennessee", listOf("423", "615", "629", "729", "731", "865", "901", "931")),
             AreaCodeState("Texas", listOf("210", "214", "254", "281", "325", "346", "361", "409", "430", "432", "469", "512", "621", "682", "713", "726", "737", "806", "817", "830", "832", "903", "915", "936", "940", "945", "956", "972", "979")),
             AreaCodeState("Utah", listOf("385", "435", "801")),
             AreaCodeState("Vermont", listOf("802")),
