@@ -5,7 +5,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.core.app.ApplicationProvider
 import com.aistudio.areacodeblocker.BlockerTestRunner
-import com.example.BlockerHomeScreen
+import com.example.ui.BlockerHomeScreen
 import com.example.data.dao.BlockedAreaCodeDao
 import com.example.data.dao.BlockedKeywordDao
 import com.example.data.dao.BlockedLogDao
@@ -28,7 +28,7 @@ import org.robolectric.annotation.GraphicsMode
 @RunWith(BlockerTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(qualifiers = RobolectricDeviceQualifiers.Pixel8, sdk = [36])
-class DashboardScreenshotTest {
+class BlockerScreenshotTest {
 
     @get:Rule val composeTestRule = createComposeRule()
 
@@ -61,7 +61,7 @@ class DashboardScreenshotTest {
             }
         }
 
-        composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/dashboard_empty.png")
+        composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/blocker_empty.png")
     }
 
     @Test
@@ -87,7 +87,7 @@ class DashboardScreenshotTest {
             }
         }
 
-        composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/dashboard_populated.png")
+        composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/blocker_populated.png")
     }
 
     @Test
@@ -112,7 +112,7 @@ class DashboardScreenshotTest {
             }
         }
 
-        composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/dashboard_grouped.png")
+        composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/blocker_grouped.png")
     }
 
     // Reuse Fake DAOs from BlockerViewModelTest logic

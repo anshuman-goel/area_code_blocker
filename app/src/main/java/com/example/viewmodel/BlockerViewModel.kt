@@ -57,8 +57,15 @@ class BlockerViewModel(
     private val _appTheme = MutableStateFlow("System")
     val appTheme: StateFlow<String> = _appTheme.asStateFlow()
 
+    private val prefs = application.getSharedPreferences("blocker_prefs", android.content.Context.MODE_PRIVATE)
+
+    private val _selectedCountryIndex = MutableStateFlow(prefs.getInt("selected_country_index", 0))
+    val selectedCountryIndex: StateFlow<Int> = _selectedCountryIndex.asStateFlow()
+
+    private val _selectedStateIndex = MutableStateFlow(prefs.getInt("selected_state_index", 0))
+    val selectedStateIndex: StateFlow<Int> = _selectedStateIndex.asStateFlow()
+
     init {
-        val prefs = application.getSharedPreferences("blocker_prefs", android.content.Context.MODE_PRIVATE)
         _userOwnNumber.value = prefs.getString("user_own_number", "") ?: ""
         _appTheme.value = prefs.getString("app_theme", "System") ?: "System"
     }
@@ -86,8 +93,17 @@ class BlockerViewModel(
 
     fun setAppTheme(theme: String) {
         _appTheme.value = theme
-        val prefs = getApplication<Application>().getSharedPreferences("blocker_prefs", android.content.Context.MODE_PRIVATE)
         prefs.edit().putString("app_theme", theme).apply()
+    }
+
+    fun setSelectedCountryIndex(index: Int) {
+        _selectedCountryIndex.value = index
+        prefs.edit().putInt("selected_country_index", index).apply()
+    }
+
+    fun setSelectedStateIndex(index: Int) {
+        _selectedStateIndex.value = index
+        prefs.edit().putInt("selected_state_index", index).apply()
     }
 
     fun addAreaCode(areaCode: String, regionLabel: String? = null) {

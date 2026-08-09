@@ -5,7 +5,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.core.app.ApplicationProvider
 import com.aistudio.areacodeblocker.BlockerTestRunner
-import com.example.SettingsDialog
+import com.example.ui.components.SettingsDialog
 import com.example.data.dao.BlockedAreaCodeDao
 import com.example.data.dao.BlockedKeywordDao
 import com.example.data.dao.BlockedLogDao
