@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -28,7 +29,8 @@ fun StatisticsGrid(callsCount: Int, textsCount: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp)
+            .testTag("statistics_grid"),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         // Calls Box
@@ -245,7 +247,7 @@ fun ProtectionStatusBanner(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
-                                val displayText = if (isRegional) firstCode.regionLabel!! else "Area ${firstCode.areaCode}"
+                                val displayText = if (isRegional) firstCode.regionLabel!! else firstCode.areaCode
                                 Text(
                                     text = displayText,
                                     color = MaterialTheme.colorScheme.primary,

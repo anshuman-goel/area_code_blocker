@@ -79,7 +79,7 @@ fun BlockedLogCard(
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "Area ${log.areaCode} • ${log.type}",
+                            text = "${log.areaCode} • ${log.type}",
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.outline,
                             fontSize = 11.sp

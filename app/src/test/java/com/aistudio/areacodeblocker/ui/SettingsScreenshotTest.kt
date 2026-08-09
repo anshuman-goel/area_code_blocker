@@ -1,8 +1,13 @@
 package com.aistudio.areacodeblocker.ui
 
 import android.app.Application
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeUp
 import androidx.test.core.app.ApplicationProvider
 import com.aistudio.areacodeblocker.BlockerTestRunner
 import com.example.ui.components.SettingsDialog
@@ -55,7 +60,31 @@ class SettingsScreenshotTest {
             }
         }
 
-        composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/settings_dialog.png")
+        // Use onNode(isRoot()) but specify which root if multiple exist
+        // Or capture the dialog specifically
+        composeTestRule.onNode(isRoot(), useUnmergedTree = true).captureRoboImage(filePath = "src/test/screenshots/settings_dialog.png")
+    }
+
+    @Test
+    fun settings_dialog_dark_mode_and_bottom() {
+        val viewModel = createViewModel()
+        
+        composeTestRule.setContent {
+            MyApplicationTheme(themeSetting = "Dark") {
+                SettingsDialog(
+                    show = true,
+                    onDismiss = {},
+                    viewModel = viewModel
+                )
+            }
+        }
+
+        // Targeting the dialog's root specifically by finding a node within it and going up or using useUnmergedTree
+        // For scrolling, we need to target the scrollable column
+        composeTestRule.onNodeWithText("App Appearance").performTouchInput { swipeUp() }
+        
+        // Capture the whole root that contains the dialog
+        composeTestRule.onNode(hasText("Settings"), useUnmergedTree = true).captureRoboImage(filePath = "src/test/screenshots/settings_dialog_dark_bottom.png")
     }
 
     // Fakes

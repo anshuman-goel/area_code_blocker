@@ -102,7 +102,8 @@ fun BlockerScreen(
                     .padding(innerPadding)
                     .fillMaxSize()
                     .imePadding()
-                    .background(MaterialTheme.colorScheme.background),
+                    .background(MaterialTheme.colorScheme.background)
+                    .testTag("main_lazy_column"),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(bottom = 80.dp)
             ) {
