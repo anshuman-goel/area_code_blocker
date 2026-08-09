@@ -1373,9 +1373,12 @@ fun ProtectionStatusBanner(
                     horizontalArrangement = Arrangement.Center,
                     verticalArrangement = Arrangement.Top
                 ) {
-                    val grouped = blockedAreaCodes.groupBy { it.regionLabel }
+                    val grouped = blockedAreaCodes.groupBy { it.regionLabel ?: "manual_${it.areaCode}" }
                     
-                    grouped.forEach { (label, codes) ->
+                    grouped.forEach { (groupKey, codes) ->
+                        val firstCode = codes.first()
+                        val isRegional = firstCode.regionLabel != null
+                        
                         Box(
                             modifier = Modifier
                                 .padding(4.dp)
@@ -1392,7 +1395,7 @@ fun ProtectionStatusBanner(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
-                                val displayText = label ?: "Area ${codes.first().areaCode}"
+                                val displayText = if (isRegional) firstCode.regionLabel!! else "Area ${firstCode.areaCode}"
                                 Text(
                                     text = displayText,
                                     color = MaterialTheme.colorScheme.primary,
@@ -1406,10 +1409,10 @@ fun ProtectionStatusBanner(
                                     modifier = Modifier
                                         .size(14.dp)
                                         .clickable {
-                                            if (label != null) {
-                                                onRemoveRegion(label)
+                                            if (isRegional) {
+                                                onRemoveRegion(firstCode.regionLabel!!)
                                             } else {
-                                                onRemoveAreaCode(codes.first().areaCode)
+                                                onRemoveAreaCode(firstCode.areaCode)
                                             }
                                         }
                                 )
