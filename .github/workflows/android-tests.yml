@@ -39,6 +39,24 @@ jobs:
           **/build/reports/tests/
           **/build/reports/lint-results-debug.xml
 
+    - name: Upload Roborazzi Screenshots & Reports
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: roborazzi-results
+        path: |
+          **/build/roborazzi/**
+          **/build/reports/roborazzi/**
+          **/build/reports/**/roborazzi/**
+          **/build/test-results/
+          **/build/reports/tests/**
+          app/src/test/screenshots/**
+          **/build/reports/verifyRoborazziDebug/**
+          **/build/outputs/roborazzi/**
+          **/.roborazzi/**
+          **/build/reports/**
+          **/app/build/reports/**
+
   instrumentation-tests:
     name: Run Instrumentation Tests
     runs-on: ubuntu-22.04
