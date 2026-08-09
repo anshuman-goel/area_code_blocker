@@ -98,6 +98,48 @@ class BlockerViewModelTest {
         collectJob.cancel()
     }
 
+    @Test
+    fun `addAreaCodes with regionLabel inserts multiple into repository`() = runTest {
+        val collectJob = launch(UnconfinedTestDispatcher()) {
+            viewModel.blockedAreaCodes.collect {}
+        }
+
+        val codes = listOf("205", "251", "256")
+        val label = "United States - Alabama"
+        
+        viewModel.addAreaCodes(codes, label)
+        advanceUntilIdle()
+
+        val blockedCodes = viewModel.blockedAreaCodes.value
+        assertEquals(3, blockedCodes.size)
+        assertTrue(blockedCodes.all { it.regionLabel == label })
+        assertTrue(blockedCodes.any { it.areaCode == "205" })
+        
+        collectJob.cancel()
+    }
+
+    @Test
+    fun `removeAreaCodesByRegion deletes all matching records`() = runTest {
+        val collectJob = launch(UnconfinedTestDispatcher()) {
+            viewModel.blockedAreaCodes.collect {}
+        }
+
+        viewModel.addAreaCodes(listOf("205", "251"), "Alabama")
+        viewModel.addAreaCode("512", null) // Manual one
+        advanceUntilIdle()
+        
+        assertEquals(3, viewModel.blockedAreaCodes.value.size)
+        
+        viewModel.removeAreaCodesByRegion("Alabama")
+        advanceUntilIdle()
+        
+        val remaining = viewModel.blockedAreaCodes.value
+        assertEquals(1, remaining.size)
+        assertEquals("512", remaining[0].areaCode)
+        
+        collectJob.cancel()
+    }
+
     // Fake Implementations
     class FakeAreaCodeDao : BlockedAreaCodeDao {
         private val list = mutableListOf<BlockedAreaCode>()
@@ -115,6 +157,10 @@ class BlockerViewModelTest {
         }
         override suspend fun deleteByAreaCode(areaCode: String) {
             list.removeAll { it.areaCode == areaCode }
+            flow.value = list.toList()
+        }
+        override suspend fun deleteByRegionLabel(label: String) {
+            list.removeAll { it.regionLabel == label }
             flow.value = list.toList()
         }
     }

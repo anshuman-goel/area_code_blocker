@@ -25,15 +25,19 @@ class BlockerRepository(
         return blockedKeywordDao.getAllBlockedKeywordsList()
     }
 
-    suspend fun insertAreaCode(areaCode: String) {
+    suspend fun insertAreaCode(areaCode: String, regionLabel: String? = null) {
         val cleanCode = areaCode.trim().filter { it.isDigit() }
         if (cleanCode.isNotEmpty()) {
-            blockedAreaCodeDao.insert(BlockedAreaCode(areaCode = cleanCode))
+            blockedAreaCodeDao.insert(BlockedAreaCode(areaCode = cleanCode, regionLabel = regionLabel))
         }
     }
 
     suspend fun deleteAreaCode(areaCode: String) {
         blockedAreaCodeDao.deleteByAreaCode(areaCode)
+    }
+
+    suspend fun deleteAreaCodesByRegion(label: String) {
+        blockedAreaCodeDao.deleteByRegionLabel(label)
     }
 
     suspend fun insertKeyword(keyword: String) {
