@@ -36,7 +36,7 @@ private const val TEST_TIMESTAMP = 1715000000000L // Fixed timestamp for screens
 
 @RunWith(BlockerTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(qualifiers = RobolectricDeviceQualifiers.Pixel8, sdk = [34]) // Using SDK 34 for better CI stability
+@Config(qualifiers = RobolectricDeviceQualifiers.Pixel8, sdk = [36])
 class BlockerScreenshotTest {
 
     @get:Rule val composeTestRule = createComposeRule()
@@ -174,7 +174,7 @@ class BlockerScreenshotTest {
         }
 
         // Scroll to the statistics grid to capture the middle section
-        composeTestRule.onNodeWithTag("main_lazy_column").performScrollToNode(hasTestTag("statistics_grid"))
+        composeTestRule.onNodeWithTag("main_lazy_column", useUnmergedTree = true).performScrollToNode(hasTestTag("statistics_grid"))
         composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/blocker_populated_dark_middle.png")
     }
 
@@ -202,7 +202,7 @@ class BlockerScreenshotTest {
         }
 
         // Scroll to the bottom cards (keywords)
-        composeTestRule.onNodeWithTag("main_lazy_column").performScrollToNode(hasTestTag("keyword_input"))
+        composeTestRule.onNodeWithTag("main_lazy_column", useUnmergedTree = true).performScrollToNode(hasTestTag("keyword_input"))
         composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/blocker_populated_dark_bottom.png")
     }
 

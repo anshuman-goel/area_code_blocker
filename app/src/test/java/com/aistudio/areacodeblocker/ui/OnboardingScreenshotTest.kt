@@ -19,7 +19,7 @@ import org.robolectric.annotation.GraphicsMode
 
 @RunWith(BlockerTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(qualifiers = RobolectricDeviceQualifiers.Pixel8, sdk = [34])
+@Config(qualifiers = RobolectricDeviceQualifiers.Pixel8, sdk = [36])
 class OnboardingScreenshotTest {
 
   @get:Rule val composeTestRule = createComposeRule()
@@ -85,7 +85,7 @@ class OnboardingScreenshotTest {
     }
 
     // Scroll to the bottom to see the launch button and privacy policy
-    composeTestRule.onNodeWithText("Privacy Policy").performScrollTo()
+    composeTestRule.onNodeWithText("Privacy Policy", useUnmergedTree = true).performScrollTo()
     composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/onboarding_none_granted_bottom.png")
   }
 
@@ -108,7 +108,7 @@ class OnboardingScreenshotTest {
     }
 
     // Scroll to the bottom
-    composeTestRule.onNodeWithText("Privacy Policy").performScrollTo()
+    composeTestRule.onNodeWithText("Privacy Policy", useUnmergedTree = true).performScrollTo()
     composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/onboarding_all_granted_bottom.png")
   }
 
