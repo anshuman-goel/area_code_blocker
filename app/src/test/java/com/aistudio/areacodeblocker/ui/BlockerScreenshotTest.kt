@@ -3,6 +3,13 @@ package com.aistudio.areacodeblocker.ui
 import android.app.Application
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeUp
+import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.performScrollToNode
+
 import androidx.test.core.app.ApplicationProvider
 import com.aistudio.areacodeblocker.BlockerTestRunner
 import com.example.ui.BlockerHomeScreen
@@ -24,6 +31,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
+
+private const val TEST_TIMESTAMP = 1715000000000L // Fixed timestamp for screenshots
 
 @RunWith(BlockerTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
@@ -70,8 +79,8 @@ class BlockerScreenshotTest {
             areaCodes = listOf(BlockedAreaCode(areaCode = "512"), BlockedAreaCode(areaCode = "212")),
             keywords = listOf(BlockedKeyword(keyword = "lottery"), BlockedKeyword(keyword = "crypto")),
             logs = listOf(
-                BlockedLog(phoneNumber = "+15125550199", areaCode = "512", messageBody = null, type = "CALL", senderName = "Unknown (Blocked Area Code)"),
-                BlockedLog(phoneNumber = "SpamSender", areaCode = "Unknown", messageBody = "Claim your lottery prize now!", type = "SMS (Silenced)", senderName = "Blocked Content (Keyword)")
+                BlockedLog(id = 1, phoneNumber = "+15125550199", areaCode = "512", messageBody = null, type = "CALL", senderName = "Unknown (Blocked Area Code)", timestamp = TEST_TIMESTAMP),
+                BlockedLog(id = 2, phoneNumber = "SpamSender", areaCode = "Unknown", messageBody = "Claim your lottery prize now!", type = "SMS (Silenced)", senderName = "Blocked Content (Keyword)", timestamp = TEST_TIMESTAMP)
             )
         )
         
@@ -113,6 +122,115 @@ class BlockerScreenshotTest {
         }
 
         composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/blocker_grouped.png")
+    }
+
+    @Test
+    fun dashboard_logs_tab_shows_logs() {
+        val viewModel = createViewModel(
+            logs = listOf(
+                BlockedLog(id = 3, phoneNumber = "+15125550199", areaCode = "512", messageBody = null, type = "CALL", senderName = "Unknown (Blocked Area Code)", timestamp = TEST_TIMESTAMP),
+                BlockedLog(id = 4, phoneNumber = "SpamSender", areaCode = "Unknown", messageBody = "Claim your lottery prize now!", type = "SMS (Silenced)", senderName = "Blocked Content (Keyword)", timestamp = TEST_TIMESTAMP)
+            )
+        )
+
+        composeTestRule.setContent {
+            MyApplicationTheme {
+                BlockerHomeScreen(
+                    viewModel = viewModel,
+                    initContactsGranted = true,
+                    initPhoneNumbersGranted = true,
+                    initCallScreeningGranted = true,
+                    initNotificationListenerGranted = true
+                )
+            }
+        }
+
+        // Switch to Logs tab and capture the logs UI
+        composeTestRule.onNodeWithTag("logs_tab").performClick()
+        composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/blocker_logs.png")
+    }
+
+    @Test
+    fun dashboard_populated_dark_mode_scrolled_middle() {
+        val viewModel = createViewModel(
+            areaCodes = listOf(BlockedAreaCode(areaCode = "512"), BlockedAreaCode(areaCode = "212")),
+            keywords = listOf(BlockedKeyword(keyword = "lottery"), BlockedKeyword(keyword = "crypto")),
+            logs = listOf(
+                BlockedLog(id = 1, phoneNumber = "+15125550199", areaCode = "512", messageBody = null, type = "CALL", senderName = "Unknown (Blocked Area Code)", timestamp = TEST_TIMESTAMP),
+                BlockedLog(id = 2, phoneNumber = "SpamSender", areaCode = "Unknown", messageBody = "Claim your lottery prize now!", type = "SMS (Silenced)", senderName = "Blocked Content (Keyword)", timestamp = TEST_TIMESTAMP)
+            )
+        )
+
+        composeTestRule.setContent {
+            MyApplicationTheme(themeSetting = "Dark") {
+                BlockerHomeScreen(
+                    viewModel = viewModel,
+                    initContactsGranted = true,
+                    initPhoneNumbersGranted = true,
+                    initCallScreeningGranted = true,
+                    initNotificationListenerGranted = true
+                )
+            }
+        }
+
+        // Scroll to the statistics grid to capture the middle section
+        composeTestRule.onNodeWithTag("main_lazy_column", useUnmergedTree = true).performScrollToNode(hasTestTag("statistics_grid"))
+        composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/blocker_populated_dark_middle.png")
+    }
+
+    @Test
+    fun dashboard_populated_dark_mode_scrolled_bottom() {
+        val viewModel = createViewModel(
+            areaCodes = listOf(BlockedAreaCode(areaCode = "512"), BlockedAreaCode(areaCode = "212")),
+            keywords = listOf(BlockedKeyword(keyword = "lottery"), BlockedKeyword(keyword = "crypto")),
+            logs = listOf(
+                BlockedLog(id = 1, phoneNumber = "+15125550199", areaCode = "512", messageBody = null, type = "CALL", senderName = "Unknown (Blocked Area Code)", timestamp = TEST_TIMESTAMP),
+                BlockedLog(id = 2, phoneNumber = "SpamSender", areaCode = "Unknown", messageBody = "Claim your lottery prize now!", type = "SMS (Silenced)", senderName = "Blocked Content (Keyword)", timestamp = TEST_TIMESTAMP)
+            )
+        )
+
+        composeTestRule.setContent {
+            MyApplicationTheme(themeSetting = "Dark") {
+                BlockerHomeScreen(
+                    viewModel = viewModel,
+                    initContactsGranted = true,
+                    initPhoneNumbersGranted = true,
+                    initCallScreeningGranted = true,
+                    initNotificationListenerGranted = true
+                )
+            }
+        }
+
+        // Scroll to the bottom cards (keywords)
+        composeTestRule.onNodeWithTag("main_lazy_column", useUnmergedTree = true).performScrollToNode(hasTestTag("keyword_input"))
+        composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/blocker_populated_dark_bottom.png")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1000dp-xhdpi") // Custom tall device to see more content at once
+    fun dashboard_populated_dark_mode_tall_view() {
+        val viewModel = createViewModel(
+            areaCodes = listOf(BlockedAreaCode(areaCode = "512"), BlockedAreaCode(areaCode = "212")),
+            keywords = listOf(BlockedKeyword(keyword = "lottery"), BlockedKeyword(keyword = "crypto")),
+            logs = listOf(
+                BlockedLog(id = 1, phoneNumber = "+15125550199", areaCode = "512", messageBody = null, type = "CALL", senderName = "Unknown (Blocked Area Code)", timestamp = TEST_TIMESTAMP),
+                BlockedLog(id = 2, phoneNumber = "SpamSender", areaCode = "Unknown", messageBody = "Claim your lottery prize now!", type = "SMS (Silenced)", senderName = "Blocked Content (Keyword)", timestamp = TEST_TIMESTAMP)
+            )
+        )
+
+        composeTestRule.setContent {
+            MyApplicationTheme(themeSetting = "Dark") {
+                BlockerHomeScreen(
+                    viewModel = viewModel,
+                    initContactsGranted = true,
+                    initPhoneNumbersGranted = true,
+                    initCallScreeningGranted = true,
+                    initNotificationListenerGranted = true
+                )
+            }
+        }
+
+        composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/blocker_populated_dark_tall.png")
     }
 
     // Reuse Fake DAOs from BlockerViewModelTest logic

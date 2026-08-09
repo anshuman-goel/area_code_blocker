@@ -30,7 +30,11 @@ fun BlockedLogCard(
     log: BlockedLog,
     onDelete: () -> Unit
 ) {
-    val sdf = remember { SimpleDateFormat("MMM dd, yyyy - hh:mm a", Locale.getDefault()) }
+    val sdf = remember { 
+        SimpleDateFormat("MMM dd, yyyy - hh:mm a", Locale.US).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }
+    }
     val timeStr = remember(log.timestamp) { sdf.format(Date(log.timestamp)) }
 
     Card(
@@ -79,7 +83,7 @@ fun BlockedLogCard(
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "Area ${log.areaCode} • ${log.type}",
+                            text = "${log.areaCode} • ${log.type}",
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.outline,
                             fontSize = 11.sp

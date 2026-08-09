@@ -1,8 +1,15 @@
 package com.aistudio.areacodeblocker.ui
 
 import android.app.Application
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeUp
 import androidx.test.core.app.ApplicationProvider
 import com.aistudio.areacodeblocker.BlockerTestRunner
 import com.example.ui.components.SettingsDialog
@@ -55,7 +62,29 @@ class SettingsScreenshotTest {
             }
         }
 
-        composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/settings_dialog.png")
+        // Capture the dialog specifically
+        composeTestRule.onNodeWithTag("settings_dialog_surface", useUnmergedTree = true).captureRoboImage(filePath = "src/test/screenshots/settings_dialog.png")
+    }
+
+    @Test
+    fun settings_dialog_dark_mode_and_bottom() {
+        val viewModel = createViewModel()
+        
+        composeTestRule.setContent {
+            MyApplicationTheme(themeSetting = "Dark") {
+                SettingsDialog(
+                    show = true,
+                    onDismiss = {},
+                    viewModel = viewModel
+                )
+            }
+        }
+
+        // Scroll the bottom section into view to capture the full dialog content
+        composeTestRule.onNodeWithText("Data Sources & Attributions").performScrollTo()
+        
+        // Capture the whole dialog surface
+        composeTestRule.onNodeWithTag("settings_dialog_surface", useUnmergedTree = true).captureRoboImage(filePath = "src/test/screenshots/settings_dialog_dark_bottom.png")
     }
 
     // Fakes
