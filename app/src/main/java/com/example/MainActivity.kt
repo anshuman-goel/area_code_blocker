@@ -1919,6 +1919,51 @@ fun SettingsDialog(
                             }
                         }
                     }
+
+                    SettingsGroup(
+                        title = "Data Sources & Attributions",
+                        icon = Icons.Default.Info
+                    ) {
+                        Text(
+                            text = "Area code and regional data is sourced from Wikipedia and is licensed under the Creative Commons Attribution-ShareAlike License.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                        )
+                        
+                        val intent1 = remember { Intent(Intent.ACTION_VIEW, Uri.parse("https://en.wikipedia.org/wiki/List_of_North_American_Numbering_Plan_area_codes")) }
+                        val intent2 = remember { Intent(Intent.ACTION_VIEW, Uri.parse("https://en.wikipedia.org/wiki/North_American_Numbering_Plan#Countries_and_territories")) }
+
+                        FlowRow(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            TextButton(
+                                onClick = {
+                                    try {
+                                        context.startActivity(intent1)
+                                    } catch (e: Exception) {
+                                        Toast.makeText(context, "No web browser found to open link.", Toast.LENGTH_SHORT).show()
+                                    }
+                                },
+                                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
+                                modifier = Modifier.height(36.dp)
+                            ) {
+                                Text("Area Code Master List", fontSize = 12.sp)
+                            }
+                            TextButton(
+                                onClick = {
+                                    try {
+                                        context.startActivity(intent2)
+                                    } catch (e: Exception) {
+                                        Toast.makeText(context, "No web browser found to open link.", Toast.LENGTH_SHORT).show()
+                                    }
+                                },
+                                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
+                                modifier = Modifier.height(36.dp)
+                            ) {
+                                Text("Countries & Territories", fontSize = 12.sp)
+                            }
+                        }
+                    }
                 }
             },
             confirmButton = {
