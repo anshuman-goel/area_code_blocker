@@ -69,6 +69,7 @@ fun LegalAcceptanceScreen(onAccept: () -> Unit) {
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onBackground,
             )
             Spacer(Modifier.height(12.dp))
             Text(
@@ -128,6 +129,7 @@ fun LegalAcceptanceScreen(onAccept: () -> Unit) {
                 Text(
                     text = "I agree to the Terms of Use and acknowledge the call-blocking risks.",
                     style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(start = 8.dp),
                 )
             }

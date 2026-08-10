@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import com.aistudio.areacodeblocker.BlockerTestRunner
@@ -52,6 +53,39 @@ class LegalAcceptanceScreenshotTest {
         composeTestRule.onNodeWithTag("legal_accept_button").assertIsEnabled()
         composeTestRule.onRoot().captureRoboImage(
             filePath = "src/test/screenshots/legal_acceptance_checked.png"
+        )
+    }
+
+    @Test
+    fun legal_acceptance_dark_unchecked() {
+        composeTestRule.setContent {
+            MyApplicationTheme(themeSetting = "Dark") {
+                LegalAcceptanceScreen(onAccept = {})
+            }
+        }
+
+        composeTestRule.onNodeWithText("Before you continue").assertExists()
+        composeTestRule.onNodeWithText(
+            "I agree to the Terms of Use and acknowledge the call-blocking risks."
+        ).assertExists()
+        composeTestRule.onNodeWithTag("legal_accept_button").assertIsNotEnabled()
+        composeTestRule.onRoot().captureRoboImage(
+            filePath = "src/test/screenshots/legal_acceptance_dark_unchecked.png"
+        )
+    }
+
+    @Test
+    fun legal_acceptance_dark_checked() {
+        composeTestRule.setContent {
+            MyApplicationTheme(themeSetting = "Dark") {
+                LegalAcceptanceScreen(onAccept = {})
+            }
+        }
+
+        composeTestRule.onNodeWithTag("legal_acknowledgment_checkbox").performClick()
+        composeTestRule.onNodeWithTag("legal_accept_button").assertIsEnabled()
+        composeTestRule.onRoot().captureRoboImage(
+            filePath = "src/test/screenshots/legal_acceptance_dark_checked.png"
         )
     }
 
