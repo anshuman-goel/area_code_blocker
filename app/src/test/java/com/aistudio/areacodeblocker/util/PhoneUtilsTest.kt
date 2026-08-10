@@ -3,8 +3,24 @@ package com.aistudio.areacodeblocker.util
 import com.example.util.PhoneUtils
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
+@RunWith(RobolectricTestRunner::class)
 class PhoneUtilsTest {
+
+    @Test
+    @Config(sdk = [24, 25])
+    fun phonePermission_legacySdk() {
+        assertEquals(android.Manifest.permission.READ_PHONE_STATE, PhoneUtils.PHONE_PERMISSION)
+    }
+
+    @Test
+    @Config(sdk = [26, 33, 36])
+    fun phonePermission_modernSdk() {
+        assertEquals(android.Manifest.permission.READ_PHONE_NUMBERS, PhoneUtils.PHONE_PERMISSION)
+    }
 
     @Test
     fun extractAreaCode_standard10Digit() {
