@@ -1,25 +1,47 @@
 package com.example.ui
 
-import android.content.Context
-import androidx.compose.animation.*
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -37,9 +59,8 @@ fun AppOnboardingScreen(
     onRequestPhoneIdentity: () -> Unit,
     onRequestCallScreening: () -> Unit,
     onRequestNotificationListener: () -> Unit,
-    onEnterApp: () -> Unit
+    onEnterApp: () -> Unit,
 ) {
-    val context = LocalContext.current
     val scrollState = rememberScrollState()
 
     // Count how many permissions are granted
@@ -47,7 +68,7 @@ fun AppOnboardingScreen(
         isContactsGranted,
         isPhoneNumbersGranted,
         isCallScreeningGranted,
-        isNotificationListenerGranted
+        isNotificationListenerGranted,
     ).count { it }
 
     // Required permissions for the main button
@@ -62,7 +83,7 @@ fun AppOnboardingScreen(
                 Brush.verticalGradient(
                     colors = listOf(
                         MaterialTheme.colorScheme.surface,
-                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
+                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
                     )
                 )
             )
@@ -189,7 +210,7 @@ fun AppOnboardingScreen(
                     icon = Icons.Default.Person,
                     testTag = "setup_contacts_button",
                     actionText = "Grant",
-                    onAction = onRequestContacts
+                    onAction = onRequestContacts,
                 )
 
                 // Item 2: Phone Identity
@@ -200,7 +221,7 @@ fun AppOnboardingScreen(
                     icon = Icons.Default.Info,
                     testTag = "setup_phone_identity_button",
                     actionText = "Authorize",
-                    onAction = onRequestPhoneIdentity
+                    onAction = onRequestPhoneIdentity,
                 )
 
                 // Item 3: Call Screening Service
@@ -211,7 +232,7 @@ fun AppOnboardingScreen(
                     icon = Icons.Default.Phone,
                     testTag = "setup_call_screening_button",
                     actionText = "Activate",
-                    onAction = onRequestCallScreening
+                    onAction = onRequestCallScreening,
                 )
 
                 // Item 4: Notification Intercept Shield
@@ -222,7 +243,7 @@ fun AppOnboardingScreen(
                     icon = Icons.Default.Notifications,
                     testTag = "setup_notification_shield_button",
                     actionText = "Enable",
-                    onAction = onRequestNotificationListener
+                    onAction = onRequestNotificationListener,
                 )
             }
 
@@ -298,7 +319,7 @@ fun PermissionItemCard(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     testTag: String,
     actionText: String,
-    onAction: () -> Unit
+    onAction: () -> Unit,
 ) {
     Card(
         shape = RoundedCornerShape(16.dp),

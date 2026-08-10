@@ -2,11 +2,19 @@ package com.example.util
 
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.provider.ContactsContract
 import android.util.Log
 
 object PhoneUtils {
     private const val TAG = "PhoneUtils"
+
+    val PHONE_PERMISSION = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        android.Manifest.permission.READ_PHONE_NUMBERS
+    } else {
+        @Suppress("DEPRECATION")
+        android.Manifest.permission.READ_PHONE_STATE
+    }
 
     /**
      * Clean phone number of any non-digit chars
@@ -24,7 +32,7 @@ object PhoneUtils {
         val digits = number.filter { it.isDigit() }
         
         return when {
-            digits.length == 11 && digits.startsWith("1") -> digits.substring(1, 4)
+            (digits.length == 11) && digits.startsWith("1") -> digits.substring(1, 4)
             digits.length == 10 -> digits.substring(0, 3)
             digits.length > 3 -> digits.substring(0, 3) // Best-effort fallback
             else -> digits
@@ -41,10 +49,10 @@ object PhoneUtils {
         return try {
             val uri = Uri.withAppendedPath(
                 ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
-                Uri.encode(phoneNumber)
+                Uri.encode(phoneNumber),
             )
             val projection = arrayOf(
-                ContactsContract.PhoneLookup.DISPLAY_NAME
+                ContactsContract.PhoneLookup.DISPLAY_NAME,
             )
             context.contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
                 if (cursor.moveToFirst()) {
@@ -67,38 +75,13 @@ object PhoneUtils {
     }
 
     /**
-     * Queries the display name for a contact if found.
-     */
-    fun getContactName(context: Context, phoneNumber: String): String? {
-        if (phoneNumber.isBlank()) return null
-        return try {
-            val uri = Uri.withAppendedPath(
-                ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
-                Uri.encode(phoneNumber)
-            )
-            val projection = arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME)
-            context.contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
-                if (cursor.moveToFirst()) {
-                    val nameIndex = cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME)
-                    if (nameIndex >= 0) {
-                        return cursor.getString(nameIndex)
-                    }
-                }
-            }
-            null
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    /**
      * Attempts to automatically retrieve the device's own telephone line number.
      * Uses TelephonyManager & SubscriptionManager. Requires READ_PHONE_NUMBERS or READ_PHONE_STATE.
      */
     fun getDevicePhoneNumber(context: Context): String? {
         if (androidx.core.content.ContextCompat.checkSelfPermission(
                 context,
-                android.Manifest.permission.READ_PHONE_NUMBERS
+                PHONE_PERMISSION
             ) != android.content.pm.PackageManager.PERMISSION_GRANTED &&
             androidx.core.content.ContextCompat.checkSelfPermission(
                 context,
@@ -109,21 +92,21 @@ object PhoneUtils {
         }
 
         try {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 val subscriptionManager = context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as? android.telephony.SubscriptionManager
                 val subId = android.telephony.SubscriptionManager.getDefaultSubscriptionId()
                 if (subId != android.telephony.SubscriptionManager.INVALID_SUBSCRIPTION_ID) {
                     try {
                         val number = subscriptionManager?.getPhoneNumber(subId)
                         if (!number.isNullOrBlank()) return number
-                    } catch (e: Exception) {
+                    } catch (_: Exception) {
                         // Fallback to legacy
                     }
                 }
             }
 
             val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as? android.telephony.TelephonyManager
-            @Suppress("DEPRECATION")
+            @Suppress("DEPRECATION", "HardwareIds")
             val line1 = telephonyManager?.line1Number
             if (!line1.isNullOrBlank()) return line1
         } catch (e: SecurityException) {
@@ -144,7 +127,7 @@ object PhoneUtils {
             val names = flat.split(":")
             for (name in names) {
                 val cn = android.content.ComponentName.unflattenFromString(name)
-                if (cn != null && cn.packageName == pkgName) {
+                if (cn != null && (cn.packageName == pkgName)) {
                     return true
                 }
             }

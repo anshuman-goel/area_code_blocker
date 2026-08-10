@@ -1,15 +1,10 @@
 package com.aistudio.areacodeblocker.ui
 
 import android.app.Application
-import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.swipeUp
 import androidx.test.core.app.ApplicationProvider
 import com.aistudio.areacodeblocker.BlockerTestRunner
 import com.example.ui.components.SettingsDialog
@@ -57,7 +52,7 @@ class SettingsScreenshotTest {
                 SettingsDialog(
                     show = true,
                     onDismiss = {},
-                    viewModel = viewModel
+                    viewModel = viewModel,
                 )
             }
         }
@@ -75,7 +70,7 @@ class SettingsScreenshotTest {
                 SettingsDialog(
                     show = true,
                     onDismiss = {},
-                    viewModel = viewModel
+                    viewModel = viewModel,
                 )
             }
         }

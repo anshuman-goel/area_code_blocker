@@ -12,7 +12,10 @@ import kotlinx.coroutines.runBlocking
 
 @RequiresApi(Build.VERSION_CODES.Q)
 class CallBlockerScreeningService : CallScreeningService() {
-    private val TAG = "CallScreeningService"
+
+    companion object {
+        private const val TAG = "CallScreeningService"
+    }
 
     override fun onScreenCall(callDetails: Call.Details) {
         val handle = callDetails.handle ?: return
@@ -53,8 +56,8 @@ class CallBlockerScreeningService : CallScreeningService() {
                         areaCode = areaCode,
                         messageBody = null,
                         type = "CALL",
-                        senderName = "Unknown (Blocked Area Code)"
-                    )
+                        senderName = "Unknown (Blocked Area Code)",
+                    ),
                 )
             }
         }

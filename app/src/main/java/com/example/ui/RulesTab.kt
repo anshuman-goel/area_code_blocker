@@ -10,7 +10,7 @@ import com.example.viewmodel.BlockerViewModel
 
 fun LazyListScope.rulesTab(
     viewModel: BlockerViewModel,
-    onTriggerPhonePermission: () -> Unit
+    onTriggerPhonePermission: () -> Unit,
 ) {
     item {
         val inputPhone by viewModel.inputPhoneNumber.collectAsStateWithLifecycle()
@@ -19,8 +19,7 @@ fun LazyListScope.rulesTab(
             inputPhone = inputPhone,
             extractedAreaCode = extractedAreaCode,
             onValueChange = { viewModel.updateInputPhoneNumber(it) },
-            onAddClick = { viewModel.addAreaCode(it) }
-        )
+        ) { viewModel.addAreaCode(it) }
     }
 
     item {
@@ -46,7 +45,7 @@ fun LazyListScope.rulesTab(
             },
             ownAreaCode = viewModel.extractUserOwnAreaCode(),
             isAlreadyBlocked = blockedAreaCodes.any { it.areaCode == viewModel.extractUserOwnAreaCode() },
-            onBlockOwnAreaClick = { viewModel.addAreaCode(it) }
+            onBlockOwnAreaClick = { viewModel.addAreaCode(it) },
         )
     }
 
@@ -67,9 +66,9 @@ fun LazyListScope.rulesTab(
     }
 
     item {
-        ManualAreaCodeCard(
-            onAddClick = { viewModel.addAreaCode(it) }
-        )
+        ManualAreaCodeCard {
+            viewModel.addAreaCode(it)
+        }
     }
 
     item {

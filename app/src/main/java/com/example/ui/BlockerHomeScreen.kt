@@ -9,13 +9,13 @@ fun BlockerHomeScreen(
     initContactsGranted: Boolean? = null,
     initPhoneNumbersGranted: Boolean? = null,
     initCallScreeningGranted: Boolean? = null,
-    initNotificationListenerGranted: Boolean? = null
+    initNotificationListenerGranted: Boolean? = null,
 ) {
     BlockerScreen(
         viewModel = viewModel,
         initContactsGranted = initContactsGranted,
         initPhoneNumbersGranted = initPhoneNumbersGranted,
         initCallScreeningGranted = initCallScreeningGranted,
-        initNotificationListenerGranted = initNotificationListenerGranted
+        initNotificationListenerGranted = initNotificationListenerGranted,
     )
 }

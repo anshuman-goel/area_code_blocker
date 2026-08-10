@@ -9,7 +9,11 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import android.widget.Toast
@@ -22,13 +26,13 @@ class PermissionState(
     private val initRole: Boolean?,
     private val initNotif: Boolean?,
     private val permissionLauncher: ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>>,
-    private val roleLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>
+    private val roleLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>,
 ) {
     var isContactsGranted by mutableStateOf(
-        initContacts ?: (ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED)
+        initContacts ?: (ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED),
     )
     var isPhoneGranted by mutableStateOf(
-        initPhone ?: (ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_PHONE_NUMBERS) == PackageManager.PERMISSION_GRANTED)
+        initPhone ?: (ContextCompat.checkSelfPermission(context, PhoneUtils.PHONE_PERMISSION) == PackageManager.PERMISSION_GRANTED),
     )
     var isRoleGranted by mutableStateOf(
         initRole ?: if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -43,26 +47,25 @@ class PermissionState(
     val hasAllRequired get() = isContactsGranted && isRoleGranted && isNotificationEnabled
 
     fun requestContacts() = permissionLauncher.launch(arrayOf(android.Manifest.permission.READ_CONTACTS))
-    fun requestPhone() = permissionLauncher.launch(arrayOf(android.Manifest.permission.READ_PHONE_NUMBERS))
+    fun requestPhone() = permissionLauncher.launch(arrayOf(PhoneUtils.PHONE_PERMISSION))
     
     fun requestRole(): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val roleManager = context.getSystemService(Context.ROLE_SERVICE) as? RoleManager
-            if (roleManager?.isRoleAvailable(RoleManager.ROLE_CALL_SCREENING) == true) {
+            return if (roleManager?.isRoleAvailable(RoleManager.ROLE_CALL_SCREENING) == true) {
                 if (!roleManager.isRoleHeld(RoleManager.ROLE_CALL_SCREENING)) {
                     roleLauncher.launch(roleManager.createRequestRoleIntent(RoleManager.ROLE_CALL_SCREENING))
-                    return true
                 } else {
                     // role already held
                     isRoleGranted = true
-                    return true
                 }
+                true
             } else {
                 // Role not available on this device - notify user
                 try {
                     Toast.makeText(context, "Call Screening role is not available on this device.", Toast.LENGTH_LONG).show()
                 } catch (_: Exception) {}
-                return false
+                false
             }
         }
         return false
@@ -73,9 +76,9 @@ class PermissionState(
             isContactsGranted = ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED
         }
         if (initPhone == null) {
-            isPhoneGranted = ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_PHONE_NUMBERS) == PackageManager.PERMISSION_GRANTED
+            isPhoneGranted = ContextCompat.checkSelfPermission(context, PhoneUtils.PHONE_PERMISSION) == PackageManager.PERMISSION_GRANTED
         }
-        if (initRole == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        if ((initRole == null) && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)) {
             val roleManager = context.getSystemService(Context.ROLE_SERVICE) as? RoleManager
             isRoleGranted = roleManager?.isRoleHeld(RoleManager.ROLE_CALL_SCREENING) ?: false
         }
@@ -99,7 +102,7 @@ fun rememberPermissionState(
     val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
         state?.let { s ->
             s.isContactsGranted = permissions[android.Manifest.permission.READ_CONTACTS] ?: s.isContactsGranted
-            s.isPhoneGranted = permissions[android.Manifest.permission.READ_PHONE_NUMBERS] ?: s.isPhoneGranted
+            s.isPhoneGranted = permissions[PhoneUtils.PHONE_PERMISSION] ?: s.isPhoneGranted
         }
     }
 
