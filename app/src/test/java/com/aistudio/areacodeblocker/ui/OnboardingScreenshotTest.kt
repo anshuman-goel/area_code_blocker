@@ -79,8 +79,8 @@ class OnboardingScreenshotTest {
       }
     }
 
-    // Scroll to the bottom to see the launch button and privacy policy
-    composeTestRule.onNodeWithText("Privacy Policy", useUnmergedTree = true).performScrollTo()
+    // Scroll to the bottom to see the launch button and legal links.
+    composeTestRule.onNodeWithText("Terms of Use", useUnmergedTree = true).performScrollTo()
     composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/onboarding_none_granted_bottom.png")
   }
 
@@ -101,8 +101,8 @@ class OnboardingScreenshotTest {
       }
     }
 
-    // Scroll to the bottom
-    composeTestRule.onNodeWithText("Privacy Policy", useUnmergedTree = true).performScrollTo()
+    // Scroll to the bottom and include both legal links.
+    composeTestRule.onNodeWithText("Terms of Use", useUnmergedTree = true).performScrollTo()
     composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/onboarding_all_granted_bottom.png")
   }
 
