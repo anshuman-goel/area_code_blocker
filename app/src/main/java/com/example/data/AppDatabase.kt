@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.data.dao.BlockedAreaCodeDao
 import com.example.data.dao.BlockedLogDao
 import com.example.data.dao.BlockedKeywordDao
@@ -18,6 +20,14 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun blockedKeywordDao(): BlockedKeywordDao
 
     companion object {
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "ALTER TABLE `blocked_area_codes` ADD COLUMN `regionLabel` TEXT DEFAULT NULL"
+                )
+            }
+        }
+
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
@@ -28,8 +38,8 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "blocked_calls_database",
                 )
-                .fallbackToDestructiveMigration(dropAllTables = true)
-                .build()
+                    .addMigrations(MIGRATION_2_3)
+                    .build()
                 INSTANCE = instance
                 instance
             }
