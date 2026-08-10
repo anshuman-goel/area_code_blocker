@@ -4,8 +4,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.swipeUp
 import com.aistudio.areacodeblocker.BlockerTestRunner
 import com.example.ui.AppOnboardingScreen
 import com.example.ui.theme.MyApplicationTheme
@@ -37,8 +35,7 @@ class OnboardingScreenshotTest {
           onRequestPhoneIdentity = {},
           onRequestCallScreening = {},
           onRequestNotificationListener = {},
-          onEnterApp = {}
-        )
+        ) {}
       } 
     }
 
@@ -58,8 +55,7 @@ class OnboardingScreenshotTest {
           onRequestPhoneIdentity = {},
           onRequestCallScreening = {},
           onRequestNotificationListener = {},
-          onEnterApp = {}
-        )
+        ) {}
       } 
     }
 
@@ -79,8 +75,7 @@ class OnboardingScreenshotTest {
           onRequestPhoneIdentity = {},
           onRequestCallScreening = {},
           onRequestNotificationListener = {},
-          onEnterApp = {}
-        )
+        ) {}
       }
     }
 
@@ -102,8 +97,7 @@ class OnboardingScreenshotTest {
           onRequestPhoneIdentity = {},
           onRequestCallScreening = {},
           onRequestNotificationListener = {},
-          onEnterApp = {}
-        )
+        ) {}
       }
     }
 
@@ -126,8 +120,7 @@ class OnboardingScreenshotTest {
           onRequestPhoneIdentity = {},
           onRequestCallScreening = {},
           onRequestNotificationListener = {},
-          onEnterApp = {}
-        )
+        ) {}
       }
     }
 
@@ -148,8 +141,7 @@ class OnboardingScreenshotTest {
           onRequestPhoneIdentity = {},
           onRequestCallScreening = {},
           onRequestNotificationListener = {},
-          onEnterApp = {}
-        )
+        ) {}
       }
     }
 

@@ -5,8 +5,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.swipeUp
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.performScrollToNode
 
@@ -44,7 +42,7 @@ class BlockerScreenshotTest {
     private fun createViewModel(
         areaCodes: List<BlockedAreaCode> = emptyList(),
         keywords: List<BlockedKeyword> = emptyList(),
-        logs: List<BlockedLog> = emptyList()
+        logs: List<BlockedLog> = emptyList(),
     ): BlockerViewModel {
         val areaDao = FakeAreaCodeDao(areaCodes)
         val keywordDao = FakeKeywordDao(keywords)

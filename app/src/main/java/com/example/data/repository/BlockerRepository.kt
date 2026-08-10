@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 class BlockerRepository(
     private val blockedAreaCodeDao: BlockedAreaCodeDao,
     private val blockedLogDao: BlockedLogDao,
-    private val blockedKeywordDao: BlockedKeywordDao
+    private val blockedKeywordDao: BlockedKeywordDao,
 ) {
     val allBlockedAreaCodes: Flow<List<BlockedAreaCode>> = blockedAreaCodeDao.getAllBlockedAreaCodes()
     val allBlockedLogs: Flow<List<BlockedLog>> = blockedLogDao.getAllBlockedLogs()

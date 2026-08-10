@@ -5,7 +5,21 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,8 +27,23 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,14 +65,14 @@ fun BlockerScreen(
     initContactsGranted: Boolean? = null,
     initPhoneNumbersGranted: Boolean? = null,
     initCallScreeningGranted: Boolean? = null,
-    initNotificationListenerGranted: Boolean? = null
+    initNotificationListenerGranted: Boolean? = null,
 ) {
     val context = LocalContext.current
     val permissionState = rememberPermissionState(
         initContacts = initContactsGranted,
         initPhone = initPhoneNumbersGranted,
         initRole = initCallScreeningGranted,
-        initNotif = initNotificationListenerGranted
+        initNotif = initNotificationListenerGranted,
     )
 
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
@@ -69,7 +98,7 @@ fun BlockerScreen(
     }
 
     var selectedTab by remember { mutableIntStateOf(0) }
-    var showSettingsDialog by remember { mutableStateOf(false) }
+    var showSettingsDialog by remember { mutableStateOf(value = false) }
     
     if (!permissionState.hasAllRequired) {
         AppOnboardingScreen(
@@ -88,14 +117,15 @@ fun BlockerScreen(
                     Toast.makeText(context, "Search 'Notification Access' in settings.", Toast.LENGTH_LONG).show()
                 }
             },
-            onEnterApp = { Toast.makeText(context, "Welcome! Protection Active.", Toast.LENGTH_SHORT).show() }
-        )
+        ) {
+            Toast.makeText(context, "Welcome! Protection Active.", Toast.LENGTH_SHORT).show()
+        }
     } else {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                AppTopBar(onSettingsClick = { showSettingsDialog = true })
-            }
+                AppTopBar { showSettingsDialog = true }
+            },
         ) { innerPadding ->
             LazyColumn(
                 modifier = Modifier
@@ -105,7 +135,7 @@ fun BlockerScreen(
                     .background(MaterialTheme.colorScheme.background)
                     .testTag("main_lazy_column"),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(bottom = 80.dp)
+                contentPadding = PaddingValues(bottom = 80.dp),
             ) {
                 item {
                     ProtectionStatusBanner(
@@ -121,14 +151,14 @@ fun BlockerScreen(
                             Toast.makeText(context, "Removed $label", Toast.LENGTH_SHORT).show()
                         },
                         onRequestPermissions = { permissionState.requestContacts() },
-                        onRequestRole = { permissionState.requestRole() }
+                        onRequestRole = { permissionState.requestRole() },
                     )
                 }
 
                 item {
                     StatisticsGrid(
                         callsCount = blockedLogs.count { it.type == "CALL" },
-                        textsCount = blockedLogs.count { it.type.startsWith("SMS") }
+                        textsCount = blockedLogs.count { it.type.startsWith("SMS") },
                     )
                 }
 
@@ -136,20 +166,20 @@ fun BlockerScreen(
                     TabNavigation(
                         selectedTab = selectedTab,
                         onTabSelected = { selectedTab = it },
-                        logsCount = blockedLogs.size
+                        logsCount = blockedLogs.size,
                     )
                 }
 
                 if (selectedTab == 0) {
                     rulesTab(
                         viewModel = viewModel,
-                        onTriggerPhonePermission = { permissionState.requestPhone() }
+                        onTriggerPhonePermission = { permissionState.requestPhone() },
                     )
                 } else {
                     logsTab(
                         blockedLogs = blockedLogs,
                         onClearAll = { viewModel.clearAllLogs() },
-                        onDeleteLog = { viewModel.deleteLogById(it) }
+                        onDeleteLog = { viewModel.deleteLogById(it) },
                     )
                 }
             }
@@ -159,7 +189,7 @@ fun BlockerScreen(
     SettingsDialog(
         show = showSettingsDialog,
         onDismiss = { showSettingsDialog = false },
-        viewModel = viewModel
+        viewModel = viewModel,
     )
 }
 
@@ -171,15 +201,15 @@ fun AppTopBar(onSettingsClick: () -> Unit) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth().padding(end = 8.dp)
+                modifier = Modifier.fillMaxWidth().padding(end = 8.dp),
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clip(RoundedCornerShape(12.dp)).clickable { onSettingsClick() }.padding(4.dp)
+                    modifier = Modifier.clip(RoundedCornerShape(12.dp)).clickable { onSettingsClick() }.padding(4.dp),
                 ) {
                     Box(
                         modifier = Modifier.size(36.dp).clip(RoundedCornerShape(10.dp)).background(MaterialTheme.colorScheme.primaryContainer),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         Icon(Icons.Default.Lock, contentDescription = "Open settings", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
                     }

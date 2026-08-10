@@ -11,5 +11,5 @@ data class BlockedLog(
     val messageBody: String?, // Null for calls
     val timestamp: Long = System.currentTimeMillis(),
     val type: String, // "CALL" or "SMS"
-    val senderName: String? // Name if found, or custom details
+    val senderName: String?, // Name if found, or custom details
 )

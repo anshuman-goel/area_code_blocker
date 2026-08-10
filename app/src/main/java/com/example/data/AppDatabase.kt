@@ -26,7 +26,7 @@ abstract class AppDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "blocked_calls_database"
+                    "blocked_calls_database",
                 )
                 .fallbackToDestructiveMigration(dropAllTables = true)
                 .build()

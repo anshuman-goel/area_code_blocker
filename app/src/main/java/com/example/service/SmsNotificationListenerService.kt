@@ -12,9 +12,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class SmsNotificationListenerService : NotificationListenerService() {
-    private val TAG = "SmsNotificationListener"
 
     companion object {
+        private const val TAG = "SmsNotificationListener"
         @Volatile
         var isServiceRunning = false
             private set
@@ -89,9 +89,9 @@ class SmsNotificationListenerService : NotificationListenerService() {
             
             // Check area code block (only relevant if senderTitle looks like a phone number)
             val cleanTitle = PhoneUtils.cleanNumber(senderTitle)
-            val isAreaCodeBlocked = cleanTitle.length >= 7 && blockedCodes.contains(areaCode)
+            val isAreaCodeBlocked = (cleanTitle.length >= 7) && blockedCodes.contains(areaCode)
 
-            if (isAreaCodeBlocked || matchedKeyword != null) {
+            if ((isAreaCodeBlocked) || (matchedKeyword != null)) {
                 val blockReason = if (matchedKeyword != null) {
                     "Notification Filtered (Keyword: '$matchedKeyword')"
                 } else {
@@ -115,8 +115,8 @@ class SmsNotificationListenerService : NotificationListenerService() {
                         areaCode = areaCode,
                         messageBody = messageText,
                         type = "SMS (Silenced)",
-                        senderName = blockReason
-                    )
+                        senderName = blockReason,
+                    ),
                 )
             }
         }

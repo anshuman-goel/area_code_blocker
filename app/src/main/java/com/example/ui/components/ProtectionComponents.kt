@@ -25,20 +25,23 @@ import com.example.data.entity.BlockedAreaCode
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun StatisticsGrid(callsCount: Int, textsCount: Int) {
+fun StatisticsGrid(
+    callsCount: Int,
+    textsCount: Int,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .testTag("statistics_grid"),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         // Calls Box
         Card(
             modifier = Modifier.weight(1f),
             shape = RoundedCornerShape(24.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         ) {
             Column(
                 modifier = Modifier.padding(16.dp)
@@ -52,7 +55,7 @@ fun StatisticsGrid(callsCount: Int, textsCount: Int) {
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "$callsCount",
+                    text = callsCount.toString(),
                     color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.SemiBold
@@ -65,7 +68,7 @@ fun StatisticsGrid(callsCount: Int, textsCount: Int) {
             modifier = Modifier.weight(1f),
             shape = RoundedCornerShape(24.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         ) {
             Column(
                 modifier = Modifier.padding(16.dp)
@@ -79,7 +82,7 @@ fun StatisticsGrid(callsCount: Int, textsCount: Int) {
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "$textsCount",
+                    text = textsCount.toString(),
                     color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.SemiBold
@@ -98,7 +101,7 @@ fun ProtectionStatusBanner(
     onRemoveAreaCode: (String) -> Unit,
     onRemoveRegion: (String) -> Unit,
     onRequestPermissions: () -> Unit,
-    onRequestRole: () -> Unit
+    onRequestRole: () -> Unit,
 ) {
     val allActive = isContactsGranted && isRoleGranted
     val statusDesc = if (allActive) {
@@ -125,7 +128,7 @@ fun ProtectionStatusBanner(
             verticalArrangement = Arrangement.Center
         ) {
             // Dynamic Counter
-            val uniqueRegions = blockedAreaCodes.filter { it.regionLabel != null }.map { it.regionLabel }.distinct().size
+            val uniqueRegions = blockedAreaCodes.mapNotNull { it.regionLabel }.distinct().size
             val manualCodes = blockedAreaCodes.filter { it.regionLabel == null }.size
             val totalActiveRules = uniqueRegions + manualCodes
             
@@ -227,7 +230,7 @@ fun ProtectionStatusBanner(
                 ) {
                     val grouped = blockedAreaCodes.groupBy { it.regionLabel ?: "manual_${it.areaCode}" }
                     
-                    grouped.forEach { (groupKey, codes) ->
+                    grouped.forEach { (_, codes) ->
                         val firstCode = codes.first()
                         val isRegional = firstCode.regionLabel != null
                         
@@ -247,7 +250,7 @@ fun ProtectionStatusBanner(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
-                                val displayText = if (isRegional) firstCode.regionLabel!! else firstCode.areaCode
+                                val displayText = if (isRegional) firstCode.regionLabel else firstCode.areaCode
                                 Text(
                                     text = displayText,
                                     color = MaterialTheme.colorScheme.primary,
@@ -262,7 +265,7 @@ fun ProtectionStatusBanner(
                                         .size(14.dp)
                                         .clickable {
                                             if (isRegional) {
-                                                onRemoveRegion(firstCode.regionLabel!!)
+                                                onRemoveRegion(firstCode.regionLabel)
                                             } else {
                                                 onRemoveAreaCode(firstCode.areaCode)
                                             }

@@ -7,5 +7,5 @@ import androidx.room.PrimaryKey
 data class BlockedAreaCode(
     @PrimaryKey val areaCode: String,
     val dateAdded: Long = System.currentTimeMillis(),
-    val regionLabel: String? = null
+    val regionLabel: String? = null,
 )

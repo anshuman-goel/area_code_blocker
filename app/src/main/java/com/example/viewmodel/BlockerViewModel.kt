@@ -5,7 +5,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.BlockerApplication
 import com.example.data.entity.BlockedAreaCode
 import com.example.data.entity.BlockedLog
 import com.example.data.entity.BlockedKeyword
@@ -18,31 +17,32 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import android.content.Context
+import androidx.core.content.edit
 
 class BlockerViewModel(
     application: Application,
-    private val repository: BlockerRepository
+    private val repository: BlockerRepository,
 ) : AndroidViewModel(application) {
 
     val blockedAreaCodes: StateFlow<List<BlockedAreaCode>> = repository.allBlockedAreaCodes
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
+            initialValue = emptyList(),
         )
 
     val blockedLogs: StateFlow<List<BlockedLog>> = repository.allBlockedLogs
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
+            initialValue = emptyList(),
         )
 
     val blockedKeywords: StateFlow<List<BlockedKeyword>> = repository.allBlockedKeywords
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
+            initialValue = emptyList(),
         )
 
     private val _inputPhoneNumber = MutableStateFlow("")
@@ -57,7 +57,7 @@ class BlockerViewModel(
     private val _appTheme = MutableStateFlow("System")
     val appTheme: StateFlow<String> = _appTheme.asStateFlow()
 
-    private val prefs = application.getSharedPreferences("blocker_prefs", android.content.Context.MODE_PRIVATE)
+    private val prefs = application.getSharedPreferences("blocker_prefs", Context.MODE_PRIVATE)
 
     private val _selectedCountryIndex = MutableStateFlow(prefs.getInt("selected_country_index", 0))
     val selectedCountryIndex: StateFlow<Int> = _selectedCountryIndex.asStateFlow()
@@ -77,8 +77,8 @@ class BlockerViewModel(
 
     fun setUserOwnNumber(number: String) {
         _userOwnNumber.value = number
-        val prefs = getApplication<Application>().getSharedPreferences("blocker_prefs", android.content.Context.MODE_PRIVATE)
-        prefs.edit().putString("user_own_number", number).apply()
+        val prefs = getApplication<Application>().getSharedPreferences("blocker_prefs", Context.MODE_PRIVATE)
+        prefs.edit { putString("user_own_number", number) }
     }
 
     fun tryAutoDetectPhoneNumber(context: Context): Boolean {
@@ -93,17 +93,17 @@ class BlockerViewModel(
 
     fun setAppTheme(theme: String) {
         _appTheme.value = theme
-        prefs.edit().putString("app_theme", theme).apply()
+        prefs.edit { putString("app_theme", theme) }
     }
 
     fun setSelectedCountryIndex(index: Int) {
         _selectedCountryIndex.value = index
-        prefs.edit().putInt("selected_country_index", index).apply()
+        prefs.edit { putInt("selected_country_index", index) }
     }
 
     fun setSelectedStateIndex(index: Int) {
         _selectedStateIndex.value = index
-        prefs.edit().putInt("selected_state_index", index).apply()
+        prefs.edit { putInt("selected_state_index", index) }
     }
 
     fun addAreaCode(areaCode: String, regionLabel: String? = null) {
@@ -179,7 +179,7 @@ class BlockerViewModel(
 
 class BlockerViewModelFactory(
     private val application: Application,
-    private val repository: BlockerRepository
+    private val repository: BlockerRepository,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(BlockerViewModel::class.java)) {

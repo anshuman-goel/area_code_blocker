@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val app = applicationContext as BlockerApplication
             val viewModel: BlockerViewModel = viewModel(
-                factory = BlockerViewModelFactory(app, app.repository)
+                factory = BlockerViewModelFactory(app, app.repository),
             )
             val appTheme by viewModel.appTheme.collectAsStateWithLifecycle()
 
