@@ -90,6 +90,7 @@ fun BlockerScreen(
     val blockedAreaCodes by viewModel.blockedAreaCodes.collectAsStateWithLifecycle()
     val blockedLogs by viewModel.blockedLogs.collectAsStateWithLifecycle()
     val userOwnNumber by viewModel.userOwnNumber.collectAsStateWithLifecycle()
+    val hasAcceptedCurrentTerms by viewModel.hasAcceptedCurrentTerms.collectAsStateWithLifecycle()
 
     LaunchedEffect(permissionState.isPhoneGranted) {
         if (permissionState.isPhoneGranted && userOwnNumber.isBlank()) {
@@ -100,7 +101,9 @@ fun BlockerScreen(
     var selectedTab by remember { mutableIntStateOf(0) }
     var showSettingsDialog by remember { mutableStateOf(value = false) }
     
-    if (!permissionState.hasAllRequired) {
+    if (!hasAcceptedCurrentTerms) {
+        LegalAcceptanceScreen(onAccept = viewModel::acceptCurrentTerms)
+    } else if (!permissionState.hasAllRequired) {
         AppOnboardingScreen(
             isContactsGranted = permissionState.isContactsGranted,
             isPhoneNumbersGranted = permissionState.isPhoneGranted,

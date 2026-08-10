@@ -54,6 +54,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -62,6 +63,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.service.SmsNotificationListenerService
+import com.example.ui.LegalLinks
 import com.example.util.PhoneUtils
 import com.example.viewmodel.BlockerViewModel
 
@@ -123,6 +125,7 @@ fun SettingsDialog(
     viewModel: BlockerViewModel,
 ) {
     val context = LocalContext.current
+    val uriHandler = LocalUriHandler.current
     if (show) {
         AlertDialog(
             onDismissRequest = onDismiss,
@@ -329,6 +332,33 @@ fun SettingsDialog(
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                                 )
+                            }
+                        }
+                    }
+
+                    SettingsGroup(
+                        title = "Legal & About",
+                        icon = Icons.Default.Info,
+                    ) {
+                        Text(
+                            text = "Review the app's legal documents, open-source license, and source code.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                        )
+                        FlowRow(modifier = Modifier.fillMaxWidth()) {
+                            listOf(
+                                "Privacy Policy" to LegalLinks.PRIVACY_POLICY,
+                                "Terms of Use" to LegalLinks.TERMS_OF_USE,
+                                "Open-Source License" to LegalLinks.OPEN_SOURCE_LICENSE,
+                                "Source Code" to LegalLinks.SOURCE_CODE,
+                            ).forEach { (label, url) ->
+                                TextButton(
+                                    onClick = { uriHandler.openUri(url) },
+                                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
+                                    modifier = Modifier.height(36.dp)
+                                ) {
+                                    Text(label, fontSize = 12.sp)
+                                }
                             }
                         }
                     }

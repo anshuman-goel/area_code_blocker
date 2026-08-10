@@ -205,7 +205,7 @@ fun AppOnboardingScreen(
                 // Item 1: Contacts Directory
                 PermissionItemCard(
                     title = "Contacts Watcher",
-                    description = "Locks in your local contacts database so messages & calls from friends are never filtered as spam.",
+                    description = "Checks your local contacts to help avoid filtering messages and calls from people you know.",
                     isGranted = isContactsGranted,
                     icon = Icons.Default.Person,
                     testTag = "setup_contacts_button",
@@ -295,17 +295,26 @@ fun AppOnboardingScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             val uriHandler = androidx.compose.ui.platform.LocalUriHandler.current
-            Text(
-                text = "Privacy Policy",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier
-                    .clickable { 
-                        uriHandler.openUri("https://github.com/anshuman-goel/area_code_blocker/blob/main/PRIVACY_POLICY.md")
-                    }
-                    .padding(8.dp)
-            )
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = "Privacy Policy",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier
+                        .clickable { uriHandler.openUri(LegalLinks.PRIVACY_POLICY) }
+                        .padding(8.dp)
+                )
+                Text(
+                    text = "Terms of Use",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier
+                        .clickable { uriHandler.openUri(LegalLinks.TERMS_OF_USE) }
+                        .padding(8.dp)
+                )
+            }
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
