@@ -43,13 +43,58 @@ class BlockerScreenshotTest {
         areaCodes: List<BlockedAreaCode> = emptyList(),
         keywords: List<BlockedKeyword> = emptyList(),
         logs: List<BlockedLog> = emptyList(),
+        acceptTerms: Boolean = true,
     ): BlockerViewModel {
         val areaDao = FakeAreaCodeDao(areaCodes)
         val keywordDao = FakeKeywordDao(keywords)
         val logDao = FakeLogDao(logs)
         val repository = BlockerRepository(areaDao, logDao, keywordDao)
         val application = ApplicationProvider.getApplicationContext<Application>()
-        return BlockerViewModel(application, repository)
+        application.getSharedPreferences("blocker_prefs", 0).edit().clear().commit()
+        return BlockerViewModel(application, repository).also {
+            if (acceptTerms) it.acceptCurrentTerms()
+        }
+    }
+
+    @Test
+    fun legal_gate_is_shown_before_dashboard() {
+        val viewModel = createViewModel(acceptTerms = false)
+
+        composeTestRule.setContent {
+            MyApplicationTheme {
+                BlockerHomeScreen(
+                    viewModel = viewModel,
+                    initContactsGranted = true,
+                    initPhoneNumbersGranted = true,
+                    initCallScreeningGranted = true,
+                    initNotificationListenerGranted = true,
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithTag("legal_accept_button").assertExists()
+        composeTestRule.onNodeWithTag("main_lazy_column").assertDoesNotExist()
+    }
+
+    @Test
+    fun accepting_legal_gate_opens_dashboard_when_permissions_are_granted() {
+        val viewModel = createViewModel(acceptTerms = false)
+
+        composeTestRule.setContent {
+            MyApplicationTheme {
+                BlockerHomeScreen(
+                    viewModel = viewModel,
+                    initContactsGranted = true,
+                    initPhoneNumbersGranted = true,
+                    initCallScreeningGranted = true,
+                    initNotificationListenerGranted = true,
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithTag("legal_acknowledgment_checkbox").performClick()
+        composeTestRule.onNodeWithTag("legal_accept_button").performClick()
+        composeTestRule.onNodeWithTag("main_lazy_column").assertExists()
     }
 
     @Test

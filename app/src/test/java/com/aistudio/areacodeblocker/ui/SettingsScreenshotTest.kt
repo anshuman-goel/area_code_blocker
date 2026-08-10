@@ -62,6 +62,29 @@ class SettingsScreenshotTest {
     }
 
     @Test
+    fun settings_dialog_legal_section() {
+        val viewModel = createViewModel()
+
+        composeTestRule.setContent {
+            MyApplicationTheme {
+                SettingsDialog(
+                    show = true,
+                    onDismiss = {},
+                    viewModel = viewModel,
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText("Legal & About").performScrollTo()
+        composeTestRule.onNodeWithText("Privacy Policy").assertExists()
+        composeTestRule.onNodeWithText("Terms of Use").assertExists()
+        composeTestRule.onNodeWithText("Open-Source License").assertExists()
+        composeTestRule.onNodeWithText("Source Code").assertExists()
+        composeTestRule.onNodeWithTag("settings_dialog_surface", useUnmergedTree = true)
+            .captureRoboImage(filePath = "src/test/screenshots/settings_dialog_legal.png")
+    }
+
+    @Test
     fun settings_dialog_dark_mode_and_bottom() {
         val viewModel = createViewModel()
         
@@ -75,7 +98,7 @@ class SettingsScreenshotTest {
             }
         }
 
-        // Scroll the bottom section into view to capture the full dialog content
+        // Scroll the bottom section into view after the new legal group.
         composeTestRule.onNodeWithText("Data Sources & Attributions").performScrollTo()
         
         // Capture the whole dialog surface

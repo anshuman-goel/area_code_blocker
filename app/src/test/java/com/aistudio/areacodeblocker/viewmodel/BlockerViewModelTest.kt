@@ -10,6 +10,7 @@ import com.example.data.entity.BlockedAreaCode
 import com.example.data.entity.BlockedKeyword
 import com.example.data.entity.BlockedLog
 import com.example.data.repository.BlockerRepository
+import com.example.ui.LegalLinks
 import com.example.viewmodel.BlockerViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -24,6 +25,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -46,6 +48,11 @@ class BlockerViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
+        ApplicationProvider.getApplicationContext<Application>()
+            .getSharedPreferences("blocker_prefs", 0)
+            .edit()
+            .clear()
+            .commit()
         
         fakeAreaCodeDao = FakeAreaCodeDao()
         fakeKeywordDao = FakeKeywordDao()
@@ -60,6 +67,50 @@ class BlockerViewModelTest {
     @After
     fun tearDown() {
         Dispatchers.resetMain()
+    }
+
+    @Test
+    fun `current terms are initially not accepted`() {
+        assertFalse(viewModel.hasAcceptedCurrentTerms.value)
+    }
+
+    @Test
+    fun `acceptCurrentTerms stores current version and timestamp`() {
+        viewModel.acceptCurrentTerms()
+
+        val application = ApplicationProvider.getApplicationContext<Application>()
+        val preferences = application.getSharedPreferences("blocker_prefs", 0)
+        assertTrue(viewModel.hasAcceptedCurrentTerms.value)
+        assertEquals(
+            LegalLinks.TERMS_VERSION,
+            preferences.getString("accepted_terms_version", null),
+        )
+        assertTrue(preferences.getLong("accepted_terms_at", 0L) > 0L)
+    }
+
+    @Test
+    fun `current terms acceptance persists in a new view model`() {
+        viewModel.acceptCurrentTerms()
+
+        val recreated = BlockerViewModel(
+            ApplicationProvider.getApplicationContext(),
+            repository,
+        )
+
+        assertTrue(recreated.hasAcceptedCurrentTerms.value)
+    }
+
+    @Test
+    fun `outdated terms version requires acceptance again`() {
+        val application = ApplicationProvider.getApplicationContext<Application>()
+        application.getSharedPreferences("blocker_prefs", 0)
+            .edit()
+            .putString("accepted_terms_version", "outdated-version")
+            .commit()
+
+        val recreated = BlockerViewModel(application, repository)
+
+        assertFalse(recreated.hasAcceptedCurrentTerms.value)
     }
 
     @Test

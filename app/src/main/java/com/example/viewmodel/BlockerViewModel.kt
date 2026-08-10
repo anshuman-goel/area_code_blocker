@@ -10,6 +10,7 @@ import com.example.data.entity.BlockedLog
 import com.example.data.entity.BlockedKeyword
 import com.example.data.repository.BlockerRepository
 import com.example.util.PhoneUtils
+import com.example.ui.LegalLinks
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -59,6 +60,11 @@ class BlockerViewModel(
 
     private val prefs = application.getSharedPreferences("blocker_prefs", Context.MODE_PRIVATE)
 
+    private val _hasAcceptedCurrentTerms = MutableStateFlow(
+        prefs.getString("accepted_terms_version", null) == LegalLinks.TERMS_VERSION
+    )
+    val hasAcceptedCurrentTerms: StateFlow<Boolean> = _hasAcceptedCurrentTerms.asStateFlow()
+
     private val _selectedCountryIndex = MutableStateFlow(prefs.getInt("selected_country_index", 0))
     val selectedCountryIndex: StateFlow<Int> = _selectedCountryIndex.asStateFlow()
 
@@ -94,6 +100,14 @@ class BlockerViewModel(
     fun setAppTheme(theme: String) {
         _appTheme.value = theme
         prefs.edit { putString("app_theme", theme) }
+    }
+
+    fun acceptCurrentTerms() {
+        prefs.edit {
+            putString("accepted_terms_version", LegalLinks.TERMS_VERSION)
+            putLong("accepted_terms_at", System.currentTimeMillis())
+        }
+        _hasAcceptedCurrentTerms.value = true
     }
 
     fun setSelectedCountryIndex(index: Int) {
