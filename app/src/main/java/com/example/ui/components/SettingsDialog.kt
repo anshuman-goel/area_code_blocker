@@ -22,9 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
@@ -38,6 +36,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -126,6 +125,7 @@ fun SettingsDialog(
 ) {
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
+    var selectedSection by remember(show) { mutableStateOf(SettingsSection.APPEARANCE) }
     if (show) {
         AlertDialog(
             onDismissRequest = onDismiss,
@@ -184,11 +184,26 @@ fun SettingsDialog(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .verticalScroll(rememberScrollState())
                         .padding(vertical = 4.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    SettingsGroup(
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        SettingsSection.entries.forEach { section ->
+                            FilterChip(
+                                selected = selectedSection == section,
+                                onClick = { selectedSection = section },
+                                label = { Text(section.label) },
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .testTag("settings_${section.name.lowercase()}"),
+                            )
+                        }
+                    }
+
+                    if (selectedSection == SettingsSection.APPEARANCE) SettingsGroup(
                         title = "App Appearance",
                         icon = Icons.Default.Settings,
                     ) {
@@ -241,8 +256,8 @@ fun SettingsDialog(
                         }
                     }
 
-                    SettingsGroup(
-                        title = "SMS Notification Guard (Modern System Setup)",
+                    if (selectedSection == SettingsSection.PROTECTION) SettingsGroup(
+                        title = "SMS Notification Guard",
                         icon = Icons.Default.Notifications,
                     ) {
                         Text(
@@ -336,7 +351,7 @@ fun SettingsDialog(
                         }
                     }
 
-                    SettingsGroup(
+                    if (selectedSection == SettingsSection.ABOUT) SettingsGroup(
                         title = "Legal & About",
                         icon = Icons.Default.Info,
                     ) {
@@ -363,7 +378,7 @@ fun SettingsDialog(
                         }
                     }
 
-                    SettingsGroup(
+                    if (selectedSection == SettingsSection.ABOUT) SettingsGroup(
                         title = "Data Sources & Attributions",
                         icon = Icons.Default.Info,
                     ) {
@@ -416,4 +431,10 @@ fun SettingsDialog(
             }
         )
     }
+}
+
+private enum class SettingsSection(val label: String) {
+    APPEARANCE("Theme"),
+    PROTECTION("Protection"),
+    ABOUT("About"),
 }

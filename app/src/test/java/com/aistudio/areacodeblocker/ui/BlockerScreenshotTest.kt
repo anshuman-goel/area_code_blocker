@@ -3,6 +3,7 @@ package com.aistudio.areacodeblocker.ui
 import android.app.Application
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.hasTestTag
@@ -95,6 +96,27 @@ class BlockerScreenshotTest {
         composeTestRule.onNodeWithTag("legal_acknowledgment_checkbox").performClick()
         composeTestRule.onNodeWithTag("legal_accept_button").performClick()
         composeTestRule.onNodeWithTag("main_lazy_column").assertExists()
+    }
+
+    @Test
+    fun hamburger_menu_opens_settings() {
+        val viewModel = createViewModel()
+
+        composeTestRule.setContent {
+            MyApplicationTheme {
+                BlockerHomeScreen(
+                    viewModel = viewModel,
+                    initContactsGranted = true,
+                    initPhoneNumbersGranted = true,
+                    initCallScreeningGranted = true,
+                    initNotificationListenerGranted = true,
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithContentDescription("Open settings menu").performClick()
+        composeTestRule.onNodeWithTag("settings_dialog_surface", useUnmergedTree = true).assertExists()
+        composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/blocker_settings_menu.png")
     }
 
     @Test

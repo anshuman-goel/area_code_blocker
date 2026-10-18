@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
 import com.aistudio.areacodeblocker.BlockerTestRunner
 import com.example.ui.components.SettingsDialog
@@ -75,7 +75,8 @@ class SettingsScreenshotTest {
             }
         }
 
-        composeTestRule.onNodeWithText("Legal & About").performScrollTo()
+        composeTestRule.onNodeWithTag("settings_about").performClick()
+        composeTestRule.onNodeWithText("Legal & About").assertExists()
         composeTestRule.onNodeWithText("Privacy Policy").assertExists()
         composeTestRule.onNodeWithText("Terms of Use").assertExists()
         composeTestRule.onNodeWithText("Open-Source License").assertExists()
@@ -98,9 +99,9 @@ class SettingsScreenshotTest {
             }
         }
 
-        // Scroll the bottom section into view after the new legal group.
-        composeTestRule.onNodeWithText("Data Sources & Attributions").performScrollTo()
-        
+        composeTestRule.onNodeWithTag("settings_about").performClick()
+        composeTestRule.onNodeWithText("Data Sources & Attributions").assertExists()
+
         // Capture the whole dialog surface
         composeTestRule.onNodeWithTag("settings_dialog_surface", useUnmergedTree = true).captureRoboImage(filePath = "src/test/screenshots/settings_dialog_dark_bottom.png")
     }
