@@ -16,8 +16,8 @@ android {
     // Android 16 QPR2 (36.1) is a compile SDK extension; targetSdk remains API 36.
     //noinspection OldTargetApi
     targetSdk = 36
-    versionCode = 6
-    versionName = "1.0.5"
+    versionCode = 7
+    versionName = "1.0.6"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
