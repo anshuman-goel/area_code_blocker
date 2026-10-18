@@ -38,6 +38,7 @@ android {
       // R8 shrinks, optimizes, and obfuscates release DEX code.
       isMinifyEnabled = true
       isShrinkResources = true
+      ndk.debugSymbolLevel = "FULL"
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
       signingConfig = signingConfigs.getByName("release")
     }
