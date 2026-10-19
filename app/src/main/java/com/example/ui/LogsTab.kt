@@ -23,8 +23,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.R
 import com.example.data.entity.BlockedLog
 import com.example.ui.components.BlockedLogCard
 
@@ -42,7 +44,7 @@ fun LazyListScope.logsTab(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Filtered Operations Log",
+                text = stringResource(R.string.filtered_operations_log),
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface
@@ -56,7 +58,7 @@ fun LazyListScope.logsTab(
                 ) {
                     Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Clear Log")
+                    Text(stringResource(R.string.clear_log))
                 }
             }
         }
@@ -79,14 +81,14 @@ fun LazyListScope.logsTab(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "Screening Log Is Clean",
+                        text = stringResource(R.string.screening_log_clean),
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Any calls or messages that match your restricted area codes and are not in your contacts will appear here.",
+                        text = stringResource(R.string.screening_log_empty_description),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center

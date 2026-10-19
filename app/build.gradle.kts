@@ -22,6 +22,14 @@ android {
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
 
+  // Keep all language resources in the base APK so Play automatic translation
+  // can process and deliver them without language configuration APKs.
+  bundle {
+    language {
+      enableSplit = false
+    }
+  }
+
   signingConfigs {
     create("release") {
       val keystorePath = System.getenv("KEYSTORE_PATH") ?: "$rootDir/app_key.jks"
@@ -33,6 +41,10 @@ android {
   }
 
   buildTypes {
+    debug {
+      // Generate en-XA/ar-XB resources so debug builds exercise localization expansion and RTL.
+      isPseudoLocalesEnabled = true
+    }
     release {
       isCrunchPngs = false
       // R8 shrinks, optimizes, and obfuscates release DEX code.

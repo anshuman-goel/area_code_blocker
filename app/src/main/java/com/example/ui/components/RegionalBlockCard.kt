@@ -36,8 +36,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.R
 import com.example.data.AreaCodeData
 
 @Composable
@@ -51,6 +53,7 @@ fun RegionalBlockCard(
     onBlockAreaCodes: (List<String>, String) -> Unit,
 ) {
     val context = LocalContext.current
+    val blockedRegionAreaCodes = stringResource(R.string.blocked_region_area_codes)
 
     val selectedCountry = AreaCodeData.countries.getOrElse(selectedCountryIndex) { AreaCodeData.countries[0] }
     val selectedState = selectedCountry.states.getOrNull(selectedStateIndex)
@@ -69,13 +72,13 @@ fun RegionalBlockCard(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = "Block by Region",
+                    text = stringResource(R.string.block_by_region),
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = "Select a country and state to quickly block all known area codes from that region.",
+                    text = stringResource(R.string.block_by_region_description),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                     modifier = Modifier.padding(vertical = 4.dp)
@@ -99,13 +102,13 @@ fun RegionalBlockCard(
                     ) {
                         Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
                             Text(
-                                text = "Also silence SMS",
+                                text = stringResource(R.string.also_silence_sms),
                                 style = MaterialTheme.typography.labelLarge,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurface,
                             )
                             Text(
-                                text = "Apply blocked area codes to messages from unknown numbers.",
+                                text = stringResource(R.string.also_silence_sms_description),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -126,7 +129,7 @@ fun RegionalBlockCard(
                         value = selectedCountry.name,
                         onValueChange = {},
                         readOnly = true,
-                        label = { Text("Country") },
+                        label = { Text(stringResource(R.string.country)) },
                         trailingIcon = { 
                             Icon(Icons.Default.ArrowDropDown, contentDescription = null)
                         },
@@ -161,10 +164,10 @@ fun RegionalBlockCard(
                     // State Selection
                     Box {
                         OutlinedTextField(
-                            value = selectedState?.name ?: "Select State",
+                            value = selectedState?.name ?: stringResource(R.string.select_state),
                             onValueChange = {},
                             readOnly = true,
-                            label = { Text("State / Province") },
+                            label = { Text(stringResource(R.string.state_or_province)) },
                             trailingIcon = {
                                 Icon(Icons.Default.ArrowDropDown, contentDescription = null)
                             },
@@ -207,16 +210,16 @@ fun RegionalBlockCard(
                         Button(
                             onClick = {
                                 onBlockAreaCodes(state.areaCodes, "${selectedCountry.name} - ${state.name}")
-                                Toast.makeText(context, "Blocked ${state.areaCodes.size} area codes for ${state.name}", Toast.LENGTH_LONG).show()
+                                Toast.makeText(context, blockedRegionAreaCodes.format(state.areaCodes.size, state.name), Toast.LENGTH_LONG).show()
                             },
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text("Block All Area Codes in ${state.name}")
+                            Text(stringResource(R.string.block_all_area_codes, state.name))
                         }
                         
                         Text(
-                            text = "Includes: ${state.areaCodes.joinToString(", ")}",
+                            text = stringResource(R.string.includes_area_codes, state.areaCodes.joinToString(", ")),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                             modifier = Modifier.padding(top = 8.dp)
@@ -240,7 +243,7 @@ fun RegionalBlockCard(
                             )
                             Spacer(modifier = Modifier.width(12.dp))
                             Text(
-                                text = "This country does not follow the standard area code pattern supported by this app.",
+                                text = stringResource(R.string.unsupported_country),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onErrorContainer
                             )

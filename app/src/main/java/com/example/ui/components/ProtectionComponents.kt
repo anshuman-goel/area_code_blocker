@@ -17,10 +17,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.R
 import com.example.data.entity.BlockedAreaCode
 
 @Composable
@@ -46,7 +48,7 @@ fun StatisticsGrid(
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    text = "CALLS BLOCK LOG",
+                    text = stringResource(R.string.calls_block_log),
                     color = MaterialTheme.colorScheme.outline,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
@@ -73,7 +75,7 @@ fun StatisticsGrid(
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    text = "TEXTS FILTERED",
+                    text = stringResource(R.string.texts_filtered),
                     color = MaterialTheme.colorScheme.outline,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
@@ -104,11 +106,11 @@ fun ProtectionStatusBanner(
 ) {
     val allActive = isContactsGranted && isRoleGranted
     val statusDesc = if (allActive) {
-        "Your device will screen calls and messages from blocked area codes, cross-checking contacts automatically."
+        stringResource(R.string.protection_status_active)
     } else if (isRoleGranted) {
-        "Calls from blocked area codes are screened, but Contacts check require system permissions."
+        stringResource(R.string.protection_status_contacts_needed)
     } else {
-        "Activate Call Screening role below to enable automated ring call blocking."
+        stringResource(R.string.protection_status_role_needed)
     }
 
     Card(
@@ -132,7 +134,7 @@ fun ProtectionStatusBanner(
             val totalActiveRules = uniqueRegions + manualCodes
             
             Text(
-                text = "$totalActiveRules Active",
+                text = stringResource(R.string.active_rules, totalActiveRules),
                 color = MaterialTheme.colorScheme.primary,
                 fontSize = 44.sp,
                 fontWeight = FontWeight.Light,
@@ -163,7 +165,7 @@ fun ProtectionStatusBanner(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = if (isRoleGranted) "ACTIVE SCREENING" else "SHIELD OFFLINE",
+                    text = if (isRoleGranted) stringResource(R.string.active_screening) else stringResource(R.string.shield_offline),
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
                     color = if (isRoleGranted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
@@ -197,7 +199,7 @@ fun ProtectionStatusBanner(
                 ) {
                     Icon(Icons.Default.Lock, contentDescription = null, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Activate Call Screening", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                    Text(stringResource(R.string.activate_call_screening), fontWeight = FontWeight.Bold, fontSize = 13.sp)
                 }
             } else if (!isContactsGranted) {
                 Spacer(modifier = Modifier.height(16.dp))
@@ -214,7 +216,7 @@ fun ProtectionStatusBanner(
                 ) {
                     Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Grant System Permissions", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                    Text(stringResource(R.string.grant_system_permissions), fontWeight = FontWeight.Bold, fontSize = 13.sp)
                 }
             }
 
@@ -258,7 +260,7 @@ fun ProtectionStatusBanner(
                                 )
                                 Icon(
                                     imageVector = Icons.Default.Close,
-                                    contentDescription = "Delete code",
+                                    contentDescription = stringResource(R.string.delete_code),
                                     tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier
                                         .size(14.dp)

@@ -42,10 +42,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.R
 
 @Composable
 fun AppOnboardingScreen(
@@ -115,14 +117,14 @@ fun AppOnboardingScreen(
             ) {
                 Icon(
                     imageVector = Icons.Default.Lock,
-                    contentDescription = "Shield Setup",
+                    contentDescription = stringResource(R.string.shield_setup),
                     tint = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.size(44.dp),
                 )
             }
 
             Text(
-                text = "Activate Spam Shield",
+                text = stringResource(R.string.activate_spam_shield),
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.ExtraBold,
                 textAlign = TextAlign.Center,
@@ -131,7 +133,7 @@ fun AppOnboardingScreen(
             )
 
             Text(
-                text = "To block spam phone calls and filter spoofed text notifications in real-time, please authorize the security options below.",
+                text = stringResource(R.string.onboarding_intro),
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.85f),
@@ -168,7 +170,7 @@ fun AppOnboardingScreen(
                             )
                     ) {
                         Text(
-                            text = "$grantedCount/4",
+                            text = stringResource(R.string.permission_progress, grantedCount),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = if (allRequiredGranted) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary
@@ -177,15 +179,15 @@ fun AppOnboardingScreen(
 
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = if (allRequiredGranted) "Shield Configuration Ready!" else "System Checkpoints",
+                            text = if (allRequiredGranted) stringResource(R.string.shield_configuration_ready) else stringResource(R.string.system_checkpoints),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = if (allRequiredGranted) 
-                                "Required security clearances active. Press below to start guarding."
-                                else "Please authorize the remaining permissions to protect your phone.",
+                            text = if (allRequiredGranted)
+                                stringResource(R.string.required_clearances_active)
+                                else stringResource(R.string.authorize_remaining_permissions),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -202,45 +204,45 @@ fun AppOnboardingScreen(
             ) {
                 // Item 1: Contacts Directory
                 PermissionItemCard(
-                    title = "Contacts Watcher",
-                    description = "Checks your local contacts to help avoid filtering messages and calls from people you know.",
+                    title = stringResource(R.string.contacts_watcher),
+                    description = stringResource(R.string.contacts_watcher_description),
                     isGranted = isContactsGranted,
                     icon = Icons.Default.Person,
                     testTag = "setup_contacts_button",
-                    actionText = "Grant",
+                    actionText = stringResource(R.string.grant),
                     onAction = onRequestContacts,
                 )
 
                 // Item 2: Phone Identity
                 PermissionItemCard(
-                    title = "Phone Identity Guard",
-                    description = "Optionally allows the app to recognize your own area code to suggest blocking spoofed local numbers.",
+                    title = stringResource(R.string.phone_identity_guard),
+                    description = stringResource(R.string.phone_identity_guard_description),
                     isGranted = isPhoneNumbersGranted,
                     icon = Icons.Default.Info,
                     testTag = "setup_phone_identity_button",
-                    actionText = "Authorize",
+                    actionText = stringResource(R.string.authorize),
                     onAction = onRequestPhoneIdentity,
                 )
 
                 // Item 3: Call Screening Service
                 PermissionItemCard(
-                    title = "Automated Call Screener",
-                    description = "The official system call screening system. Silently blocks matched area codes before your phone rings.",
+                    title = stringResource(R.string.automated_call_screener),
+                    description = stringResource(R.string.automated_call_screener_description),
                     isGranted = isCallScreeningGranted,
                     icon = Icons.Default.Phone,
                     testTag = "setup_call_screening_button",
-                    actionText = "Activate",
+                    actionText = stringResource(R.string.activate),
                     onAction = onRequestCallScreening,
                 )
 
                 // Item 4: Notification Intercept Shield
                 PermissionItemCard(
-                    title = "SMS Notification Guard",
-                    description = "Required to dismiss sound & text previews of blocked spoofed messages from incoming messaging clients.",
+                    title = stringResource(R.string.sms_notification_guard),
+                    description = stringResource(R.string.sms_notification_guard_description),
                     isGranted = isNotificationListenerGranted,
                     icon = Icons.Default.Notifications,
                     testTag = "setup_notification_shield_button",
-                    actionText = "Enable",
+                    actionText = stringResource(R.string.enable),
                     onAction = onRequestNotificationListener,
                 )
             }
@@ -275,7 +277,7 @@ fun AppOnboardingScreen(
                         Icon(Icons.Default.CheckCircle, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "LAUNCH BLOCKER DASHBOARD",
+                            text = stringResource(R.string.launch_blocker_dashboard),
                             fontWeight = FontWeight.ExtraBold,
                             letterSpacing = 0.5.sp
                         )
@@ -283,7 +285,7 @@ fun AppOnboardingScreen(
                         Icon(Icons.Default.Lock, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "PENDING SYSTEM CLEARANCE",
+                            text = stringResource(R.string.pending_system_clearance),
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 0.5.sp
                         )
@@ -295,7 +297,7 @@ fun AppOnboardingScreen(
             val uriHandler = androidx.compose.ui.platform.LocalUriHandler.current
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
-                    text = "Privacy Policy",
+                    text = stringResource(R.string.privacy_policy),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.SemiBold,
@@ -304,7 +306,7 @@ fun AppOnboardingScreen(
                         .padding(8.dp)
                 )
                 Text(
-                    text = "Terms of Use",
+                    text = stringResource(R.string.terms_of_use),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.SemiBold,
@@ -385,7 +387,7 @@ fun PermissionItemCard(
                     if (isGranted) {
                         Icon(
                             imageVector = Icons.Default.CheckCircle,
-                            contentDescription = "Active",
+                            contentDescription = stringResource(R.string.active),
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(16.dp)
                         )
@@ -422,7 +424,7 @@ fun PermissionItemCard(
                 }
             } else {
                 Text(
-                    text = "Shielded",
+                    text = stringResource(R.string.shielded),
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,

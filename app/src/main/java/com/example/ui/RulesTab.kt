@@ -4,7 +4,9 @@ import android.widget.Toast
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.R
 import com.example.ui.components.*
 import com.example.viewmodel.BlockerViewModel
 
@@ -24,6 +26,8 @@ fun LazyListScope.rulesTab(
 
     item {
         val context = LocalContext.current
+        val successfullyDetected = stringResource(R.string.successfully_detected)
+        val numberDetectionFailed = stringResource(R.string.number_detection_failed)
         val userOwnNumber by viewModel.userOwnNumber.collectAsStateWithLifecycle()
         val blockedAreaCodes by viewModel.blockedAreaCodes.collectAsStateWithLifecycle()
         
@@ -33,13 +37,13 @@ fun LazyListScope.rulesTab(
             onAutoDetectClick = {
                 val detected = viewModel.tryAutoDetectPhoneNumber(context)
                 if (detected) {
-                    Toast.makeText(context, "Successfully detected!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, successfullyDetected, Toast.LENGTH_SHORT).show()
                 } else {
                     onTriggerPhonePermission()
                     if (viewModel.tryAutoDetectPhoneNumber(context)) {
-                        Toast.makeText(context, "Successfully detected!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, successfullyDetected, Toast.LENGTH_SHORT).show()
                     } else {
-                        Toast.makeText(context, "Could not auto-retrieve number.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, numberDetectionFailed, Toast.LENGTH_LONG).show()
                     }
                 }
             },

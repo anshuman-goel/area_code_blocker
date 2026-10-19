@@ -40,9 +40,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.example.R
 import com.example.data.entity.BlockedKeyword
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -54,6 +56,8 @@ fun SmsKeywordCard(
 ) {
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
+    val addedKeyword = stringResource(R.string.added_keyword)
+    val removedKeyword = stringResource(R.string.removed_keyword)
     var rawKeywordInput by remember { mutableStateOf("") }
 
     Box(modifier = Modifier.padding(horizontal = 16.dp)) {
@@ -69,13 +73,13 @@ fun SmsKeywordCard(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = "Blocked SMS Keywords",
+                    text = stringResource(R.string.blocked_sms_keywords),
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = "Add specific words or phrases. Any incoming text message containing any of these keywords from non-contacts will be filtered.",
+                    text = stringResource(R.string.blocked_sms_keywords_description),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                     modifier = Modifier.padding(vertical = 4.dp)
@@ -90,7 +94,7 @@ fun SmsKeywordCard(
                     OutlinedTextField(
                         value = rawKeywordInput,
                         onValueChange = { rawKeywordInput = it },
-                        placeholder = { Text("e.g. lottery, crypto, claim") },
+                        placeholder = { Text(stringResource(R.string.keyword_example)) },
                         keyboardOptions = KeyboardOptions(
                             imeAction = ImeAction.Done
                         ),
@@ -109,7 +113,7 @@ fun SmsKeywordCard(
                         onClick = {
                             if (rawKeywordInput.isNotBlank()) {
                                 onAddKeyword(rawKeywordInput)
-                                Toast.makeText(context, "Added keyword: $rawKeywordInput", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, addedKeyword.format(rawKeywordInput), Toast.LENGTH_SHORT).show()
                                 rawKeywordInput = ""
                                 keyboardController?.hide()
                             }
@@ -117,16 +121,16 @@ fun SmsKeywordCard(
                         enabled = rawKeywordInput.isNotBlank(),
                         modifier = Modifier.testTag("add_keyword_button")
                     ) {
-                        Icon(Icons.Default.Add, contentDescription = "Add")
+                        Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add))
                         Spacer(modifier = Modifier.width(2.dp))
-                        Text("Add")
+                        Text(stringResource(R.string.add))
                     }
                 }
 
                 if (blockedKeywords.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = "Active Keywords (${blockedKeywords.size})",
+                        text = stringResource(R.string.active_keywords, blockedKeywords.size),
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurface
@@ -149,12 +153,12 @@ fun SmsKeywordCard(
                                 trailingIcon = {
                                     Icon(
                                         imageVector = Icons.Default.Close,
-                                        contentDescription = "Delete keyword",
+                                        contentDescription = stringResource(R.string.delete_keyword),
                                         modifier = Modifier
                                             .size(16.dp)
                                             .clickable {
                                                 onRemoveKeyword(rule.keyword)
-                                                Toast.makeText(context, "Removed keyword: ${rule.keyword}", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(context, removedKeyword.format(rule.keyword), Toast.LENGTH_SHORT).show()
                                             }
                                     )
                                 },

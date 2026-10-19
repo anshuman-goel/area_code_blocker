@@ -32,10 +32,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.example.R
 
 @Composable
 fun PhoneExtractionCard(
@@ -46,6 +48,7 @@ fun PhoneExtractionCard(
 ) {
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
+    val blockedAreaCode = stringResource(R.string.blocked_area_code)
 
     Box(modifier = Modifier.padding(horizontal = 16.dp)) {
         Card(
@@ -58,13 +61,13 @@ fun PhoneExtractionCard(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = "Extract from Phone Number",
+                    text = stringResource(R.string.extract_from_phone_number),
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = "Input a phone number to extract its area code instantly to block calls/texts from that region.",
+                    text = stringResource(R.string.extract_phone_description),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                     modifier = Modifier.padding(vertical = 4.dp)
@@ -75,8 +78,8 @@ fun PhoneExtractionCard(
                 OutlinedTextField(
                     value = inputPhone,
                     onValueChange = onValueChange,
-                    label = { Text("Enter Phone Number") },
-                    placeholder = { Text("+1 (512) 555-0199") },
+                    label = { Text(stringResource(R.string.enter_phone_number)) },
+                    placeholder = { Text(stringResource(R.string.phone_number_example)) },
                     leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Phone,
@@ -113,7 +116,7 @@ fun PhoneExtractionCard(
                     ) {
                         Column {
                             Text(
-                                text = "Extracted Area Code",
+                                text = stringResource(R.string.extracted_area_code),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.primary
                             )
@@ -130,13 +133,13 @@ fun PhoneExtractionCard(
                                 onAddClick(extractedAreaCode)
                                 onValueChange("")
                                 keyboardController?.hide()
-                                Toast.makeText(context, "Blocked Area Code: $extractedAreaCode", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, blockedAreaCode.format(extractedAreaCode), Toast.LENGTH_SHORT).show()
                             },
                             modifier = Modifier.testTag("add_extracted_button")
                         ) {
                             Icon(Icons.Default.Add, contentDescription = null)
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Block")
+                            Text(stringResource(R.string.block))
                         }
                     }
                 }
