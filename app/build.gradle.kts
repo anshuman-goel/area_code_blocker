@@ -23,6 +23,8 @@ android {
 
   // Keep all language resources in the base APK so Play automatic translation
   // can process and deliver them without language configuration APKs.
+  // The Android Gradle Plugin's required language-split API is still marked incubating.
+  @Suppress("UnstableApiUsage")
   bundle {
     language {
       enableSplit = false

@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -93,7 +94,6 @@ fun StatisticsGrid(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ProtectionStatusBanner(
     isContactsGranted: Boolean,
@@ -134,7 +134,7 @@ fun ProtectionStatusBanner(
             val totalActiveRules = uniqueRegions + manualCodes
             
             Text(
-                text = stringResource(R.string.active_rules, totalActiveRules),
+                text = pluralStringResource(R.plurals.active_rules, totalActiveRules, totalActiveRules),
                 color = MaterialTheme.colorScheme.primary,
                 fontSize = 44.sp,
                 fontWeight = FontWeight.Light,

@@ -53,45 +53,68 @@ class LocalizationRegressionTest {
     val stringsFile = File(projectRoot, "app/src/main/res/values/strings.xml")
     val factory = DocumentBuilderFactory.newInstance().apply { isNamespaceAware = true }
     val document = factory.newDocumentBuilder().parse(stringsFile)
-    val strings = document.getElementsByTagName("string")
     val formatArgument = Regex("%(\\d+)\\$([a-zA-Z])")
+    val resources = buildList {
+      val strings = document.getElementsByTagName("string")
+      addAll((0 until strings.length).map { strings.item(it) as Element })
+      val plurals = document.getElementsByTagName("plurals")
+      for (pluralIndex in 0 until plurals.length) {
+        val plural = plurals.item(pluralIndex) as Element
+        val items = plural.getElementsByTagName("item")
+        addAll((0 until items.length).map { items.item(it) as Element })
+      }
+    }
 
-    for (index in 0 until strings.length) {
-      val string = strings.item(index) as Element
-      if (string.getAttribute("translatable") == "false") continue
-      val name = string.getAttribute("name")
-      val arguments = formatArgument.findAll(string.textContent).map { match ->
+    resources.forEach { resource ->
+      if (resource.getAttribute("translatable") == "false") return@forEach
+      val parent = resource.parentNode as? Element
+      val name = resource.getAttribute("name").ifBlank { parent?.getAttribute("name").orEmpty() }
+      val quantity = resource.getAttribute("quantity").takeIf(String::isNotBlank)
+      val resourceLabel = if (quantity == null) name else "$name[$quantity]"
+      val arguments = formatArgument.findAll(resource.textContent).map { match ->
         match.groupValues[1].toInt() to match.groupValues[2].lowercase()
       }.toList()
 
-      val unprotected = (0 until string.childNodes.length).asSequence()
-        .map { childIndex -> string.childNodes.item(childIndex) }
+      val unprotected = (0 until resource.childNodes.length)
+        .map { childIndex -> resource.childNodes.item(childIndex) }
         .filter { child -> child.nodeType == Node.TEXT_NODE }
-        .flatMap { child -> formatArgument.findAll(child.nodeValue).asSequence() }
-        .map { match -> match.value }
-        .toList()
-      assertTrue("Raw format arguments in $name must be wrapped in xliff:g: $unprotected", unprotected.isEmpty())
+        .flatMap { child -> formatArgument.findAll(child.nodeValue).map { it.value }.toList() }
+      assertTrue(
+        "Raw format arguments in $resourceLabel must be wrapped in xliff:g: $unprotected",
+        unprotected.isEmpty(),
+      )
 
-      val xliffArguments = string.getElementsByTagNameNS(
+      val xliffArguments = resource.getElementsByTagNameNS(
         "urn:oasis:names:tc:xliff:document:1.2",
         "g",
       )
       val protectedArguments = (0 until xliffArguments.length).flatMap { xliffIndex ->
         val placeholder = xliffArguments.item(xliffIndex) as Element
-        assertTrue("xliff:g in $name needs a meaningful id", placeholder.getAttribute("id").isNotBlank())
+        assertTrue(
+          "xliff:g in $resourceLabel needs a meaningful id",
+          placeholder.getAttribute("id").isNotBlank(),
+        )
         formatArgument.findAll(placeholder.textContent).map { match ->
           match.groupValues[1].toInt() to match.groupValues[2].lowercase()
         }.toList()
       }
-      assertEquals("Every format argument in $name must be protected exactly once", arguments, protectedArguments)
+      assertEquals(
+        "Every format argument in $resourceLabel must be protected exactly once",
+        arguments,
+        protectedArguments,
+      )
 
       val typesByPosition = arguments.groupBy({ it.first }, { it.second })
       typesByPosition.forEach { (position, types) ->
-        assertEquals("Format argument $position in $name has conflicting types", 1, types.distinct().size)
+        assertEquals(
+          "Format argument $position in $resourceLabel has conflicting types",
+          1,
+          types.distinct().size,
+        )
       }
       if (arguments.isNotEmpty()) {
         assertEquals(
-          "Format argument positions in $name must be contiguous",
+          "Format argument positions in $resourceLabel must be contiguous",
           (1..arguments.maxOf { it.first }).toSet(),
           arguments.map { it.first }.toSet(),
         )

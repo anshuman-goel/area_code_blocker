@@ -58,7 +58,7 @@
     <string name="add">Add</string>
     <string name="added_item">Added <xliff:g id="area_code" example="512">%1$s</xliff:g></string>
     <string name="your_phone_number">Your Phone Number Link</string>
-    <string name="your_phone_number_description">Optionally save your own number to quickly suggestions-block your own home area code.</string>
+    <string name="your_phone_number_description">Optionally save your own number to quickly suggest blocking your own home area code.</string>
     <string name="my_number">My Number</string>
     <string name="auto_fill_phone">Auto Fill Phone</string>
     <string name="block_area_code">Block <xliff:g id="area_code" example="512">%1$s</xliff:g></string>
@@ -73,7 +73,10 @@
 
     <string name="calls_block_log">CALLS BLOCK LOG</string>
     <string name="texts_filtered">TEXTS FILTERED</string>
-    <string name="active_rules"><xliff:g id="active_rule_count" example="4">%1$d</xliff:g> Active</string>
+    <plurals name="active_rules">
+        <item quantity="one"><xliff:g id="active_rule_count" example="1">%1$d</xliff:g> Active</item>
+        <item quantity="other"><xliff:g id="active_rule_count" example="4">%1$d</xliff:g> Active</item>
+    </plurals>
     <string name="active_screening">ACTIVE SCREENING</string>
     <string name="shield_offline">SHIELD OFFLINE</string>
     <string name="protection_status_active">Your device will screen calls and messages from blocked area codes, cross-checking contacts automatically.</string>
@@ -91,7 +94,10 @@
     <string name="select_state">Select State</string>
     <string name="state_or_province">State / Province</string>
     <string name="block_all_area_codes">Block All Area Codes in <xliff:g id="region_name" example="Texas">%1$s</xliff:g></string>
-    <string name="blocked_region_area_codes">Blocked <xliff:g id="area_code_count" example="27">%1$d</xliff:g> area codes for <xliff:g id="region_name" example="Texas">%2$s</xliff:g></string>
+    <plurals name="blocked_region_area_codes">
+        <item quantity="one">Blocked <xliff:g id="area_code_count" example="1">%1$d</xliff:g> area code for <xliff:g id="region_name" example="Texas">%2$s</xliff:g></item>
+        <item quantity="other">Blocked <xliff:g id="area_code_count" example="27">%1$d</xliff:g> area codes for <xliff:g id="region_name" example="Texas">%2$s</xliff:g></item>
+    </plurals>
     <string name="includes_area_codes">Includes: <xliff:g id="area_codes" example="512, 737">%1$s</xliff:g></string>
     <string name="unsupported_country">This country does not follow the standard area code pattern supported by this app.</string>
 

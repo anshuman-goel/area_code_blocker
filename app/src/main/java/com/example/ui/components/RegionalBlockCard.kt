@@ -53,7 +53,6 @@ fun RegionalBlockCard(
     onBlockAreaCodes: (List<String>, String) -> Unit,
 ) {
     val context = LocalContext.current
-    val blockedRegionAreaCodes = stringResource(R.string.blocked_region_area_codes)
 
     val selectedCountry = AreaCodeData.countries.getOrElse(selectedCountryIndex) { AreaCodeData.countries[0] }
     val selectedState = selectedCountry.states.getOrNull(selectedStateIndex)
@@ -210,7 +209,16 @@ fun RegionalBlockCard(
                         Button(
                             onClick = {
                                 onBlockAreaCodes(state.areaCodes, "${selectedCountry.name} - ${state.name}")
-                                Toast.makeText(context, blockedRegionAreaCodes.format(state.areaCodes.size, state.name), Toast.LENGTH_LONG).show()
+                                Toast.makeText(
+                                    context,
+                                    context.resources.getQuantityString(
+                                        R.plurals.blocked_region_area_codes,
+                                        state.areaCodes.size,
+                                        state.areaCodes.size,
+                                        state.name,
+                                    ),
+                                    Toast.LENGTH_LONG,
+                                ).show()
                             },
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(12.dp)
