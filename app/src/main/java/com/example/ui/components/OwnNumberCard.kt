@@ -31,10 +31,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.example.R
 
 @Composable
 fun OwnNumberCard(
@@ -47,6 +49,7 @@ fun OwnNumberCard(
 ) {
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
+    val blockedOwnAreaCode = stringResource(R.string.blocked_your_area_code)
 
     Box(modifier = Modifier.padding(horizontal = 16.dp)) {
         Card(
@@ -59,13 +62,13 @@ fun OwnNumberCard(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = "Your Phone Number Link",
+                    text = stringResource(R.string.your_phone_number),
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = "Optionally save your own number to quickly suggestions-block your own home area code.",
+                    text = stringResource(R.string.your_phone_number_description),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                     modifier = Modifier.padding(vertical = 4.dp)
@@ -80,13 +83,13 @@ fun OwnNumberCard(
                     OutlinedTextField(
                         value = userOwnNumber,
                         onValueChange = onValueChange,
-                        placeholder = { Text("My Number") },
+                        placeholder = { Text(stringResource(R.string.my_number)) },
                         leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
                         trailingIcon = {
                             IconButton(onClick = onAutoDetectClick) {
                                 Icon(
                                     imageVector = Icons.Default.Refresh,
-                                    contentDescription = "Auto Fill Phone"
+                                    contentDescription = stringResource(R.string.auto_fill_phone)
                                 )
                             }
                         },
@@ -109,14 +112,14 @@ fun OwnNumberCard(
                         Button(
                             onClick = {
                                 onBlockOwnAreaClick(ownAreaCode)
-                                Toast.makeText(context, "Blocked your area code: $ownAreaCode", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, blockedOwnAreaCode.format(ownAreaCode), Toast.LENGTH_SHORT).show()
                             },
                             enabled = !isAlreadyBlocked,
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.secondary
                             )
                         ) {
-                            Text("Block $ownAreaCode")
+                            Text(stringResource(R.string.block_area_code, ownAreaCode))
                         }
                     }
                 }

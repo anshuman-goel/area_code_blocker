@@ -33,10 +33,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.example.R
 
 @Composable
 fun ManualAreaCodeCard(
@@ -44,6 +46,7 @@ fun ManualAreaCodeCard(
 ) {
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
+    val addedItem = stringResource(R.string.added_item)
     var rawAreaInput by remember { mutableStateOf("") }
 
     Box(modifier = Modifier.padding(horizontal = 16.dp)) {
@@ -57,7 +60,7 @@ fun ManualAreaCodeCard(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = "Add Custom Area Code Prefix",
+                    text = stringResource(R.string.add_custom_area_code),
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary
@@ -75,7 +78,7 @@ fun ManualAreaCodeCard(
                                 rawAreaInput = input
                             }
                         },
-                        placeholder = { Text("e.g. 512, 212") },
+                        placeholder = { Text(stringResource(R.string.area_code_example)) },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number,
                             imeAction = ImeAction.Done
@@ -95,7 +98,7 @@ fun ManualAreaCodeCard(
                         onClick = {
                             if (rawAreaInput.isNotBlank()) {
                                 onAddClick(rawAreaInput)
-                                Toast.makeText(context, "Added $rawAreaInput", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, addedItem.format(rawAreaInput), Toast.LENGTH_SHORT).show()
                                 rawAreaInput = ""
                                 keyboardController?.hide()
                             }
@@ -103,9 +106,9 @@ fun ManualAreaCodeCard(
                         enabled = rawAreaInput.isNotBlank(),
                         modifier = Modifier.testTag("add_manual_button")
                     ) {
-                        Icon(Icons.Default.Add, contentDescription = "Add")
+                        Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add))
                         Spacer(modifier = Modifier.width(2.dp))
-                        Text("Add")
+                        Text(stringResource(R.string.add))
                     }
                 }
             }

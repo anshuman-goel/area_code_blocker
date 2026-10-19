@@ -40,7 +40,7 @@
 
         <service
             android:name=".service.SmsNotificationListenerService"
-            android:label="Area Code Blocker Notification Filter"
+            android:label="@string/notification_filter_service_name"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
             android:exported="true">
             <intent-filter>

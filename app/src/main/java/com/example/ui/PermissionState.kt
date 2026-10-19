@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
+import com.example.R
 import com.example.util.PhoneUtils
 
 class PermissionState(
@@ -65,7 +66,7 @@ class PermissionState(
                 true
             } else {
                 try {
-                    Toast.makeText(context, "Call Screening role is not available on this device.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, context.getString(R.string.call_screening_unavailable), Toast.LENGTH_LONG).show()
                 } catch (_: Exception) {
                     // Toasts may not be available in non-UI contexts.
                 }

@@ -51,10 +51,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.R
 import com.example.ui.components.*
 import com.example.viewmodel.BlockerViewModel
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -68,6 +70,10 @@ fun BlockerScreen(
     initNotificationListenerGranted: Boolean? = null,
 ) {
     val context = LocalContext.current
+    val notificationAccessHint = stringResource(R.string.notification_access_hint)
+    val notificationAccessSearchHint = stringResource(R.string.notification_access_search_hint)
+    val welcomeProtectionActive = stringResource(R.string.welcome_protection_active)
+    val removedItem = stringResource(R.string.removed_item)
     val permissionState = rememberPermissionState(
         initContacts = initContactsGranted,
         initPhone = initPhoneNumbersGranted,
@@ -115,13 +121,13 @@ fun BlockerScreen(
             onRequestNotificationListener = {
                 try {
                     context.startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
-                    Toast.makeText(context, "Locate 'Area Code Blocker' and toggle Access", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, notificationAccessHint, Toast.LENGTH_LONG).show()
                 } catch (_: Exception) {
-                    Toast.makeText(context, "Search 'Notification Access' in settings.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, notificationAccessSearchHint, Toast.LENGTH_LONG).show()
                 }
             },
         ) {
-            Toast.makeText(context, "Welcome! Protection Active.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, welcomeProtectionActive, Toast.LENGTH_SHORT).show()
         }
     } else {
         Scaffold(
@@ -147,11 +153,11 @@ fun BlockerScreen(
                         blockedAreaCodes = blockedAreaCodes,
                         onRemoveAreaCode = { area ->
                             viewModel.removeAreaCode(area)
-                            Toast.makeText(context, "Removed $area", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, removedItem.format(area), Toast.LENGTH_SHORT).show()
                         },
                         onRemoveRegion = { label ->
                             viewModel.removeAreaCodesByRegion(label)
-                            Toast.makeText(context, "Removed $label", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, removedItem.format(label), Toast.LENGTH_SHORT).show()
                         },
                         onRequestPermissions = { permissionState.requestContacts() },
                         onRequestRole = { permissionState.requestRole() },
@@ -207,7 +213,7 @@ fun AppTopBar(onSettingsClick: () -> Unit) {
             ) {
                 Icon(
                     imageVector = Icons.Default.Menu,
-                    contentDescription = "Open settings menu",
+                    contentDescription = stringResource(R.string.open_settings_menu),
                 )
             }
         },
@@ -225,7 +231,7 @@ fun AppTopBar(onSettingsClick: () -> Unit) {
                         Icon(Icons.Default.Lock, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
                     }
                     Spacer(modifier = Modifier.width(10.dp))
-                    Text(text = "Area Code Blocker", fontWeight = FontWeight.Bold, fontSize = 19.sp, letterSpacing = (-0.5).sp)
+                    Text(text = stringResource(R.string.app_name), fontWeight = FontWeight.Bold, fontSize = 19.sp, letterSpacing = (-0.5).sp)
                 }
                 ActiveBadge()
             }
@@ -240,7 +246,7 @@ fun ActiveBadge() {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.surface).border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape).padding(horizontal = 10.dp, vertical = 4.dp)
     ) {
-        Text(text = "ACTIVE", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary, letterSpacing = 1.2.sp)
+        Text(text = stringResource(R.string.protection_active), fontSize = 10.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary, letterSpacing = 1.2.sp)
         Spacer(modifier = Modifier.width(6.dp))
         Box(modifier = Modifier.size(6.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primary))
     }
@@ -259,14 +265,14 @@ fun TabNavigation(selectedTab: Int, onTabSelected: (Int) -> Unit, logsCount: Int
             selected = selectedTab == 0,
             onClick = { onTabSelected(0) },
             icon = Icons.Default.Settings,
-            label = "Shield & Setup",
+            label = stringResource(R.string.shield_and_setup),
             tag = "rules_tab"
         )
         TabItem(
             selected = selectedTab == 1,
             onClick = { onTabSelected(1) },
             icon = Icons.AutoMirrored.Filled.List,
-            label = "Logs ($logsCount)",
+            label = stringResource(R.string.logs_count, logsCount),
             tag = "logs_tab"
         )
     }

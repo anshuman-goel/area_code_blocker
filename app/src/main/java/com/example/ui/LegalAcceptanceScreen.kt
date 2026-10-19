@@ -36,6 +36,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.example.R
 
 @Composable
 fun LegalAcceptanceScreen(onAccept: () -> Unit) {
@@ -65,7 +67,7 @@ fun LegalAcceptanceScreen(onAccept: () -> Unit) {
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = "Before you continue",
+                text = stringResource(R.string.before_you_continue),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
@@ -73,7 +75,7 @@ fun LegalAcceptanceScreen(onAccept: () -> Unit) {
             )
             Spacer(Modifier.height(12.dp))
             Text(
-                text = "Please review this important call-blocking notice.",
+                text = stringResource(R.string.review_call_blocking_notice),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
@@ -86,13 +88,13 @@ fun LegalAcceptanceScreen(onAccept: () -> Unit) {
             ) {
                 Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
-                        text = "Important call-blocking notice",
+                        text = stringResource(R.string.important_call_blocking_notice),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onErrorContainer,
                     )
                     Text(
-                        text = "Area Code Blocker may fail to block unwanted calls and may block legitimate or important calls, including healthcare, financial, or emergency-related communications. Review your rules and blocked-call history regularly.",
+                        text = stringResource(R.string.call_blocking_risk_notice),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onErrorContainer,
                     )
@@ -101,13 +103,13 @@ fun LegalAcceptanceScreen(onAccept: () -> Unit) {
             Spacer(Modifier.height(16.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
-                    text = "Privacy Policy",
+                    text = stringResource(R.string.privacy_policy),
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.clickable { uriHandler.openUri(LegalLinks.PRIVACY_POLICY) }.padding(8.dp),
                 )
                 Text(
-                    text = "Terms of Use",
+                    text = stringResource(R.string.terms_of_use),
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.clickable { uriHandler.openUri(LegalLinks.TERMS_OF_USE) }.padding(8.dp),
@@ -127,7 +129,7 @@ fun LegalAcceptanceScreen(onAccept: () -> Unit) {
                     modifier = Modifier.testTag("legal_acknowledgment_checkbox"),
                 )
                 Text(
-                    text = "I agree to the Terms of Use and acknowledge the call-blocking risks.",
+                    text = stringResource(R.string.legal_acknowledgment),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(start = 8.dp),
@@ -140,7 +142,7 @@ fun LegalAcceptanceScreen(onAccept: () -> Unit) {
                 modifier = Modifier.fillMaxWidth().height(56.dp).testTag("legal_accept_button"),
                 shape = RoundedCornerShape(16.dp),
             ) {
-                Text("AGREE AND CONTINUE", fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.agree_and_continue), fontWeight = FontWeight.Bold)
             }
         }
     }

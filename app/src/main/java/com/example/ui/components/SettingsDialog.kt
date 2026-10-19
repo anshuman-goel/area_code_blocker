@@ -54,12 +54,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.R
 import com.example.service.SmsNotificationListenerService
 import com.example.ui.LegalLinks
 import com.example.util.PhoneUtils
@@ -124,6 +126,14 @@ fun SettingsDialog(
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
     var selectedSection by remember(show) { mutableStateOf(SettingsSection.APPEARANCE) }
+    val sectionLabels = mapOf(
+        SettingsSection.APPEARANCE to stringResource(R.string.theme),
+        SettingsSection.PROTECTION to stringResource(R.string.protection),
+        SettingsSection.ABOUT to stringResource(R.string.about),
+    )
+    val notificationAccessHint = stringResource(R.string.notification_access_settings_hint)
+    val notificationSettingsOpenFailed = stringResource(R.string.notification_settings_open_failed)
+    val noWebBrowser = stringResource(R.string.no_web_browser)
     if (show) {
         AlertDialog(
             onDismissRequest = onDismiss,
@@ -160,7 +170,7 @@ fun SettingsDialog(
                         }
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = "Settings",
+                            text = stringResource(R.string.settings),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
@@ -172,7 +182,7 @@ fun SettingsDialog(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Close settings",
+                            contentDescription = stringResource(R.string.close_settings),
                             tint = MaterialTheme.colorScheme.outline
                         )
                     }
@@ -193,7 +203,7 @@ fun SettingsDialog(
                             FilterChip(
                                 selected = selectedSection == section,
                                 onClick = { selectedSection = section },
-                                label = { Text(section.label) },
+                                label = { Text(sectionLabels.getValue(section)) },
                                 modifier = Modifier
                                     .weight(1f)
                                     .testTag("settings_${section.name.lowercase()}"),
@@ -202,11 +212,11 @@ fun SettingsDialog(
                     }
 
                     if (selectedSection == SettingsSection.APPEARANCE) SettingsGroup(
-                        title = "App Appearance",
+                        title = stringResource(R.string.app_appearance),
                         icon = Icons.Default.Settings,
                     ) {
                         Text(
-                            text = "Select your preferred visual style. Choose light mode for daytime clarity, dark mode for eye relaxation, or synchronize with your device system configurations.",
+                            text = stringResource(R.string.app_appearance_description),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
                         )
@@ -214,6 +224,11 @@ fun SettingsDialog(
                         
                         val currentThemeChoice by viewModel.appTheme.collectAsStateWithLifecycle()
                         val themes = listOf("System", "Light", "Dark")
+                        val themeLabels = mapOf(
+                            "System" to stringResource(R.string.theme_system),
+                            "Light" to stringResource(R.string.theme_light),
+                            "Dark" to stringResource(R.string.theme_dark),
+                        )
 
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -240,10 +255,7 @@ fun SettingsDialog(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = when (theme) {
-                                            "System" -> "System"
-                                            else -> theme
-                                        },
+                                        text = themeLabels.getValue(theme),
                                         style = MaterialTheme.typography.labelMedium,
                                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                                         color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
@@ -255,11 +267,11 @@ fun SettingsDialog(
                     }
 
                     if (selectedSection == SettingsSection.PROTECTION) SettingsGroup(
-                        title = "SMS Notification Guard",
+                        title = stringResource(R.string.sms_notification_guard),
                         icon = Icons.Default.Notifications,
                     ) {
                         Text(
-                            text = "The Notification Guard silences SMS alerts that match your enabled rules. Saved contacts are always allowed. Area-code SMS silencing can be changed directly in Block by Region.",
+                            text = stringResource(R.string.notification_guard_description),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
                         )
@@ -282,13 +294,13 @@ fun SettingsDialog(
                         ) {
                             Column(modifier = Modifier.weight(1f).padding(end = 8.dp)) {
                                 Text(
-                                    text = "System Access Status",
+                                    text = stringResource(R.string.system_access_status),
                                     style = MaterialTheme.typography.labelLarge,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
-                                    text = if (isNotificationSettingAllowed) "Granted in system preferences" else "Awaiting system approval",
+                                    text = if (isNotificationSettingAllowed) stringResource(R.string.granted_in_system_preferences) else stringResource(R.string.awaiting_system_approval),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                                 )
@@ -299,9 +311,9 @@ fun SettingsDialog(
                                     try {
                                         val intent = Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
                                         context.startActivity(intent)
-                                        Toast.makeText(context, "Locate 'Area Code Blocker' and toggle Notification Access", Toast.LENGTH_LONG).show()
+                                        Toast.makeText(context, notificationAccessHint, Toast.LENGTH_LONG).show()
                                     } catch (_: Exception) {
-                                        Toast.makeText(context, "Could not open settings automatically. Search 'Notification Access' in device settings.", Toast.LENGTH_LONG).show()
+                                        Toast.makeText(context, notificationSettingsOpenFailed, Toast.LENGTH_LONG).show()
                                     }
                                 },
                                 shape = RoundedCornerShape(8.dp),
@@ -312,7 +324,7 @@ fun SettingsDialog(
                                 modifier = Modifier.height(34.dp)
                             ) {
                                 Text(
-                                    text = if (isNotificationSettingAllowed) "Authorized" else "Grant",
+                                    text = if (isNotificationSettingAllowed) stringResource(R.string.authorized) else stringResource(R.string.grant),
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -335,13 +347,13 @@ fun SettingsDialog(
                             Spacer(modifier = Modifier.width(8.dp))
                             Column {
                                 Text(
-                                    text = if (isListenerCurrentlyActive) "Shield Active & Guarding" else "Shield Suspended",
+                                    text = if (isListenerCurrentlyActive) stringResource(R.string.shield_active_guarding) else stringResource(R.string.shield_suspended),
                                     style = MaterialTheme.typography.labelMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = if (isListenerCurrentlyActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
                                 )
                                 Text(
-                                    text = if (isListenerCurrentlyActive) "Currently listening for and dismissing text spam alerts." else "Authorize system settings, or cycle setting Off/On to force activation.",
+                                    text = if (isListenerCurrentlyActive) stringResource(R.string.listener_active_description) else stringResource(R.string.listener_suspended_description),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                                 )
@@ -350,20 +362,20 @@ fun SettingsDialog(
                     }
 
                     if (selectedSection == SettingsSection.ABOUT) SettingsGroup(
-                        title = "Legal & About",
+                        title = stringResource(R.string.legal_and_about),
                         icon = Icons.Default.Info,
                     ) {
                         Text(
-                            text = "Review the app's legal documents, open-source license, and source code.",
+                            text = stringResource(R.string.legal_and_about_description),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
                         )
                         FlowRow(modifier = Modifier.fillMaxWidth()) {
                             listOf(
-                                "Privacy Policy" to LegalLinks.PRIVACY_POLICY,
-                                "Terms of Use" to LegalLinks.TERMS_OF_USE,
-                                "Open-Source License" to LegalLinks.OPEN_SOURCE_LICENSE,
-                                "Source Code" to LegalLinks.SOURCE_CODE,
+                                stringResource(R.string.privacy_policy) to LegalLinks.PRIVACY_POLICY,
+                                stringResource(R.string.terms_of_use) to LegalLinks.TERMS_OF_USE,
+                                stringResource(R.string.open_source_license) to LegalLinks.OPEN_SOURCE_LICENSE,
+                                stringResource(R.string.source_code) to LegalLinks.SOURCE_CODE,
                             ).forEach { (label, url) ->
                                 TextButton(
                                     onClick = { uriHandler.openUri(url) },
@@ -377,11 +389,11 @@ fun SettingsDialog(
                     }
 
                     if (selectedSection == SettingsSection.ABOUT) SettingsGroup(
-                        title = "Data Sources & Attributions",
+                        title = stringResource(R.string.data_sources_attributions),
                         icon = Icons.Default.Info,
                     ) {
                         Text(
-                            text = "Area code and regional data is sourced from Wikipedia and is licensed under the Creative Commons Attribution-ShareAlike License.",
+                            text = stringResource(R.string.data_sources_description),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
                         )
@@ -397,26 +409,26 @@ fun SettingsDialog(
                                     try {
                                         context.startActivity(intent1)
                                     } catch (_: Exception) {
-                                        Toast.makeText(context, "No web browser found to open link.", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, noWebBrowser, Toast.LENGTH_SHORT).show()
                                     }
                                 },
                                 contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
                                 modifier = Modifier.height(36.dp)
                             ) {
-                                Text("Area Code Master List", fontSize = 12.sp)
+                                Text(stringResource(R.string.area_code_master_list), fontSize = 12.sp)
                             }
                             TextButton(
                                 onClick = {
                                     try {
                                         context.startActivity(intent2)
                                     } catch (_: Exception) {
-                                        Toast.makeText(context, "No web browser found to open link.", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, noWebBrowser, Toast.LENGTH_SHORT).show()
                                     }
                                 },
                                 contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
                                 modifier = Modifier.height(36.dp)
                             ) {
-                                Text("Countries & Territories", fontSize = 12.sp)
+                                Text(stringResource(R.string.countries_and_territories), fontSize = 12.sp)
                             }
                         }
                     }
@@ -424,15 +436,15 @@ fun SettingsDialog(
             },
             confirmButton = {
                 TextButton(onClick = onDismiss) {
-                    Text("Done")
+                    Text(stringResource(R.string.done))
                 }
             }
         )
     }
 }
 
-private enum class SettingsSection(val label: String) {
-    APPEARANCE("Theme"),
-    PROTECTION("Protection"),
-    ABOUT("About"),
+private enum class SettingsSection {
+    APPEARANCE,
+    PROTECTION,
+    ABOUT,
 }
