@@ -9,6 +9,7 @@ import com.example.data.entity.BlockedAreaCode
 import com.example.data.entity.BlockedLog
 import com.example.data.entity.BlockedKeyword
 import com.example.data.repository.BlockerRepository
+import com.example.service.SmsFilterPreferences
 import com.example.util.PhoneUtils
 import com.example.ui.LegalLinks
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -58,6 +59,12 @@ class BlockerViewModel(
     private val _appTheme = MutableStateFlow("System")
     val appTheme: StateFlow<String> = _appTheme.asStateFlow()
 
+    private val _silenceSmsFromBlockedAreaCodes = MutableStateFlow(
+        SmsFilterPreferences.isAreaCodeSilencingEnabled(application),
+    )
+    val silenceSmsFromBlockedAreaCodes: StateFlow<Boolean> =
+        _silenceSmsFromBlockedAreaCodes.asStateFlow()
+
     private val prefs = application.getSharedPreferences("blocker_prefs", Context.MODE_PRIVATE)
 
     private val _hasAcceptedCurrentTerms = MutableStateFlow(
@@ -100,6 +107,11 @@ class BlockerViewModel(
     fun setAppTheme(theme: String) {
         _appTheme.value = theme
         prefs.edit { putString("app_theme", theme) }
+    }
+
+    fun setSilenceSmsFromBlockedAreaCodes(enabled: Boolean) {
+        _silenceSmsFromBlockedAreaCodes.value = enabled
+        SmsFilterPreferences.setAreaCodeSilencingEnabled(getApplication(), enabled)
     }
 
     fun acceptCurrentTerms() {

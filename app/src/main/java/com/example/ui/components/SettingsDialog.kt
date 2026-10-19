@@ -41,6 +41,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -261,12 +262,48 @@ fun SettingsDialog(
                         icon = Icons.Default.Notifications,
                     ) {
                         Text(
-                            text = "On newer system versions, the default system messaging client receives and stores message notifications. Our background Notification Guard intercepts in real-time, silences, and clears spam message alerts matching your rules.",
+                            text = "Choose which SMS alerts the Notification Guard should silence. Saved contacts are always allowed.",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
                         )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        
+
+                        val silenceAreaCodeSms by
+                            viewModel.silenceSmsFromBlockedAreaCodes.collectAsStateWithLifecycle()
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    viewModel.setSilenceSmsFromBlockedAreaCodes(!silenceAreaCodeSms)
+                                }
+                                .testTag("sms_area_code_silencing_row"),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
+                                Text(
+                                    text = "Silence SMS from blocked area codes",
+                                    style = MaterialTheme.typography.labelLarge,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                )
+                                Text(
+                                    text = "Applies your area-code rules to messages from unknown numbers. Keyword filtering stays active when this is off.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                                )
+                            }
+                            Switch(
+                                checked = silenceAreaCodeSms,
+                                onCheckedChange = viewModel::setSilenceSmsFromBlockedAreaCodes,
+                                modifier = Modifier.testTag("sms_area_code_silencing_switch"),
+                            )
+                        }
+
+                        HorizontalDivider(
+                            modifier = Modifier.padding(vertical = 4.dp),
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                        )
+
                         var isNotificationSettingAllowed by remember {
                             mutableStateOf(PhoneUtils.isNotificationServiceEnabled(context))
                         }

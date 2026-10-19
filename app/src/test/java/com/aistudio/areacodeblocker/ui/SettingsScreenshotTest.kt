@@ -3,6 +3,8 @@ package com.aistudio.areacodeblocker.ui
 import android.app.Application
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.assertIsOff
+import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
@@ -40,6 +42,7 @@ class SettingsScreenshotTest {
         val logDao = FakeLogDao()
         val repository = BlockerRepository(areaDao, logDao, keywordDao)
         val application = ApplicationProvider.getApplicationContext<Application>()
+        application.getSharedPreferences("blocker_prefs", 0).edit().clear().commit()
         return BlockerViewModel(application, repository)
     }
 
@@ -59,6 +62,30 @@ class SettingsScreenshotTest {
 
         // Capture the dialog specifically
         composeTestRule.onNodeWithTag("settings_dialog_surface", useUnmergedTree = true).captureRoboImage(filePath = "src/test/screenshots/settings_dialog.png")
+    }
+
+    @Test
+    fun settings_dialog_protection_section() {
+        val viewModel = createViewModel()
+
+        composeTestRule.setContent {
+            MyApplicationTheme {
+                SettingsDialog(
+                    show = true,
+                    onDismiss = {},
+                    viewModel = viewModel,
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithTag("settings_protection").performClick()
+        composeTestRule.onNodeWithText("Silence SMS from blocked area codes").assertExists()
+        composeTestRule.onNodeWithTag("sms_area_code_silencing_switch").assertIsOn()
+        composeTestRule.onNodeWithTag("settings_dialog_surface", useUnmergedTree = true)
+            .captureRoboImage(filePath = "src/test/screenshots/settings_dialog_protection.png")
+
+        composeTestRule.onNodeWithTag("sms_area_code_silencing_switch").performClick()
+        composeTestRule.onNodeWithTag("sms_area_code_silencing_switch").assertIsOff()
     }
 
     @Test

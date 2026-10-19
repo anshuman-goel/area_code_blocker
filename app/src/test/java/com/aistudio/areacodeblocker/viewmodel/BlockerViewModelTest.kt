@@ -70,6 +70,23 @@ class BlockerViewModelTest {
     }
 
     @Test
+    fun `SMS area code silencing is enabled by default`() {
+        assertTrue(viewModel.silenceSmsFromBlockedAreaCodes.value)
+    }
+
+    @Test
+    fun `SMS area code silencing preference persists`() {
+        viewModel.setSilenceSmsFromBlockedAreaCodes(false)
+
+        val recreated = BlockerViewModel(
+            ApplicationProvider.getApplicationContext(),
+            repository,
+        )
+
+        assertFalse(recreated.silenceSmsFromBlockedAreaCodes.value)
+    }
+
+    @Test
     fun `current terms are initially not accepted`() {
         assertFalse(viewModel.hasAcceptedCurrentTerms.value)
     }

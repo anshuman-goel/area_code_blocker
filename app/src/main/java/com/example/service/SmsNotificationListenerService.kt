@@ -85,10 +85,16 @@ class SmsNotificationListenerService : NotificationListenerService() {
         val repository = app.repository
 
         CoroutineScope(Dispatchers.IO).launch {
+            val areaCodeSilencingEnabled =
+                SmsFilterPreferences.isAreaCodeSilencingEnabled(applicationContext)
             val match = SmsNotificationFilter.findMatch(
                 senderIdentifiers = senderIdentifiers,
                 messageText = messageText,
-                blockedAreaCodes = repository.getBlockedAreaCodesList().map { it.areaCode },
+                blockedAreaCodes = if (areaCodeSilencingEnabled) {
+                    repository.getBlockedAreaCodesList().map { it.areaCode }
+                } else {
+                    emptyList()
+                },
                 blockedKeywords = repository.getBlockedKeywordsList().map { it.keyword },
             ) ?: return@launch
 
