@@ -35,13 +35,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -67,7 +65,6 @@ import com.example.ui.LegalLinks
 import com.example.util.PhoneUtils
 import com.example.viewmodel.BlockerViewModel
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SettingsGroup(
     title: String,
@@ -77,7 +74,7 @@ fun SettingsGroup(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp)
+            .padding(vertical = 4.dp),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -117,7 +114,7 @@ fun SettingsGroup(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SettingsDialog(
     show: Boolean,
@@ -262,47 +259,11 @@ fun SettingsDialog(
                         icon = Icons.Default.Notifications,
                     ) {
                         Text(
-                            text = "Choose which SMS alerts the Notification Guard should silence. Saved contacts are always allowed.",
+                            text = "The Notification Guard silences SMS alerts that match your enabled rules. Saved contacts are always allowed. Area-code SMS silencing can be changed directly in Block by Region.",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
                         )
-
-                        val silenceAreaCodeSms by
-                            viewModel.silenceSmsFromBlockedAreaCodes.collectAsStateWithLifecycle()
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    viewModel.setSilenceSmsFromBlockedAreaCodes(!silenceAreaCodeSms)
-                                }
-                                .testTag("sms_area_code_silencing_row"),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                        ) {
-                            Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
-                                Text(
-                                    text = "Silence SMS from blocked area codes",
-                                    style = MaterialTheme.typography.labelLarge,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                )
-                                Text(
-                                    text = "Applies your area-code rules to messages from unknown numbers. Keyword filtering stays active when this is off.",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                                )
-                            }
-                            Switch(
-                                checked = silenceAreaCodeSms,
-                                onCheckedChange = viewModel::setSilenceSmsFromBlockedAreaCodes,
-                                modifier = Modifier.testTag("sms_area_code_silencing_switch"),
-                            )
-                        }
-
-                        HorizontalDivider(
-                            modifier = Modifier.padding(vertical = 4.dp),
-                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                        )
+                        Spacer(modifier = Modifier.height(12.dp))
 
                         var isNotificationSettingAllowed by remember {
                             mutableStateOf(PhoneUtils.isNotificationServiceEnabled(context))

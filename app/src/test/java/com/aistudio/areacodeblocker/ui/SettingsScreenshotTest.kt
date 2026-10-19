@@ -3,8 +3,6 @@ package com.aistudio.areacodeblocker.ui
 import android.app.Application
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.assertIsOff
-import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
@@ -79,13 +77,9 @@ class SettingsScreenshotTest {
         }
 
         composeTestRule.onNodeWithTag("settings_protection").performClick()
-        composeTestRule.onNodeWithText("Silence SMS from blocked area codes").assertExists()
-        composeTestRule.onNodeWithTag("sms_area_code_silencing_switch").assertIsOn()
+        composeTestRule.onNodeWithText("SMS Notification Guard").assertExists()
         composeTestRule.onNodeWithTag("settings_dialog_surface", useUnmergedTree = true)
             .captureRoboImage(filePath = "src/test/screenshots/settings_dialog_protection.png")
-
-        composeTestRule.onNodeWithTag("sms_area_code_silencing_switch").performClick()
-        composeTestRule.onNodeWithTag("sms_area_code_silencing_switch").assertIsOff()
     }
 
     @Test

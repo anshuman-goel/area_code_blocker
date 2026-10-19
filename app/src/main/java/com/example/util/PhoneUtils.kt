@@ -31,10 +31,10 @@ object PhoneUtils {
     fun extractAreaCode(number: String): String {
         val digits = number.filter { it.isDigit() }
         
-        return when {
-            (digits.length == 11) && digits.startsWith("1") -> digits.substring(1, 4)
-            digits.length == 10 -> digits.substring(0, 3)
-            digits.length > 3 -> digits.substring(0, 3) // Best-effort fallback
+        return when (digits.length) {
+            11 -> if (digits.startsWith("1")) digits.substring(1, 4) else digits.substring(0, 3)
+            10 -> digits.substring(0, 3)
+            in 4..Int.MAX_VALUE -> digits.substring(0, 3) // Best-effort fallback
             else -> digits
         }
     }
@@ -45,9 +45,9 @@ object PhoneUtils {
      */
     fun extractNanpAreaCodeOrNull(number: String): String? {
         val digits = cleanNumber(number)
-        return when {
-            digits.length == 11 && digits.startsWith("1") -> digits.substring(1, 4)
-            digits.length == 10 -> digits.substring(0, 3)
+        return when (digits.length) {
+            11 -> digits.takeIf { it.startsWith("1") }?.substring(1, 4)
+            10 -> digits.substring(0, 3)
             else -> null
         }
     }
@@ -56,36 +56,40 @@ object PhoneUtils {
      * Queries the system contacts to check if the given phone number exists.
      * Requires READ_CONTACTS permission.
      */
-    fun isNumberInContacts(context: Context, phoneNumber: String): Boolean {
-        if (phoneNumber.isBlank()) return false
-        
-        return try {
-            val uri = Uri.withAppendedPath(
+    fun isNumberInContacts(context: Context, phoneNumber: String): Boolean =
+        phoneNumber.takeIf(String::isNotBlank)?.let { number ->
+            try {
+            val lookupUri = Uri.withAppendedPath(
                 ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
-                Uri.encode(phoneNumber),
+                Uri.encode(number),
             )
-            val projection = arrayOf(
-                ContactsContract.PhoneLookup.DISPLAY_NAME,
-            )
-            context.contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
-                if (cursor.moveToFirst()) {
-                    val nameIndex = cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME)
-                    if (nameIndex >= 0) {
-                        val name = cursor.getString(nameIndex)
-                        Log.d(TAG, "Number $phoneNumber found in contacts as '$name'")
-                    }
-                    return true
+            val projection = arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME)
+            context.contentResolver.query(
+                lookupUri,
+                projection,
+                null,
+                null,
+                null,
+            )?.use { cursor ->
+                if (!cursor.moveToFirst()) return@use false
+
+                val nameIndex = cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME)
+                if (nameIndex >= 0) {
+                    Log.d(
+                        TAG,
+                        "Number $number found in contacts as '${cursor.getString(nameIndex)}'",
+                    )
                 }
+                true
+            } ?: false
+            } catch (e: SecurityException) {
+                Log.w(TAG, "READ_CONTACTS permission missing or denied.", e)
+                false
+            } catch (e: Exception) {
+                Log.e(TAG, "Error checking contact lookup.", e)
+                false
             }
-            false
-        } catch (e: SecurityException) {
-            Log.w(TAG, "READ_CONTACTS permission missing or denied.", e)
-            false
-        } catch (e: Exception) {
-            Log.e(TAG, "Error checking contact lookup.", e)
-            false
-        }
-    }
+        } ?: false
 
     /**
      * Attempts to automatically retrieve the device's own telephone line number.

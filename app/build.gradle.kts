@@ -8,7 +8,7 @@ plugins {
 
 android {
   namespace = "com.example"
-  compileSdk { version = release(36) { minorApiLevel = 1 } }
+  compileSdk { version = release(37) { minorApiLevel = 2 } }
 
   defaultConfig {
     applicationId = "com.aistudio.areacodeblocker.zbyjqw"
@@ -24,7 +24,7 @@ android {
 
   signingConfigs {
     create("release") {
-      val keystorePath = System.getenv("KEYSTORE_PATH") ?: "${rootDir}/app_key.jks"
+      val keystorePath = System.getenv("KEYSTORE_PATH") ?: "$rootDir/app_key.jks"
       storeFile = file(keystorePath)
       storePassword = System.getenv("STORE_PASSWORD")
       keyAlias = System.getenv("KEY_ALIAS") ?: "upload"
@@ -61,6 +61,12 @@ android {
 secrets {
   propertiesFileName = ".env"
   defaultPropertiesFileName = ".env.example"
+}
+
+tasks.withType<Test>().configureEach {
+  // Robolectric accesses FileDescriptor internals when emulating API 36 on the
+  // current JDK; open only the required package for local JVM tests.
+  jvmArgs("--add-opens=java.base/jdk.internal.access=ALL-UNNAMED")
 }
 
 // Some unused dependencies are commented out below instead of being removed.
