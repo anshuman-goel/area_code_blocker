@@ -2,7 +2,6 @@ package com.aistudio.areacodeblocker
 
 import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -13,23 +12,32 @@ class LocalizationRegressionTest {
     .first { File(it, "app/src/main/res").isDirectory }
 
   @Test
-  fun `default resource locale is American English`() {
-    val metadata = File(projectRoot, "app/src/main/res/resources.properties")
-    assertTrue("resources.properties must exist", metadata.isFile)
-    val properties = java.util.Properties().apply { metadata.inputStream().use(::load) }
-    assertEquals("en-US", properties.getProperty("unqualifiedResLocale"))
+  fun `bundle does not constrain locales supplied by Play automatic translation`() {
+    val buildFile = File(projectRoot, "app/build.gradle.kts").readText()
+    assertFalse(
+      "localeFilters removes every locale except its allowlist from packaged resources",
+      buildFile.contains("localeFilters"),
+    )
+    assertFalse(
+      "A generated LocaleConfig advertises only locales already compiled into the upload",
+      buildFile.contains("generateLocaleConfig = true"),
+    )
+    val localeMetadata = File(projectRoot, "app/src/main/res/resources.properties").readText()
+    assertTrue(
+      "The unqualified source strings use Play's generic English source language",
+      localeMetadata.lineSequence().any { it.trim() == "unqualifiedResLocale=en" },
+    )
   }
 
   @Test
-  fun `app does not provide Norwegian resources`() {
-    val res = File(projectRoot, "app/src/main/res")
-    assertFalse(
-      "Norwegian must not be advertised as an app-provided locale",
-      res.listFiles().orEmpty().any { it.isDirectory && Regex("values-(no|nb|nn)(-.*)?").matches(it.name) },
+  fun `app does not claim bundled translations`() {
+    val translatedValuesDirectory = Regex("values-(?!night(?:-|$)|v\\d+(?:-|$)).+")
+    val translatedDirectories = File(projectRoot, "app/src/main/res").listFiles().orEmpty()
+      .filter { it.isDirectory && translatedValuesDirectory.matches(it.name) }
+    assertTrue(
+      "Play automatic translations must not be advertised as app-provided resources: $translatedDirectories",
+      translatedDirectories.isEmpty(),
     )
-    val buildFile = File(projectRoot, "app/build.gradle.kts").readText()
-    assertTrue(buildFile.contains("generateLocaleConfig = true"))
-    assertTrue(buildFile.contains("localeFilters += \"en\""))
   }
 
   @Test

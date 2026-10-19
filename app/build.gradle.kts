@@ -16,8 +16,8 @@ android {
     // Android 16 QPR2 (36.1) is a compile SDK extension; targetSdk remains API 36.
     //noinspection OldTargetApi
     targetSdk = 36
-    versionCode = 10
-    versionName = "1.0.9"
+    versionCode = 11
+    versionName = "1.0.10"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -48,12 +48,6 @@ android {
     targetCompatibility = JavaVersion.VERSION_11
   }
   buildFeatures { compose = true }
-  androidResources {
-    generateLocaleConfig = true
-    // Exclude dependency-only translations (for example Norwegian `no`) from
-    // the packaged locale set while keeping Play automatic translation enabled.
-    localeFilters += "en"
-  }
   testOptions { unitTests { isIncludeAndroidResources = true } }
 }
 
