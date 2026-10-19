@@ -22,6 +22,11 @@ class LocalizationRegressionTest {
       "A generated LocaleConfig advertises only locales already compiled into the upload",
       buildFile.contains("generateLocaleConfig = true"),
     )
+    assertTrue(
+      "Language splitting must be disabled so translated resources remain in the base APK",
+      Regex("""bundle\s*\{[\s\S]*?language\s*\{[\s\S]*?enableSplit\s*=\s*false""")
+        .containsMatchIn(buildFile),
+    )
     val localeMetadata = File(projectRoot, "app/src/main/res/resources.properties").readText()
     assertTrue(
       "The unqualified source strings use Play's generic English source language",

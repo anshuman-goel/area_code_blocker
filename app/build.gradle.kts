@@ -16,10 +16,18 @@ android {
     // Android 16 QPR2 (36.1) is a compile SDK extension; targetSdk remains API 36.
     //noinspection OldTargetApi
     targetSdk = 36
-    versionCode = 11
-    versionName = "1.0.10"
+    versionCode = 12
+    versionName = "1.0.11"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+  }
+
+  // Keep all language resources in the base APK so Play automatic translation
+  // can process and deliver them without language configuration APKs.
+  bundle {
+    language {
+      enableSplit = false
+    }
   }
 
   signingConfigs {
