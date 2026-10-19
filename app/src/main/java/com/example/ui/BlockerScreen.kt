@@ -59,7 +59,6 @@ import com.example.ui.components.*
 import com.example.viewmodel.BlockerViewModel
 import androidx.compose.ui.graphics.vector.ImageVector
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun BlockerScreen(
     viewModel: BlockerViewModel,

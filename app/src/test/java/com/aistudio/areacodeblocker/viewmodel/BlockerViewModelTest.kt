@@ -70,6 +70,23 @@ class BlockerViewModelTest {
     }
 
     @Test
+    fun `SMS area code silencing is enabled by default`() {
+        assertTrue(viewModel.silenceSmsFromBlockedAreaCodes.value)
+    }
+
+    @Test
+    fun `SMS area code silencing preference persists`() {
+        viewModel.setSilenceSmsFromBlockedAreaCodes(enabled = false)
+
+        val recreated = BlockerViewModel(
+            ApplicationProvider.getApplicationContext(),
+            repository,
+        )
+
+        assertFalse(recreated.silenceSmsFromBlockedAreaCodes.value)
+    }
+
+    @Test
     fun `current terms are initially not accepted`() {
         assertFalse(viewModel.hasAcceptedCurrentTerms.value)
     }
@@ -124,13 +141,13 @@ class BlockerViewModelTest {
         val collectJob = launch(UnconfinedTestDispatcher()) {
             viewModel.blockedAreaCodes.collect {}
         }
-        
+
         viewModel.addAreaCode("512")
         advanceUntilIdle()
-        
+
         val blockedCodes = viewModel.blockedAreaCodes.value
-        assertTrue("Expected 512 to be in $blockedCodes", blockedCodes.any { it.areaCode == "512" })
-        
+        assertTrue("Expected 512 to be in $blockedCodes", blockedCodes.any { (areaCode) -> areaCode == "512" })
+
         collectJob.cancel()
     }
 

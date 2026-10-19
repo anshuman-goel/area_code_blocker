@@ -40,6 +40,7 @@ class SettingsScreenshotTest {
         val logDao = FakeLogDao()
         val repository = BlockerRepository(areaDao, logDao, keywordDao)
         val application = ApplicationProvider.getApplicationContext<Application>()
+        application.getSharedPreferences("blocker_prefs", 0).edit().clear().commit()
         return BlockerViewModel(application, repository)
     }
 
@@ -59,6 +60,26 @@ class SettingsScreenshotTest {
 
         // Capture the dialog specifically
         composeTestRule.onNodeWithTag("settings_dialog_surface", useUnmergedTree = true).captureRoboImage(filePath = "src/test/screenshots/settings_dialog.png")
+    }
+
+    @Test
+    fun settings_dialog_protection_section() {
+        val viewModel = createViewModel()
+
+        composeTestRule.setContent {
+            MyApplicationTheme {
+                SettingsDialog(
+                    show = true,
+                    onDismiss = {},
+                    viewModel = viewModel,
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithTag("settings_protection").performClick()
+        composeTestRule.onNodeWithText("SMS Notification Guard").assertExists()
+        composeTestRule.onNodeWithTag("settings_dialog_surface", useUnmergedTree = true)
+            .captureRoboImage(filePath = "src/test/screenshots/settings_dialog_protection.png")
     }
 
     @Test

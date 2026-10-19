@@ -1,6 +1,9 @@
 package com.example.service
 
 import android.app.Notification
+import android.app.Person
+import android.os.Build
+import android.os.Bundle
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
@@ -50,25 +53,31 @@ class SmsNotificationListenerService : NotificationListenerService() {
 
         val extras = sbn.notification?.extras ?: return
         
-        // Get sender title, checking multiple possible titles for deep compatibility with modern messaging styles
-        val senderTitle = (extras.getCharSequence(Notification.EXTRA_TITLE) ?: 
-                           extras.getCharSequence(Notification.EXTRA_CONVERSATION_TITLE) ?: 
-                           extras.getCharSequence(Notification.EXTRA_SUB_TEXT) ?: 
-                           "").toString().trim()
-                           
-        // Get message text, with multiple big-text and subtext fallback options
-        val messageText = (extras.getCharSequence(Notification.EXTRA_TEXT) ?: 
-                           extras.getCharSequence(Notification.EXTRA_BIG_TEXT) ?: 
-                           "").toString().trim()
+        val senderTitle = (extras.getCharSequence(Notification.EXTRA_TITLE)
+            ?: extras.getCharSequence(Notification.EXTRA_CONVERSATION_TITLE)
+            ?: extras.getCharSequence(Notification.EXTRA_SUB_TEXT)
+            ?: "").toString().trim()
 
-        if (senderTitle.isBlank()) return
+        val messageText = (extras.getCharSequence(Notification.EXTRA_TEXT)
+            ?: extras.getCharSequence(Notification.EXTRA_BIG_TEXT)
+            ?: "").toString().trim()
 
-        Log.d(TAG, "Intercepted message notification from $packageName. Sender: '$senderTitle', Content: '$messageText'")
+        val senderIdentifiers = buildList {
+            if (senderTitle.isNotBlank()) add(senderTitle)
+            messagingStyleSenders(extras).forEach(::add)
+        }.distinct()
 
-        // Check if the sender is a contact. If so, we never block them
-        val isInContacts = PhoneUtils.isSenderInContacts(applicationContext, senderTitle)
-        if (isInContacts) {
-            Log.d(TAG, "Sender '$senderTitle' is in contacts. Skipping block checks.")
+        if (senderIdentifiers.isEmpty()) return
+
+        Log.d(
+            TAG,
+            "Intercepted message notification from $packageName. " +
+                "Senders: $senderIdentifiers, Content: '$messageText'",
+        )
+
+        // Contacts are always allowed. MessagingStyle sender data is checked as well as the title.
+        if (senderIdentifiers.any { PhoneUtils.isSenderInContacts(applicationContext, it) }) {
+            Log.d(TAG, "A sender is in contacts. Skipping block checks.")
             return
         }
 
@@ -76,50 +85,61 @@ class SmsNotificationListenerService : NotificationListenerService() {
         val repository = app.repository
 
         CoroutineScope(Dispatchers.IO).launch {
-            val blockedCodes = repository.getBlockedAreaCodesList().map { it.areaCode }
-            val blockedKeywords = repository.getBlockedKeywordsList().map { it.keyword }
-
-            val areaCode = PhoneUtils.extractAreaCode(senderTitle)
-            
-            // Check keyword block (checks both the text body AND the sender title)
-            val matchedKeyword = blockedKeywords.firstOrNull { keyword ->
-                messageText.contains(keyword, ignoreCase = true) || 
-                senderTitle.contains(keyword, ignoreCase = true)
-            }
-            
-            // Check area code block (only relevant if senderTitle looks like a phone number)
-            val cleanTitle = PhoneUtils.cleanNumber(senderTitle)
-            val isAreaCodeBlocked = (cleanTitle.length >= 7) && blockedCodes.contains(areaCode)
-
-            if ((isAreaCodeBlocked) || (matchedKeyword != null)) {
-                val blockReason = if (matchedKeyword != null) {
-                    "Notification Filtered (Keyword: '$matchedKeyword')"
+            val areaCodeSilencingEnabled =
+                SmsFilterPreferences.isAreaCodeSilencingEnabled(applicationContext)
+            val match = SmsNotificationFilter.findMatch(
+                senderIdentifiers = senderIdentifiers,
+                messageText = messageText,
+                blockedAreaCodes = if (areaCodeSilencingEnabled) {
+                    repository.getBlockedAreaCodesList().map { it.areaCode }
                 } else {
-                    "Notification Filtered (Area Code: $areaCode)"
-                }
-                
-                Log.d(TAG, "Keyword/AreaCode match detected: blocking notification from '$senderTitle'. Reason: $blockReason")
+                    emptyList()
+                },
+                blockedKeywords = repository.getBlockedKeywordsList().map { it.keyword },
+            ) ?: return@launch
 
-                // 1. Cancel the system notification in real-time so it disappears from status-bar/lockscreen
-                try {
-                    cancelNotification(sbn.key)
-                    Log.d(TAG, "Successfully dismissed notification for key: ${sbn.key}")
-                } catch (e: Exception) {
-                    Log.e(TAG, "Error trying to cancel notification", e)
-                }
-
-                // 2. Insert into Blocked Logs so user can view blocked SMS in the main logs dashboard
-                repository.insertLog(
-                    BlockedLog(
-                        phoneNumber = senderTitle,
-                        areaCode = areaCode,
-                        messageBody = messageText,
-                        type = "SMS (Silenced)",
-                        senderName = blockReason,
-                    ),
-                )
+            val sender = senderIdentifiers.first()
+            val blockReason = if (match.keyword != null) {
+                "Notification Filtered (Keyword: '${match.keyword}')"
+            } else {
+                "Notification Filtered (Area Code: ${match.areaCode})"
             }
+
+            Log.d(TAG, "SMS match detected: silencing '$sender'. Reason: $blockReason")
+
+            try {
+                cancelNotification(sbn.key)
+                Log.d(TAG, "Successfully dismissed notification for key: ${sbn.key}")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error trying to cancel notification", e)
+            }
+
+            repository.insertLog(
+                BlockedLog(
+                    phoneNumber = sender,
+                    areaCode = match.areaCode,
+                    messageBody = messageText,
+                    type = "SMS (Silenced)",
+                    senderName = blockReason,
+                ),
+            )
         }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun messagingStyleSenders(extras: Bundle): List<String> {
+        return extras.getParcelableArray(Notification.EXTRA_MESSAGES)
+            .orEmpty()
+            .mapNotNull { it as? Bundle }
+            .mapNotNull { message ->
+                val sender = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    (message.getParcelable("sender_person") as? Person)?.name
+                        ?: message.getCharSequence("sender")
+                } else {
+                    message.getCharSequence("sender")
+                }
+                sender?.toString()?.trim()?.takeIf(String::isNotBlank)
+            }
     }
 
     override fun onNotificationRemoved(sbn: StatusBarNotification) {

@@ -1,6 +1,5 @@
 package com.example.ui
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -48,7 +47,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AppOnboardingScreen(
     isContactsGranted: Boolean,
@@ -72,9 +70,9 @@ fun AppOnboardingScreen(
     ).count { it }
 
     // Required permissions for the main button
-    val allRequiredGranted = isContactsGranted && 
-                            isCallScreeningGranted && 
-                            isNotificationListenerGranted
+    val allRequiredGranted = isContactsGranted &&
+        isCallScreeningGranted &&
+        isNotificationListenerGranted
 
     Box(
         modifier = Modifier
@@ -84,11 +82,11 @@ fun AppOnboardingScreen(
                     colors = listOf(
                         MaterialTheme.colorScheme.surface,
                         MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
-                    )
-                )
+                    ),
+                ),
             )
             .statusBarsPadding()
-            .navigationBarsPadding()
+            .navigationBarsPadding(),
     ) {
         Column(
             modifier = Modifier
@@ -96,7 +94,7 @@ fun AppOnboardingScreen(
                 .verticalScroll(scrollState)
                 .padding(horizontal = 20.dp, vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             // Header Section
             Spacer(modifier = Modifier.height(12.dp))
@@ -110,16 +108,16 @@ fun AppOnboardingScreen(
                         Brush.linearGradient(
                             colors = listOf(
                                 MaterialTheme.colorScheme.primary,
-                                MaterialTheme.colorScheme.primaryContainer
-                            )
-                        )
-                    )
+                                MaterialTheme.colorScheme.primaryContainer,
+                            ),
+                        ),
+                    ),
             ) {
                 Icon(
                     imageVector = Icons.Default.Lock,
                     contentDescription = "Shield Setup",
                     tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.size(44.dp)
+                    modifier = Modifier.size(44.dp),
                 )
             }
 
@@ -129,7 +127,7 @@ fun AppOnboardingScreen(
                 fontWeight = FontWeight.ExtraBold,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurface,
-                letterSpacing = (-0.5).sp
+                letterSpacing = (-0.5).sp,
             )
 
             Text(
@@ -137,7 +135,7 @@ fun AppOnboardingScreen(
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.85f),
-                modifier = Modifier.padding(horizontal = 8.dp)
+                modifier = Modifier.padding(horizontal = 8.dp),
             )
 
             // Progress Banner

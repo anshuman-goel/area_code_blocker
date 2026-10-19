@@ -35,7 +35,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -66,7 +65,6 @@ import com.example.ui.LegalLinks
 import com.example.util.PhoneUtils
 import com.example.viewmodel.BlockerViewModel
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SettingsGroup(
     title: String,
@@ -76,7 +74,7 @@ fun SettingsGroup(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp)
+            .padding(vertical = 4.dp),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -116,7 +114,7 @@ fun SettingsGroup(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SettingsDialog(
     show: Boolean,
@@ -261,12 +259,12 @@ fun SettingsDialog(
                         icon = Icons.Default.Notifications,
                     ) {
                         Text(
-                            text = "On newer system versions, the default system messaging client receives and stores message notifications. Our background Notification Guard intercepts in real-time, silences, and clears spam message alerts matching your rules.",
+                            text = "The Notification Guard silences SMS alerts that match your enabled rules. Saved contacts are always allowed. Area-code SMS silencing can be changed directly in Block by Region.",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
                         )
                         Spacer(modifier = Modifier.height(12.dp))
-                        
+
                         var isNotificationSettingAllowed by remember {
                             mutableStateOf(PhoneUtils.isNotificationServiceEnabled(context))
                         }

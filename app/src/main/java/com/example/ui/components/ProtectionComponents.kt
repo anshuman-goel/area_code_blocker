@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.entity.BlockedAreaCode
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun StatisticsGrid(
     callsCount: Int,

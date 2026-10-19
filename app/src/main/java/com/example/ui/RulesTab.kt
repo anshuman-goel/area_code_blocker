@@ -53,12 +53,17 @@ fun LazyListScope.rulesTab(
         // hoist selection indices to screen scope using the ViewModel
         val selectedCountryIndex = viewModel.selectedCountryIndex.collectAsStateWithLifecycle().value
         val selectedStateIndex = viewModel.selectedStateIndex.collectAsStateWithLifecycle().value
+        val silenceSmsFromBlockedAreaCodes =
+            viewModel.silenceSmsFromBlockedAreaCodes.collectAsStateWithLifecycle().value
 
         RegionalBlockCard(
             selectedCountryIndex = selectedCountryIndex,
             selectedStateIndex = selectedStateIndex,
             onSelectedCountryIndexChange = { viewModel.setSelectedCountryIndex(it) },
             onSelectedStateIndexChange = { viewModel.setSelectedStateIndex(it) },
+            silenceSmsFromBlockedAreaCodes = silenceSmsFromBlockedAreaCodes,
+            onSilenceSmsFromBlockedAreaCodesChange =
+                viewModel::setSilenceSmsFromBlockedAreaCodes,
             onBlockAreaCodes = { codes, label ->
                 viewModel.addAreaCodes(codes, label)
             }
