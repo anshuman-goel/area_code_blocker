@@ -130,7 +130,7 @@ class SmsNotificationListenerService : NotificationListenerService() {
     private fun messagingStyleSenders(extras: Bundle): List<String> {
         return extras.getParcelableArray(Notification.EXTRA_MESSAGES)
             .orEmpty()
-            .mapNotNull { it as? Bundle }
+            .filterIsInstance<Bundle>()
             .mapNotNull { message ->
                 val sender = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     (message.getParcelable("sender_person") as? Person)?.name
