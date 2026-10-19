@@ -3,9 +3,9 @@
 **Effective Date:** June 20, 2026  
 **Last Updated:** June 20, 2026  
 
-This Privacy Policy describes how the **Area Code Blocker** mobile application ("the App", "we", "us", "our") handles, processes, and protects your information. The App is designed to help you block unwanted phone calls, SMS messages, and notification alerts from specific area codes and keywords.
+This Privacy Policy describes how the **Area Code Blocker** mobile application (the **App**) handles, processes, and protects your information. The App is designed to help you block unwanted phone calls, SMS messages, and notification alerts from specific area codes and keywords.
 
-Your privacy is of paramount importance to us. **Area Code Blocker is built on a "Privacy-First" architecture.** This means that your call screening, contacts list, SMS contents, and blocking preferences are processed and stored **locally on your device**, and we do not transmit, upload, or sell your personal information to any third-party servers.
+Your privacy is important to us. **Area Code Blocker uses a privacy-first architecture.** Your call screening, contacts list, SMS contents, and blocking preferences are processed and stored **locally on your device**. We do not transmit, upload, or sell your personal information to third-party servers.
 
 ---
 
@@ -76,7 +76,7 @@ Because all data is stored entirely on your device, you have complete control ov
 
 ## 6. Children's Privacy
 
-The App is not directed to, or intended for, children under the age of 13. We do not knowingly collect or solicit personal information from children under 13, nor do we store any such data since all processing is restricted to your local device.
+The App is not directed to or intended for children under the age of 13. We do not knowingly collect or solicit personal information from children under 13. We also do not store such data because all processing is restricted to your local device.
 
 ---
 

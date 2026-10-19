@@ -35,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,6 +54,7 @@ fun RegionalBlockCard(
     onBlockAreaCodes: (List<String>, String) -> Unit,
 ) {
     val context = LocalContext.current
+    val resources = LocalResources.current
 
     val selectedCountry = AreaCodeData.countries.getOrElse(selectedCountryIndex) { AreaCodeData.countries[0] }
     val selectedState = selectedCountry.states.getOrNull(selectedStateIndex)
@@ -211,7 +213,7 @@ fun RegionalBlockCard(
                                 onBlockAreaCodes(state.areaCodes, "${selectedCountry.name} - ${state.name}")
                                 Toast.makeText(
                                     context,
-                                    context.resources.getQuantityString(
+                                    resources.getQuantityString(
                                         R.plurals.blocked_region_area_codes,
                                         state.areaCodes.size,
                                         state.areaCodes.size,
