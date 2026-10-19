@@ -76,7 +76,7 @@ class BlockerViewModelTest {
 
     @Test
     fun `SMS area code silencing preference persists`() {
-        viewModel.setSilenceSmsFromBlockedAreaCodes(false)
+        viewModel.setSilenceSmsFromBlockedAreaCodes(enabled = false)
 
         val recreated = BlockerViewModel(
             ApplicationProvider.getApplicationContext(),
@@ -141,13 +141,13 @@ class BlockerViewModelTest {
         val collectJob = launch(UnconfinedTestDispatcher()) {
             viewModel.blockedAreaCodes.collect {}
         }
-        
+
         viewModel.addAreaCode("512")
         advanceUntilIdle()
-        
+
         val blockedCodes = viewModel.blockedAreaCodes.value
-        assertTrue("Expected 512 to be in $blockedCodes", blockedCodes.any { it.areaCode == "512" })
-        
+        assertTrue("Expected 512 to be in $blockedCodes", blockedCodes.any { (areaCode) -> areaCode == "512" })
+
         collectJob.cancel()
     }
 
