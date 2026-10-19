@@ -40,6 +40,19 @@ object PhoneUtils {
     }
 
     /**
+     * Extracts an area code only when the value contains a complete NANP phone number.
+     * This avoids treating short codes, notification IDs, or arbitrary text as senders.
+     */
+    fun extractNanpAreaCodeOrNull(number: String): String? {
+        val digits = cleanNumber(number)
+        return when {
+            digits.length == 11 && digits.startsWith("1") -> digits.substring(1, 4)
+            digits.length == 10 -> digits.substring(0, 3)
+            else -> null
+        }
+    }
+
+    /**
      * Queries the system contacts to check if the given phone number exists.
      * Requires READ_CONTACTS permission.
      */

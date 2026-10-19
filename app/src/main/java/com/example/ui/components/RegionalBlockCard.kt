@@ -3,6 +3,7 @@ package com.example.ui.components
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -51,6 +52,7 @@ fun RegionalBlockCard(
     val selectedState = selectedCountry.states.getOrNull(selectedStateIndex)
     var countryExpanded by remember { mutableStateOf(value = false) }
     var stateExpanded by remember { mutableStateOf(value = false) }
+    val stateMenuScrollState = rememberScrollState()
 
     Box(modifier = Modifier.padding(horizontal = 16.dp)) {
         Card(
@@ -135,17 +137,26 @@ fun RegionalBlockCard(
                         DropdownMenu(
                             expanded = stateExpanded,
                             onDismissRequest = { stateExpanded = false },
-                            modifier = Modifier.fillMaxWidth(0.85f)
+                            modifier = Modifier.fillMaxWidth(0.85f),
+                            scrollState = stateMenuScrollState,
                         ) {
-                                                    selectedCountry.states.forEachIndexed { idx, state ->
-                                DropdownMenuItem(
-                                    text = { Text(state.name) },
-                                    onClick = {
-                                        onSelectedStateIndexChange(idx)
-                                        stateExpanded = false
-                                    }
-                                )
-                            }
+                            selectedCountry.states
+                                .withIndex()
+                                .sortedBy { it.value.name }
+                                .forEach { (originalIndex, state) ->
+                                    DropdownMenuItem(
+                                        text = { Text(state.name) },
+                                        onClick = {
+                                            onSelectedStateIndexChange(originalIndex)
+                                            stateExpanded = false
+                                        }
+                                    )
+                                }
+
+                            // DropdownMenu can align its final item with the bottom edge of
+                            // the popup, where it is obscured by the navigation/gesture area.
+                            // Extra scrollable space lets the final region move fully on-screen.
+                            Spacer(modifier = Modifier.height(48.dp))
                         }
                     }
 

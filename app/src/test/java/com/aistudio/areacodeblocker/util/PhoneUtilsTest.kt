@@ -41,6 +41,14 @@ class PhoneUtilsTest {
     }
 
     @Test
+    fun extractNanpAreaCodeOrNull_requiresCompletePhoneNumber() {
+        assertEquals("512", PhoneUtils.extractNanpAreaCodeOrNull("(512) 555-0199"))
+        assertEquals("512", PhoneUtils.extractNanpAreaCodeOrNull("+1 512 555 0199"))
+        assertEquals(null, PhoneUtils.extractNanpAreaCodeOrNull("51255"))
+        assertEquals(null, PhoneUtils.extractNanpAreaCodeOrNull("Message from Alice"))
+    }
+
+    @Test
     fun cleanNumber_removesFormatting() {
         assertEquals("15125550199", PhoneUtils.cleanNumber("+1 (512) 555-0199"))
         assertEquals("123", PhoneUtils.cleanNumber("abc 123 def"))
