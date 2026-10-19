@@ -1,11 +1,11 @@
-<resources>
-    <string name="app_name">Area Code Blocker</string>
-    <string name="notification_filter_service_name">Area Code Blocker Notification Filter</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name" translatable="false">Area Code Blocker</string>
+    <string name="notification_filter_service_name"><xliff:g id="app_name">Area Code Blocker</xliff:g> Notification Filter</string>
 
     <string name="shield_setup">Shield Setup</string>
     <string name="activate_spam_shield">Activate Spam Shield</string>
     <string name="onboarding_intro">To block spam phone calls and filter spoofed text notifications in real-time, please authorize the security options below.</string>
-    <string name="permission_progress">%1$d/4</string>
+    <string name="permission_progress"><xliff:g id="granted_permission_count" example="3">%1$d</xliff:g>/4</string>
     <string name="shield_configuration_ready">Shield Configuration Ready!</string>
     <string name="system_checkpoints">System Checkpoints</string>
     <string name="required_clearances_active">Required security clearances active. Press below to start guarding.</string>
@@ -39,11 +39,11 @@
     <string name="open_settings_menu">Open settings menu</string>
     <string name="protection_active">ACTIVE</string>
     <string name="shield_and_setup">Shield &amp; Setup</string>
-    <string name="logs_count">Logs (%1$d)</string>
-    <string name="notification_access_hint">Locate \'Area Code Blocker\' and toggle Access</string>
-    <string name="notification_access_search_hint">Search \'Notification Access\' in settings.</string>
+    <string name="logs_count">Logs (<xliff:g id="log_count" example="12">%1$d</xliff:g>)</string>
+    <string name="notification_access_hint">Locate \‘<xliff:g id="app_name">Area Code Blocker</xliff:g>\’ and toggle Access</string>
+    <string name="notification_access_search_hint">Search \‘Notification Access\’ in settings.</string>
     <string name="welcome_protection_active">Welcome! Protection Active.</string>
-    <string name="removed_item">Removed %1$s</string>
+    <string name="removed_item">Removed <xliff:g id="removed_item" example="512">%1$s</xliff:g></string>
 
     <string name="filtered_operations_log">Filtered Operations Log</string>
     <string name="clear_log">Clear Log</string>
@@ -56,24 +56,24 @@
     <string name="add_custom_area_code">Add Custom Area Code Prefix</string>
     <string name="area_code_example">e.g. 512, 212</string>
     <string name="add">Add</string>
-    <string name="added_item">Added %1$s</string>
+    <string name="added_item">Added <xliff:g id="area_code" example="512">%1$s</xliff:g></string>
     <string name="your_phone_number">Your Phone Number Link</string>
     <string name="your_phone_number_description">Optionally save your own number to quickly suggestions-block your own home area code.</string>
     <string name="my_number">My Number</string>
     <string name="auto_fill_phone">Auto Fill Phone</string>
-    <string name="block_area_code">Block %1$s</string>
-    <string name="blocked_your_area_code">Blocked your area code: %1$s</string>
+    <string name="block_area_code">Block <xliff:g id="area_code" example="512">%1$s</xliff:g></string>
+    <string name="blocked_your_area_code">Blocked your area code: <xliff:g id="area_code" example="512">%1$s</xliff:g></string>
     <string name="extract_from_phone_number">Extract from Phone Number</string>
     <string name="extract_phone_description">Input a phone number to extract its area code instantly to block calls/texts from that region.</string>
     <string name="enter_phone_number">Enter Phone Number</string>
     <string name="phone_number_example" translatable="false">+1 (512) 555-0199</string>
     <string name="extracted_area_code">Extracted Area Code</string>
     <string name="block">Block</string>
-    <string name="blocked_area_code">Blocked Area Code: %1$s</string>
+    <string name="blocked_area_code">Blocked Area Code: <xliff:g id="area_code" example="512">%1$s</xliff:g></string>
 
     <string name="calls_block_log">CALLS BLOCK LOG</string>
     <string name="texts_filtered">TEXTS FILTERED</string>
-    <string name="active_rules">%1$d Active</string>
+    <string name="active_rules"><xliff:g id="active_rule_count" example="4">%1$d</xliff:g> Active</string>
     <string name="active_screening">ACTIVE SCREENING</string>
     <string name="shield_offline">SHIELD OFFLINE</string>
     <string name="protection_status_active">Your device will screen calls and messages from blocked area codes, cross-checking contacts automatically.</string>
@@ -90,18 +90,18 @@
     <string name="country">Country</string>
     <string name="select_state">Select State</string>
     <string name="state_or_province">State / Province</string>
-    <string name="block_all_area_codes">Block All Area Codes in %1$s</string>
-    <string name="blocked_region_area_codes">Blocked %1$d area codes for %2$s</string>
-    <string name="includes_area_codes">Includes: %1$s</string>
+    <string name="block_all_area_codes">Block All Area Codes in <xliff:g id="region_name" example="Texas">%1$s</xliff:g></string>
+    <string name="blocked_region_area_codes">Blocked <xliff:g id="area_code_count" example="27">%1$d</xliff:g> area codes for <xliff:g id="region_name" example="Texas">%2$s</xliff:g></string>
+    <string name="includes_area_codes">Includes: <xliff:g id="area_codes" example="512, 737">%1$s</xliff:g></string>
     <string name="unsupported_country">This country does not follow the standard area code pattern supported by this app.</string>
 
     <string name="blocked_sms_keywords">Blocked SMS Keywords</string>
     <string name="blocked_sms_keywords_description">Add specific words or phrases. Any incoming text message containing any of these keywords from non-contacts will be filtered.</string>
     <string name="keyword_example">e.g. lottery, crypto, claim</string>
-    <string name="added_keyword">Added keyword: %1$s</string>
-    <string name="active_keywords">Active Keywords (%1$d)</string>
+    <string name="added_keyword">Added keyword: <xliff:g id="keyword" example="lottery">%1$s</xliff:g></string>
+    <string name="active_keywords">Active Keywords (<xliff:g id="keyword_count" example="3">%1$d</xliff:g>)</string>
     <string name="delete_keyword">Delete keyword</string>
-    <string name="removed_keyword">Removed keyword: %1$s</string>
+    <string name="removed_keyword">Removed keyword: <xliff:g id="keyword" example="lottery">%1$s</xliff:g></string>
     <string name="delete_log">Delete log</string>
 
     <string name="settings">Settings</string>
@@ -118,8 +118,8 @@
     <string name="system_access_status">System Access Status</string>
     <string name="granted_in_system_preferences">Granted in system preferences</string>
     <string name="awaiting_system_approval">Awaiting system approval</string>
-    <string name="notification_access_settings_hint">Locate \'Area Code Blocker\' and toggle Notification Access</string>
-    <string name="notification_settings_open_failed">Could not open settings automatically. Search \'Notification Access\' in device settings.</string>
+    <string name="notification_access_settings_hint">Locate \‘<xliff:g id="app_name">Area Code Blocker</xliff:g>\’ and toggle Notification Access</string>
+    <string name="notification_settings_open_failed">Could not open settings automatically. Search \‘Notification Access\’ in device settings.</string>
     <string name="authorized">Authorized</string>
     <string name="shield_active_guarding">Shield Active &amp; Guarding</string>
     <string name="shield_suspended">Shield Suspended</string>

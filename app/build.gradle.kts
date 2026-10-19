@@ -16,8 +16,8 @@ android {
     // Android 16 QPR2 (36.1) is a compile SDK extension; targetSdk remains API 36.
     //noinspection OldTargetApi
     targetSdk = 36
-    versionCode = 12
-    versionName = "1.0.11"
+    versionCode = 13
+    versionName = "1.0.12"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -41,6 +41,10 @@ android {
   }
 
   buildTypes {
+    debug {
+      // Generate en-XA/ar-XB resources so debug builds exercise localization expansion and RTL.
+      isPseudoLocalesEnabled = true
+    }
     release {
       isCrunchPngs = false
       // R8 shrinks, optimizes, and obfuscates release DEX code.

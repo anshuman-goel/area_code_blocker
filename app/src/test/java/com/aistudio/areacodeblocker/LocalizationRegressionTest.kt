@@ -2,8 +2,11 @@ package com.aistudio.areacodeblocker
 
 import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.w3c.dom.Element
+import org.w3c.dom.Node
 import org.junit.Test
 
 class LocalizationRegressionTest {
@@ -43,6 +46,57 @@ class LocalizationRegressionTest {
       "Play automatic translations must not be advertised as app-provided resources: $translatedDirectories",
       translatedDirectories.isEmpty(),
     )
+  }
+
+  @Test
+  fun `every translatable format argument is protected and structurally valid`() {
+    val stringsFile = File(projectRoot, "app/src/main/res/values/strings.xml")
+    val factory = DocumentBuilderFactory.newInstance().apply { isNamespaceAware = true }
+    val document = factory.newDocumentBuilder().parse(stringsFile)
+    val strings = document.getElementsByTagName("string")
+    val formatArgument = Regex("%(\\d+)\\$([a-zA-Z])")
+
+    for (index in 0 until strings.length) {
+      val string = strings.item(index) as Element
+      if (string.getAttribute("translatable") == "false") continue
+      val name = string.getAttribute("name")
+      val arguments = formatArgument.findAll(string.textContent).map { match ->
+        match.groupValues[1].toInt() to match.groupValues[2].lowercase()
+      }.toList()
+
+      val unprotected = (0 until string.childNodes.length).asSequence()
+        .map { childIndex -> string.childNodes.item(childIndex) }
+        .filter { child -> child.nodeType == Node.TEXT_NODE }
+        .flatMap { child -> formatArgument.findAll(child.nodeValue).asSequence() }
+        .map { match -> match.value }
+        .toList()
+      assertTrue("Raw format arguments in $name must be wrapped in xliff:g: $unprotected", unprotected.isEmpty())
+
+      val xliffArguments = string.getElementsByTagNameNS(
+        "urn:oasis:names:tc:xliff:document:1.2",
+        "g",
+      )
+      val protectedArguments = (0 until xliffArguments.length).flatMap { xliffIndex ->
+        val placeholder = xliffArguments.item(xliffIndex) as Element
+        assertTrue("xliff:g in $name needs a meaningful id", placeholder.getAttribute("id").isNotBlank())
+        formatArgument.findAll(placeholder.textContent).map { match ->
+          match.groupValues[1].toInt() to match.groupValues[2].lowercase()
+        }.toList()
+      }
+      assertEquals("Every format argument in $name must be protected exactly once", arguments, protectedArguments)
+
+      val typesByPosition = arguments.groupBy({ it.first }, { it.second })
+      typesByPosition.forEach { (position, types) ->
+        assertEquals("Format argument $position in $name has conflicting types", 1, types.distinct().size)
+      }
+      if (arguments.isNotEmpty()) {
+        assertEquals(
+          "Format argument positions in $name must be contiguous",
+          (1..arguments.maxOf { it.first }).toSet(),
+          arguments.map { it.first }.toSet(),
+        )
+      }
+    }
   }
 
   @Test
