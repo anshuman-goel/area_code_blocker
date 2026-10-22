@@ -94,9 +94,15 @@ class LocalizationRegressionTest {
           "xliff:g in $resourceLabel needs a meaningful id",
           placeholder.getAttribute("id").isNotBlank(),
         )
-        formatArgument.findAll(placeholder.textContent).map { match ->
+        val placeholderArguments = formatArgument.findAll(placeholder.textContent).toList()
+        assertEquals(
+          "xliff:g in $resourceLabel must protect exactly one printf argument, not literal text",
+          1,
+          placeholderArguments.size,
+        )
+        placeholderArguments.map { match ->
           match.groupValues[1].toInt() to match.groupValues[2].lowercase()
-        }.toList()
+        }
       }
       assertEquals(
         "Every format argument in $resourceLabel must be protected exactly once",
@@ -119,6 +125,28 @@ class LocalizationRegressionTest {
           arguments.map { it.first }.toSet(),
         )
       }
+    }
+  }
+
+  @Test
+  fun `translation source has no backslash escaped smart quotes`() {
+    val strings = File(projectRoot, "app/src/main/res/values/strings.xml").readText()
+    assertFalse("Smart opening quotes must not be backslash escaped", strings.contains("\\‘"))
+    assertFalse("Smart closing quotes must not be backslash escaped", strings.contains("\\’"))
+  }
+
+  @Test
+  fun `app name format strings supply the app name argument`() {
+    val productionKotlin = File(projectRoot, "app/src/main/java").walkTopDown()
+      .filter { it.extension == "kt" }
+      .joinToString("\n") { it.readText() }
+    listOf("notification_access_hint", "notification_access_settings_hint").forEach { name ->
+      assertTrue(
+        "$name must be formatted with app_name at its Compose call site",
+        Regex(
+          """stringResource\(\s*R\.string\.$name,\s*stringResource\(R\.string\.app_name\),?\s*\)""",
+        ).containsMatchIn(productionKotlin),
+      )
     }
   }
 

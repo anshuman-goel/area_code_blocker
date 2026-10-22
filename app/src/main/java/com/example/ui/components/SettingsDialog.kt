@@ -129,7 +129,10 @@ fun SettingsDialog(
         SettingsSection.PROTECTION to stringResource(R.string.protection),
         SettingsSection.ABOUT to stringResource(R.string.about),
     )
-    val notificationAccessHint = stringResource(R.string.notification_access_settings_hint)
+    val notificationAccessHint = stringResource(
+        R.string.notification_access_settings_hint,
+        stringResource(R.string.app_name),
+    )
     val notificationSettingsOpenFailed = stringResource(R.string.notification_settings_open_failed)
     val noWebBrowser = stringResource(R.string.no_web_browser)
     if (show) {
