@@ -56,8 +56,7 @@ object AreaCodeData {
             AreaCodeState("Washington", listOf("206", "253", "360", "425", "509", "564")),
             AreaCodeState("West Virginia", listOf("304", "681")),
             AreaCodeState("Wisconsin", listOf("262", "274", "353", "414", "534", "608", "715", "920")),
-            AreaCodeState("Wyoming", listOf("307")),
-            AreaCodeState("Federal Government", listOf("710"))
+            AreaCodeState("Wyoming", listOf("307"))
         )),
         AreaCodeCountry("Canada", listOf(
             AreaCodeState("Alberta", listOf("368", "403", "587", "780", "825")),
@@ -100,6 +99,7 @@ object AreaCodeData {
             AreaCodeState("Turks and Caicos", listOf("649"))
         )),
         AreaCodeCountry("Special / Non-Geographic", listOf(
+            AreaCodeState("Federal Government", listOf("710")),
             AreaCodeState("Toll-Free", listOf("800", "822", "833", "844", "855", "866", "877", "880", "881", "882", "883", "884", "885", "886", "887", "888", "889")),
             AreaCodeState("Personal Communications", listOf("500", "521", "522", "523", "524", "525", "526", "527", "528", "529", "532", "533", "535", "538", "542", "543", "544", "545", "547", "549", "566", "577", "588")),
             AreaCodeState("Premium & Others", listOf("700", "900"))
