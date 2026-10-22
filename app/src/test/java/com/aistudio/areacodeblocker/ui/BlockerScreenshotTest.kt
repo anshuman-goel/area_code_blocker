@@ -1,7 +1,9 @@
 package com.aistudio.areacodeblocker.ui
 
 import android.app.Application
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -25,6 +27,9 @@ import com.github.takahirom.roborazzi.RobolectricDeviceQualifiers
 import com.github.takahirom.roborazzi.captureRoboImage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import java.util.TimeZone
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -39,6 +44,19 @@ private const val TEST_TIMESTAMP = 1715000000000L // Fixed timestamp for screens
 class BlockerScreenshotTest {
 
     @get:Rule val composeTestRule = createComposeRule()
+
+    private lateinit var originalTimeZone: TimeZone
+
+    @Before
+    fun setDeterministicTimeZone() {
+        originalTimeZone = TimeZone.getDefault()
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
+    }
+
+    @After
+    fun restoreTimeZone() {
+        TimeZone.setDefault(originalTimeZone)
+    }
 
     private fun createViewModel(
         areaCodes: List<BlockedAreaCode> = emptyList(),
@@ -212,6 +230,7 @@ class BlockerScreenshotTest {
 
         // Switch to Logs tab and capture the logs UI
         composeTestRule.onNodeWithTag("logs_tab").performClick()
+        composeTestRule.onAllNodesWithText("May 06, 2024 - 12:53 PM").assertCountEquals(2)
         composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/blocker_logs.png")
     }
 

@@ -33,6 +33,17 @@ class AreaCodeDataTest {
     }
 
     @Test
+    fun `Federal Government is listed under Special Non-Geographic`() {
+        val unitedStates = AreaCodeData.countries.first { (name) -> name == "United States" }
+        assertFalse(unitedStates.states.any { (name) -> name == "Federal Government" })
+
+        val special = AreaCodeData.countries.first { (name) -> name == "Special / Non-Geographic" }
+        val federalGovernment = special.states.firstOrNull { (name) -> name == "Federal Government" }
+        assertNotNull(federalGovernment)
+        assertTrue(federalGovernment!!.areaCodes.contains("710"))
+    }
+
+    @Test
     fun `Other country is present and not supported`() {
         val other = AreaCodeData.countries.find { (name) -> name == "Other" }
         assertNotNull(other)

@@ -37,19 +37,6 @@ class RegionalBlockCardTest {
     }
 
     @Test
-    fun `United States menu selects Federal Government`() {
-        setUnitedStatesCard()
-
-        composeTestRule.onNodeWithText("Alabama").performClick()
-        composeTestRule.onNodeWithText("Federal Government")
-            .performScrollTo()
-            .assertIsDisplayed()
-            .performClick()
-
-        composeTestRule.onNodeWithText("Includes: 710").assertIsDisplayed()
-    }
-
-    @Test
     fun `United States menu scrolls to and selects Wyoming`() {
         setUnitedStatesCard()
 

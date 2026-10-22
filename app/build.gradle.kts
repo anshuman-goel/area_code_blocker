@@ -15,8 +15,8 @@ android {
     // Android 16 QPR2 (36.1) is a compile SDK extension; targetSdk remains API 36.
     //noinspection OldTargetApi
     targetSdk = 36
-    versionCode = 9
-    versionName = "1.0.8"
+    versionCode = 10
+    versionName = "1.0.9"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -57,6 +57,7 @@ android {
     }
   }
   compileOptions {
+    isCoreLibraryDesugaringEnabled = true
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
   }
@@ -71,6 +72,7 @@ tasks.withType<Test>().configureEach {
 }
 
 dependencies {
+  coreLibraryDesugaring(libs.desugarJdkLibs)
   implementation(platform(libs.androidx.compose.bom))
   implementation(libs.androidx.activity.compose)
   implementation(libs.androidx.compose.material.icons.core)
@@ -100,6 +102,8 @@ dependencies {
   testImplementation(libs.roborazzi)
   testImplementation(libs.roborazzi.compose)
   testImplementation(libs.roborazzi.junit.rule)
+  androidTestImplementation(platform(libs.androidx.compose.bom))
+  androidTestImplementation(libs.androidx.compose.ui.test.junit4)
   androidTestImplementation(libs.androidx.espresso.core)
   androidTestImplementation(libs.androidx.junit)
   androidTestImplementation(libs.androidx.runner)

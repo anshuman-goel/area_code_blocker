@@ -10,33 +10,80 @@ import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import com.example.R
 import com.example.data.entity.BlockedLog
-import java.text.SimpleDateFormat
-import java.util.*
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+
+private const val LOG_TIMESTAMP_PATTERN = "MMM dd, uuuu - hh:mm a"
+
+internal fun formatLogTimestamp(
+    timestamp: Long,
+    locale: Locale,
+    zoneId: ZoneId,
+): String = DateTimeFormatter.ofPattern(LOG_TIMESTAMP_PATTERN, locale)
+    .withZone(zoneId)
+    .format(Instant.ofEpochMilli(timestamp))
+
+@Composable
+private fun currentZoneId(): ZoneId {
+    val context = LocalContext.current
+    val configuration = LocalConfiguration.current
+    var timezoneChangeCount by remember { mutableIntStateOf(0) }
+
+    DisposableEffect(context) {
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                timezoneChangeCount++
+            }
+        }
+        ContextCompat.registerReceiver(
+            context,
+            receiver,
+            IntentFilter(Intent.ACTION_TIMEZONE_CHANGED),
+            ContextCompat.RECEIVER_NOT_EXPORTED,
+        )
+        onDispose { context.unregisterReceiver(receiver) }
+    }
+
+    return remember(configuration, timezoneChangeCount) { ZoneId.systemDefault() }
+}
 
 @Composable
 fun BlockedLogCard(
     log: BlockedLog,
     onDelete: () -> Unit
 ) {
-    val sdf = remember { 
-        SimpleDateFormat("MMM dd, yyyy - hh:mm a", Locale.US).apply {
-            timeZone = TimeZone.getTimeZone("UTC")
-        }
+    val configuration = LocalConfiguration.current
+    val locale = configuration.locales[0]
+    val zoneId = currentZoneId()
+    val timeStr = remember(log.timestamp, locale, zoneId) {
+        formatLogTimestamp(log.timestamp, locale, zoneId)
     }
-    val timeStr = remember(log.timestamp) { sdf.format(Date(log.timestamp)) }
 
     Card(
         modifier = Modifier
