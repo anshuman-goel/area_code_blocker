@@ -1,6 +1,6 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" translatable="false">Area Code Blocker</string>
-    <string name="notification_filter_service_name"><xliff:g id="app_name">Area Code Blocker</xliff:g> Notification Filter</string>
+    <string name="notification_filter_service_name" translatable="false">Area Code Blocker Notification Filter</string>
 
     <string name="shield_setup">Shield Setup</string>
     <string name="activate_spam_shield">Activate Spam Shield</string>
@@ -40,8 +40,8 @@
     <string name="protection_active">ACTIVE</string>
     <string name="shield_and_setup">Shield &amp; Setup</string>
     <string name="logs_count">Logs (<xliff:g id="log_count" example="12">%1$d</xliff:g>)</string>
-    <string name="notification_access_hint">Locate \‘<xliff:g id="app_name">Area Code Blocker</xliff:g>\’ and toggle Access</string>
-    <string name="notification_access_search_hint">Search \‘Notification Access\’ in settings.</string>
+    <string name="notification_access_hint">Locate <xliff:g id="app_name" example="Area Code Blocker">%1$s</xliff:g> and toggle Access</string>
+    <string name="notification_access_search_hint">Search for Notification Access in settings.</string>
     <string name="welcome_protection_active">Welcome! Protection Active.</string>
     <string name="removed_item">Removed <xliff:g id="removed_item" example="512">%1$s</xliff:g></string>
 
@@ -124,8 +124,8 @@
     <string name="system_access_status">System Access Status</string>
     <string name="granted_in_system_preferences">Granted in system preferences</string>
     <string name="awaiting_system_approval">Awaiting system approval</string>
-    <string name="notification_access_settings_hint">Locate \‘<xliff:g id="app_name">Area Code Blocker</xliff:g>\’ and toggle Notification Access</string>
-    <string name="notification_settings_open_failed">Could not open settings automatically. Search \‘Notification Access\’ in device settings.</string>
+    <string name="notification_access_settings_hint">Locate <xliff:g id="app_name" example="Area Code Blocker">%1$s</xliff:g> and toggle Notification Access</string>
+    <string name="notification_settings_open_failed">Could not open settings automatically. Search for Notification Access in device settings.</string>
     <string name="authorized">Authorized</string>
     <string name="shield_active_guarding">Shield Active &amp; Guarding</string>
     <string name="shield_suspended">Shield Suspended</string>

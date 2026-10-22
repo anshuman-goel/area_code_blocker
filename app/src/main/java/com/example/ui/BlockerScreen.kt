@@ -69,7 +69,10 @@ fun BlockerScreen(
     initNotificationListenerGranted: Boolean? = null,
 ) {
     val context = LocalContext.current
-    val notificationAccessHint = stringResource(R.string.notification_access_hint)
+    val notificationAccessHint = stringResource(
+        R.string.notification_access_hint,
+        stringResource(R.string.app_name),
+    )
     val notificationAccessSearchHint = stringResource(R.string.notification_access_search_hint)
     val welcomeProtectionActive = stringResource(R.string.welcome_protection_active)
     val removedItem = stringResource(R.string.removed_item)
