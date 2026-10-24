@@ -101,9 +101,9 @@ fun LegalAcceptanceScreen(onAccept: () -> Unit) {
             Spacer(Modifier.height(16.dp))
             Card(
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f),
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
                 ),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.25f)),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                 shape = RoundedCornerShape(16.dp),
             ) {
                 Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -111,12 +111,12 @@ fun LegalAcceptanceScreen(onAccept: () -> Unit) {
                         text = stringResource(R.string.privacy_summary_title),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Text(
                         text = stringResource(R.string.privacy_summary),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
