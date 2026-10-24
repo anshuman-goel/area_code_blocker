@@ -3,7 +3,10 @@ package com.example.data.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "blocked_logs")
+@Entity(
+    tableName = "blocked_logs",
+    indices = [androidx.room.Index(value = ["timestamp"])],
+)
 data class BlockedLog(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val phoneNumber: String,

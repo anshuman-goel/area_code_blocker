@@ -49,6 +49,8 @@
     <string name="clear_log">Clear Log</string>
     <string name="screening_log_clean">Screening Log Is Clean</string>
     <string name="screening_log_empty_description">Any calls or messages that match your restricted area codes and are not in your contacts will appear here.</string>
+    <string name="logs_load_error">Could not load the screening log.</string>
+    <string name="retry">Retry</string>
     <string name="call_screening_unavailable">Call Screening role is not available on this device.</string>
     <string name="successfully_detected">Successfully detected!</string>
     <string name="number_detection_failed">Could not auto-retrieve number.</string>

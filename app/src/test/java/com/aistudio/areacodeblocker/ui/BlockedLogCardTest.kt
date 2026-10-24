@@ -8,6 +8,8 @@ import com.example.data.entity.BlockedLog
 import com.example.ui.components.BlockedLogCard
 import com.example.ui.theme.MyApplicationTheme
 import java.time.Instant
+import java.time.ZoneId
+import java.util.Locale
 import java.util.TimeZone
 import org.junit.After
 import org.junit.Before
@@ -49,6 +51,8 @@ class BlockedLogCardTest {
                         type = "CALL",
                         senderName = null,
                     ),
+                    locale = Locale.US,
+                    zoneId = ZoneId.of("America/Los_Angeles"),
                     onDelete = {},
                 )
             }

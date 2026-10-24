@@ -1,6 +1,8 @@
 package com.aistudio.areacodeblocker.viewmodel
 
 import android.app.Application
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
 import androidx.test.core.app.ApplicationProvider
 import com.aistudio.areacodeblocker.BlockerTestRunner
 import com.example.data.dao.BlockedAreaCodeDao
@@ -255,20 +257,44 @@ class BlockerViewModelTest {
 
     class FakeLogDao : BlockedLogDao {
         private val list = mutableListOf<BlockedLog>()
-        private val flow = MutableStateFlow<List<BlockedLog>>(emptyList())
+        private val total = MutableStateFlow(0)
+        private val calls = MutableStateFlow(0)
+        private val sms = MutableStateFlow(0)
 
-        override fun getAllBlockedLogs(): Flow<List<BlockedLog>> = flow
+        override fun getBlockedLogsPagingSource(): PagingSource<Int, BlockedLog> =
+            ListPagingSource(list.sortedWith(compareByDescending<BlockedLog> { it.timestamp }.thenByDescending { it.id }))
+        override fun observeTotalCount(): Flow<Int> = total
+        override fun observeCallCount(): Flow<Int> = calls
+        override fun observeSmsCount(): Flow<Int> = sms
         override suspend fun insert(blockedLog: BlockedLog) {
             list.add(blockedLog)
-            flow.value = list.toList()
+            updateCounts()
         }
         override suspend fun deleteById(id: Int) {
             list.removeAll { it.id == id }
-            flow.value = list.toList()
+            updateCounts()
         }
         override suspend fun clearAll() {
             list.clear()
-            flow.value = list.toList()
+            updateCounts()
         }
+        private fun updateCounts() {
+            total.value = list.size
+            calls.value = list.count { it.type == "CALL" }
+            sms.value = list.count { it.type.startsWith("SMS") }
+        }
+    }
+
+    private class ListPagingSource(private val data: List<BlockedLog>) : PagingSource<Int, BlockedLog>() {
+        override suspend fun load(params: LoadParams<Int>): LoadResult<Int, BlockedLog> {
+            val start = params.key ?: 0
+            val end = minOf(start + params.loadSize, data.size)
+            return LoadResult.Page(
+                data = data.subList(start, end),
+                prevKey = if (start == 0) null else maxOf(0, start - params.loadSize),
+                nextKey = if (end == data.size) null else end,
+            )
+        }
+        override fun getRefreshKey(state: PagingState<Int, BlockedLog>): Int? = 0
     }
 }

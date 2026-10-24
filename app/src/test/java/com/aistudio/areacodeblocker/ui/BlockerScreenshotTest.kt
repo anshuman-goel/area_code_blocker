@@ -1,6 +1,8 @@
 package com.aistudio.areacodeblocker.ui
 
 import android.app.Application
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
@@ -337,11 +339,22 @@ class BlockerScreenshotTest {
         override suspend fun deleteByKeyword(keyword: String) {}
     }
 
-    class FakeLogDao(initial: List<BlockedLog>) : BlockedLogDao {
-        private val flow = MutableStateFlow(initial)
-        override fun getAllBlockedLogs(): Flow<List<BlockedLog>> = flow
+    class FakeLogDao(private val logs: List<BlockedLog>) : BlockedLogDao {
+        override fun getBlockedLogsPagingSource(): PagingSource<Int, BlockedLog> = ListPagingSource(logs)
+        override fun observeTotalCount(): Flow<Int> = MutableStateFlow(logs.size)
+        override fun observeCallCount(): Flow<Int> = MutableStateFlow(logs.count { it.type == "CALL" })
+        override fun observeSmsCount(): Flow<Int> = MutableStateFlow(logs.count { it.type.startsWith("SMS") })
         override suspend fun insert(blockedLog: BlockedLog) {}
         override suspend fun deleteById(id: Int) {}
         override suspend fun clearAll() {}
+    }
+
+    private class ListPagingSource(private val data: List<BlockedLog>) : PagingSource<Int, BlockedLog>() {
+        override suspend fun load(params: LoadParams<Int>): LoadResult<Int, BlockedLog> = LoadResult.Page(
+            data = data,
+            prevKey = null,
+            nextKey = null,
+        )
+        override fun getRefreshKey(state: PagingState<Int, BlockedLog>): Int? = null
     }
 }

@@ -48,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -55,6 +56,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.R
 import com.example.ui.components.*
 import com.example.viewmodel.BlockerViewModel
@@ -96,7 +98,10 @@ fun BlockerScreen(
 
     // UI Data States
     val blockedAreaCodes by viewModel.blockedAreaCodes.collectAsStateWithLifecycle()
-    val blockedLogs by viewModel.blockedLogs.collectAsStateWithLifecycle()
+    val blockedLogs = viewModel.blockedLogs.collectAsLazyPagingItems()
+    val totalLogCount by viewModel.totalLogCount.collectAsStateWithLifecycle()
+    val callLogCount by viewModel.callLogCount.collectAsStateWithLifecycle()
+    val smsLogCount by viewModel.smsLogCount.collectAsStateWithLifecycle()
     val userOwnNumber by viewModel.userOwnNumber.collectAsStateWithLifecycle()
     val hasAcceptedCurrentTerms by viewModel.hasAcceptedCurrentTerms.collectAsStateWithLifecycle()
 
@@ -108,6 +113,8 @@ fun BlockerScreen(
 
     var selectedTab by remember { mutableIntStateOf(0) }
     var showSettingsDialog by remember { mutableStateOf(value = false) }
+    val zoneId = rememberCurrentZoneId()
+    val locale = LocalConfiguration.current.locales[0]
     
     if (!hasAcceptedCurrentTerms) {
         LegalAcceptanceScreen(onAccept = viewModel::acceptCurrentTerms)
@@ -168,8 +175,8 @@ fun BlockerScreen(
 
                 item {
                     StatisticsGrid(
-                        callsCount = blockedLogs.count { it.type == "CALL" },
-                        textsCount = blockedLogs.count { it.type.startsWith("SMS") },
+                        callsCount = callLogCount,
+                        textsCount = smsLogCount,
                     )
                 }
 
@@ -177,7 +184,7 @@ fun BlockerScreen(
                     TabNavigation(
                         selectedTab = selectedTab,
                         onTabSelected = { selectedTab = it },
-                        logsCount = blockedLogs.size,
+                        logsCount = totalLogCount,
                     )
                 }
 
@@ -189,8 +196,17 @@ fun BlockerScreen(
                 } else {
                     logsTab(
                         blockedLogs = blockedLogs,
-                        onClearAll = { viewModel.clearAllLogs() },
-                        onDeleteLog = { viewModel.deleteLogById(it) },
+                        totalCount = totalLogCount,
+                        zoneId = zoneId,
+                        locale = locale,
+                        onClearAll = {
+                            viewModel.clearAllLogs()
+                            blockedLogs.refresh()
+                        },
+                        onDeleteLog = {
+                            viewModel.deleteLogById(it)
+                            blockedLogs.refresh()
+                        },
                     )
                 }
             }
