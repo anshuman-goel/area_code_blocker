@@ -30,10 +30,12 @@
     <string name="privacy_policy">Privacy Policy</string>
     <string name="terms_of_use">Terms of Use</string>
     <string name="before_you_continue">Before you continue</string>
-    <string name="review_call_blocking_notice">Please review this important call-blocking notice.</string>
+    <string name="review_call_blocking_notice">Please review this important call-blocking and privacy notice.</string>
+    <string name="privacy_summary_title">Privacy summary</string>
+    <string name="privacy_summary">Area Code Blocker processes contacts, caller details, message-notification content, rules, and blocked-event logs locally on your device. The developer does not transmit this information to developer-operated servers. Your operating system, app store, device manufacturer, mobile carrier, and related platform services may independently process diagnostics or usage information under their own policies.</string>
     <string name="important_call_blocking_notice">Important call-blocking notice</string>
     <string name="call_blocking_risk_notice">Area Code Blocker may fail to block unwanted calls and may block legitimate or important calls, including healthcare, financial, or emergency-related communications. Review your rules and blocked-call history regularly.</string>
-    <string name="legal_acknowledgment">I agree to the Terms of Use and acknowledge the call-blocking risks.</string>
+    <string name="legal_acknowledgment">I agree to the Terms of Use, acknowledge the call-blocking risks, and confirm that I reviewed the Privacy Policy.</string>
     <string name="agree_and_continue">AGREE AND CONTINUE</string>
 
     <string name="open_settings_menu">Open settings menu</string>

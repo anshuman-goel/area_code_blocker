@@ -1,5 +1,6 @@
 package com.aistudio.areacodeblocker.ui
 
+import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -65,9 +66,20 @@ class LegalAcceptanceScreenshotTest {
         }
 
         composeTestRule.onNodeWithText("Before you continue").assertExists()
+        composeTestRule.onNodeWithText("Privacy summary").assertExists()
         composeTestRule.onNodeWithText(
-            "I agree to the Terms of Use and acknowledge the call-blocking risks."
+            "Area Code Blocker processes contacts, caller details, message-notification content, " +
+                "rules, and blocked-event logs locally on your device. The developer does not " +
+                "transmit this information to developer-operated servers. Your operating system, " +
+                "app store, device manufacturer, mobile carrier, and related platform services " +
+                "may independently process diagnostics or usage information under their own policies."
         ).assertExists()
+        composeTestRule.onNodeWithText(
+            "I agree to the Terms of Use, acknowledge the call-blocking risks, and confirm that I " +
+                "reviewed the Privacy Policy."
+        ).assertExists()
+        composeTestRule.onNodeWithText("Privacy Policy").assertHasClickAction()
+        composeTestRule.onNodeWithText("Terms of Use").assertHasClickAction()
         composeTestRule.onNodeWithTag("legal_accept_button").assertIsNotEnabled()
         composeTestRule.onRoot().captureRoboImage(
             filePath = "src/test/screenshots/legal_acceptance_dark_unchecked.png"
