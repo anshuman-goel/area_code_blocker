@@ -25,6 +25,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.R
 import com.example.data.entity.BlockedAreaCode
+import com.example.data.entity.BlockedKeyword
+
+internal fun activeRuleCount(
+    blockedAreaCodes: List<BlockedAreaCode>,
+    blockedKeywords: List<BlockedKeyword>,
+): Int {
+    val regionalRules = blockedAreaCodes.mapNotNull { it.regionLabel }.distinct().size
+    val manualRules = blockedAreaCodes
+        .filter { it.regionLabel == null }
+        .distinctBy { it.areaCode }
+        .size
+    val keywordRules = blockedKeywords.distinctBy { it.keyword }.size
+    return regionalRules + manualRules + keywordRules
+}
 
 @Composable
 fun StatisticsGrid(
@@ -99,8 +113,10 @@ fun ProtectionStatusBanner(
     isContactsGranted: Boolean,
     isRoleGranted: Boolean,
     blockedAreaCodes: List<BlockedAreaCode>,
+    blockedKeywords: List<BlockedKeyword>,
     onRemoveAreaCode: (String) -> Unit,
     onRemoveRegion: (String) -> Unit,
+    onRemoveKeyword: (String) -> Unit,
     onRequestPermissions: () -> Unit,
     onRequestRole: () -> Unit,
 ) {
@@ -129,9 +145,7 @@ fun ProtectionStatusBanner(
             verticalArrangement = Arrangement.Center
         ) {
             // Dynamic Counter
-            val uniqueRegions = blockedAreaCodes.mapNotNull { it.regionLabel }.distinct().size
-            val manualCodes = blockedAreaCodes.filter { it.regionLabel == null }.size
-            val totalActiveRules = uniqueRegions + manualCodes
+            val totalActiveRules = activeRuleCount(blockedAreaCodes, blockedKeywords)
             
             Text(
                 text = pluralStringResource(R.plurals.active_rules, totalActiveRules, totalActiveRules),
@@ -220,63 +234,101 @@ fun ProtectionStatusBanner(
                 }
             }
 
-            if (blockedAreaCodes.isNotEmpty()) {
+            if (blockedAreaCodes.isNotEmpty() || blockedKeywords.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(20.dp))
-                
-                // Flow list of active area codes directly inside status hero
+
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
-                    verticalArrangement = Arrangement.Top
+                    verticalArrangement = Arrangement.Top,
                 ) {
-                    val grouped = blockedAreaCodes.groupBy { it.regionLabel ?: "manual_${it.areaCode}" }
-                    
-                    grouped.forEach { (_, codes) ->
+                    val groupedAreaCodes = blockedAreaCodes.groupBy {
+                        it.regionLabel ?: "manual_${it.areaCode}"
+                    }
+
+                    groupedAreaCodes.forEach { (_, codes) ->
                         val firstCode = codes.first()
                         val isRegional = firstCode.regionLabel != null
-                        
-                        Box(
-                            modifier = Modifier
-                                .padding(4.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
-                                .border(
-                                    width = 1.dp,
-                                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
-                                    shape = CircleShape
-                                )
-                                .padding(horizontal = 12.dp, vertical = 6.dp)
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(6.dp)
-                            ) {
-                                val displayText = if (isRegional) firstCode.regionLabel else firstCode.areaCode
-                                Text(
-                                    text = displayText,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Medium
-                                )
-                                Icon(
-                                    imageVector = Icons.Default.Close,
-                                    contentDescription = stringResource(R.string.delete_code),
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier
-                                        .size(14.dp)
-                                        .clickable {
-                                            if (isRegional) {
-                                                onRemoveRegion(firstCode.regionLabel)
-                                            } else {
-                                                onRemoveAreaCode(firstCode.areaCode)
-                                            }
-                                        }
-                                )
-                            }
-                        }
+                        val displayText = firstCode.regionLabel ?: firstCode.areaCode
+
+                        RuleChip(
+                            label = displayText,
+                            contentDescription = stringResource(R.string.delete_code),
+                            onRemove = {
+                                if (isRegional) {
+                                    onRemoveRegion(requireNotNull(firstCode.regionLabel))
+                                } else {
+                                    onRemoveAreaCode(firstCode.areaCode)
+                                }
+                            },
+                        )
+                    }
+
+                    blockedKeywords.distinctBy { it.keyword }.forEach { blockedKeyword ->
+                        RuleChip(
+                            label = blockedKeyword.keyword,
+                            contentDescription = stringResource(
+                                R.string.delete_keyword_named,
+                                blockedKeyword.keyword,
+                            ),
+                            onRemove = { onRemoveKeyword(blockedKeyword.keyword) },
+                            isKeyword = true,
+                        )
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun RuleChip(
+    label: String,
+    contentDescription: String,
+    onRemove: () -> Unit,
+    isKeyword: Boolean = false,
+) {
+    val containerColor = if (isKeyword) {
+        MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.55f)
+    } else {
+        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+    }
+    val contentColor = if (isKeyword) {
+        MaterialTheme.colorScheme.onSecondaryContainer
+    } else {
+        MaterialTheme.colorScheme.primary
+    }
+
+    Box(
+        modifier = Modifier
+            .padding(4.dp)
+            .clip(CircleShape)
+            .background(containerColor)
+            .border(
+                width = 1.dp,
+                color = contentColor.copy(alpha = 0.25f),
+                shape = CircleShape,
+            )
+            .padding(horizontal = 12.dp, vertical = 6.dp),
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            Text(
+                text = label,
+                color = contentColor,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Medium,
+            )
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = contentDescription,
+                tint = contentColor,
+                modifier = Modifier
+                    .size(14.dp)
+                    .clickable(onClick = onRemove),
+            )
         }
     }
 }

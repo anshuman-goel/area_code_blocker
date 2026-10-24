@@ -78,6 +78,7 @@ fun BlockerScreen(
     val notificationAccessSearchHint = stringResource(R.string.notification_access_search_hint)
     val welcomeProtectionActive = stringResource(R.string.welcome_protection_active)
     val removedItem = stringResource(R.string.removed_item)
+    val removedKeyword = stringResource(R.string.removed_keyword)
     val permissionState = rememberPermissionState(
         initContacts = initContactsGranted,
         initPhone = initPhoneNumbersGranted,
@@ -98,6 +99,7 @@ fun BlockerScreen(
 
     // UI Data States
     val blockedAreaCodes by viewModel.blockedAreaCodes.collectAsStateWithLifecycle()
+    val blockedKeywords by viewModel.blockedKeywords.collectAsStateWithLifecycle()
     val blockedLogs = viewModel.blockedLogs.collectAsLazyPagingItems()
     val totalLogCount by viewModel.totalLogCount.collectAsStateWithLifecycle()
     val callLogCount by viewModel.callLogCount.collectAsStateWithLifecycle()
@@ -160,6 +162,7 @@ fun BlockerScreen(
                         isContactsGranted = permissionState.isContactsGranted,
                         isRoleGranted = permissionState.isRoleGranted,
                         blockedAreaCodes = blockedAreaCodes,
+                        blockedKeywords = blockedKeywords,
                         onRemoveAreaCode = { area ->
                             viewModel.removeAreaCode(area)
                             Toast.makeText(context, removedItem.format(area), Toast.LENGTH_SHORT).show()
@@ -167,6 +170,14 @@ fun BlockerScreen(
                         onRemoveRegion = { label ->
                             viewModel.removeAreaCodesByRegion(label)
                             Toast.makeText(context, removedItem.format(label), Toast.LENGTH_SHORT).show()
+                        },
+                        onRemoveKeyword = { keyword ->
+                            viewModel.removeKeyword(keyword)
+                            Toast.makeText(
+                                context,
+                                removedKeyword.format(keyword),
+                                Toast.LENGTH_SHORT,
+                            ).show()
                         },
                         onRequestPermissions = { permissionState.requestContacts() },
                         onRequestRole = { permissionState.requestRole() },
