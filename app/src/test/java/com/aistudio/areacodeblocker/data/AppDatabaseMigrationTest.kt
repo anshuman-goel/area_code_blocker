@@ -19,7 +19,7 @@ import org.robolectric.annotation.Config
 class AppDatabaseMigrationTest {
 
     private val context = ApplicationProvider.getApplicationContext<Context>()
-    private val databaseName = "migration-2-3-test"
+    private val databaseName = "app-database-migration-test"
 
     @Before
     fun setUp() {
@@ -69,7 +69,7 @@ class AppDatabaseMigrationTest {
         }
 
         val database = Room.databaseBuilder(context, AppDatabase::class.java, databaseName)
-            .addMigrations(AppDatabase.MIGRATION_2_3)
+            .addMigrations(AppDatabase.MIGRATION_2_3, AppDatabase.MIGRATION_3_4)
             .allowMainThreadQueries()
             .build()
         try {
@@ -87,6 +87,52 @@ class AppDatabaseMigrationTest {
             sqliteDatabase.query("SELECT keyword FROM blocked_keywords").use { cursor ->
                 cursor.moveToFirst()
                 assertEquals("lottery", cursor.getString(0))
+            }
+        } finally {
+            database.close()
+        }
+    }
+
+    @Test
+    fun `migration 3 to 4 preserves logs and creates timestamp index`() {
+        val configuration = androidx.sqlite.db.SupportSQLiteOpenHelper.Configuration.builder(context)
+            .name(databaseName)
+            .callback(
+                object : androidx.sqlite.db.SupportSQLiteOpenHelper.Callback(3) {
+                    override fun onCreate(db: androidx.sqlite.db.SupportSQLiteDatabase) {
+                        db.execSQL("CREATE TABLE IF NOT EXISTS `blocked_area_codes` (`areaCode` TEXT NOT NULL, `dateAdded` INTEGER NOT NULL, `regionLabel` TEXT, PRIMARY KEY(`areaCode`))")
+                        db.execSQL("CREATE TABLE IF NOT EXISTS `blocked_logs` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `phoneNumber` TEXT NOT NULL, `areaCode` TEXT NOT NULL, `messageBody` TEXT, `timestamp` INTEGER NOT NULL, `type` TEXT NOT NULL, `senderName` TEXT)")
+                        db.execSQL("CREATE TABLE IF NOT EXISTS `blocked_keywords` (`keyword` TEXT NOT NULL, `dateAdded` INTEGER NOT NULL, PRIMARY KEY(`keyword`))")
+                    }
+                    override fun onUpgrade(db: androidx.sqlite.db.SupportSQLiteDatabase, oldVersion: Int, newVersion: Int) = Unit
+                },
+            )
+            .build()
+
+        FrameworkSQLiteOpenHelperFactory().create(configuration).use { helper ->
+            helper.writableDatabase.execSQL(
+                "INSERT INTO blocked_logs(id, phoneNumber, areaCode, messageBody, timestamp, type, senderName) VALUES (7, '+15125550199', '512', NULL, 200, 'CALL', 'Unknown')",
+            )
+        }
+
+        val database = Room.databaseBuilder(context, AppDatabase::class.java, databaseName)
+            .addMigrations(AppDatabase.MIGRATION_3_4)
+            .allowMainThreadQueries()
+            .build()
+        try {
+            val sqliteDatabase = database.openHelper.writableDatabase
+            sqliteDatabase.query("SELECT id, phoneNumber FROM blocked_logs").use { cursor ->
+                cursor.moveToFirst()
+                assertEquals(7, cursor.getInt(0))
+                assertEquals("+15125550199", cursor.getString(1))
+            }
+            sqliteDatabase.query("PRAGMA index_list(`blocked_logs`)").use { cursor ->
+                val nameColumn = cursor.getColumnIndexOrThrow("name")
+                var found = false
+                while (cursor.moveToNext()) {
+                    if (cursor.getString(nameColumn) == "index_blocked_logs_timestamp") found = true
+                }
+                assertEquals(true, found)
             }
         } finally {
             database.close()

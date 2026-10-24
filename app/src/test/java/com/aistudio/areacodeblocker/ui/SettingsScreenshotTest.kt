@@ -1,6 +1,8 @@
 package com.aistudio.areacodeblocker.ui
 
 import android.app.Application
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -146,7 +148,15 @@ class SettingsScreenshotTest {
     }
 
     class FakeLogDao : BlockedLogDao {
-        override fun getAllBlockedLogs(): Flow<List<BlockedLog>> = MutableStateFlow(emptyList())
+        override fun getBlockedLogsPagingSource(): PagingSource<Int, BlockedLog> =
+            object : PagingSource<Int, BlockedLog>() {
+                override suspend fun load(params: LoadParams<Int>): LoadResult<Int, BlockedLog> =
+                    LoadResult.Page(emptyList(), null, null)
+                override fun getRefreshKey(state: PagingState<Int, BlockedLog>): Int? = null
+            }
+        override fun observeTotalCount(): Flow<Int> = MutableStateFlow(0)
+        override fun observeCallCount(): Flow<Int> = MutableStateFlow(0)
+        override fun observeSmsCount(): Flow<Int> = MutableStateFlow(0)
         override suspend fun insert(blockedLog: BlockedLog) {}
         override suspend fun deleteById(id: Int) {}
         override suspend fun clearAll() {}

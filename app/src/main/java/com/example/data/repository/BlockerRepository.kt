@@ -1,5 +1,8 @@
 package com.example.data.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.example.data.dao.BlockedAreaCodeDao
 import com.example.data.dao.BlockedLogDao
 import com.example.data.dao.BlockedKeywordDao
@@ -14,16 +17,24 @@ class BlockerRepository(
     private val blockedKeywordDao: BlockedKeywordDao,
 ) {
     val allBlockedAreaCodes: Flow<List<BlockedAreaCode>> = blockedAreaCodeDao.getAllBlockedAreaCodes()
-    val allBlockedLogs: Flow<List<BlockedLog>> = blockedLogDao.getAllBlockedLogs()
+    val blockedLogs: Flow<PagingData<BlockedLog>> = Pager(
+        config = PagingConfig(
+            pageSize = LOG_PAGE_SIZE,
+            prefetchDistance = LOG_PREFETCH_DISTANCE,
+            enablePlaceholders = false,
+        ),
+        pagingSourceFactory = blockedLogDao::getBlockedLogsPagingSource,
+    ).flow
+    val totalLogCount: Flow<Int> = blockedLogDao.observeTotalCount()
+    val callLogCount: Flow<Int> = blockedLogDao.observeCallCount()
+    val smsLogCount: Flow<Int> = blockedLogDao.observeSmsCount()
     val allBlockedKeywords: Flow<List<BlockedKeyword>> = blockedKeywordDao.getAllBlockedKeywords()
 
-    suspend fun getBlockedAreaCodesList(): List<BlockedAreaCode> {
-        return blockedAreaCodeDao.getAllBlockedAreaCodesList()
-    }
+    suspend fun getBlockedAreaCodesList(): List<BlockedAreaCode> =
+        blockedAreaCodeDao.getAllBlockedAreaCodesList()
 
-    suspend fun getBlockedKeywordsList(): List<BlockedKeyword> {
-        return blockedKeywordDao.getAllBlockedKeywordsList()
-    }
+    suspend fun getBlockedKeywordsList(): List<BlockedKeyword> =
+        blockedKeywordDao.getAllBlockedKeywordsList()
 
     suspend fun insertAreaCode(areaCode: String, regionLabel: String? = null) {
         val cleanCode = areaCode.trim().filter { it.isDigit() }
@@ -61,5 +72,10 @@ class BlockerRepository(
 
     suspend fun clearLogs() {
         blockedLogDao.clearAll()
+    }
+
+    private companion object {
+        const val LOG_PAGE_SIZE = 30
+        const val LOG_PREFETCH_DISTANCE = 10
     }
 }

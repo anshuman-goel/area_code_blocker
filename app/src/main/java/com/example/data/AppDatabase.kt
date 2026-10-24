@@ -13,7 +13,7 @@ import com.example.data.entity.BlockedAreaCode
 import com.example.data.entity.BlockedLog
 import com.example.data.entity.BlockedKeyword
 
-@Database(entities = [BlockedAreaCode::class, BlockedLog::class, BlockedKeyword::class], version = 3, exportSchema = false)
+@Database(entities = [BlockedAreaCode::class, BlockedLog::class, BlockedKeyword::class], version = 4, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun blockedAreaCodeDao(): BlockedAreaCodeDao
     abstract fun blockedLogDao(): BlockedLogDao
@@ -28,6 +28,14 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_blocked_logs_timestamp` ON `blocked_logs` (`timestamp`)"
+                )
+            }
+        }
+
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
@@ -38,7 +46,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "blocked_calls_database",
                 )
-                    .addMigrations(MIGRATION_2_3)
+                    .addMigrations(MIGRATION_2_3, MIGRATION_3_4)
                     .build()
                 INSTANCE = instance
                 instance

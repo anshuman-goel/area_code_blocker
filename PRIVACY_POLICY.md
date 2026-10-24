@@ -1,7 +1,7 @@
 # Privacy Policy for Area Code Blocker
 
 **Effective Date:** June 20, 2026  
-**Last Updated:** June 20, 2026  
+**Last Updated:** October 24, 2026  
 
 This Privacy Policy describes how the **Area Code Blocker** mobile application (the **App**) handles, processes, and protects your information. The App is designed to help you block unwanted phone calls, SMS messages, and notification alerts from specific area codes and keywords.
 
@@ -17,9 +17,9 @@ To perform its core functions of call blocking, SMS screening, and notification 
 * **Purpose:** The App reads your contact list to ensure that calls, SMS messages, and notifications from your saved contacts are **never blocked or silenced**, even if they match a blocked area code or keyword.
 * **Data Handling:** This check is performed entirely offline, on-device. Your contacts are never uploaded, shared, or sent to any external server.
 
-### B. SMS Reception and Blocking (`android.permission.RECEIVE_SMS`)
-* **Purpose:** The App intercepts incoming SMS messages to screen them against your user-defined blocked area codes and blocked keywords.
-* **Data Handling:** If an incoming message matches your blocking criteria, the App silences the message and logs the event locally so you can view it in the App's "Blocked Logs" dashboard. Your SMS text contents and sender information remain securely on your device and are never sent to external servers.
+### B. SMS Notification Screening (`android.permission.BIND_NOTIFICATION_LISTENER_SERVICE`)
+* **Purpose:** The App screens notifications posted by messaging applications against your user-defined blocked area codes and blocked keywords. The App does not request permission to receive or read SMS messages directly.
+* **Data Handling:** If a messaging notification matches your blocking criteria, the App dismisses the notification and may log the event locally so you can view it in the App's "Blocked Logs" dashboard. Relevant notification text and sender information remain on your device and are never sent to external servers.
 
 ### C. Phone State and Numbers (`android.permission.READ_PHONE_STATE`, `android.permission.READ_PHONE_NUMBERS`)
 * **Purpose:** These permissions are used to auto-detect your own phone number and area code during onboarding or configuration. This helps the App suggest your own area code so you do not accidentally block yourself.
@@ -31,7 +31,7 @@ To perform its core functions of call blocking, SMS screening, and notification 
 
 ### E. Notification Listener Service (`android.permission.BIND_NOTIFICATION_LISTENER_SERVICE`)
 * **Purpose:** The App uses a Notification Listener to screen incoming notification alerts from messaging applications (such as the default system SMS app). If a notification is triggered by a sender or text matching your blocked criteria, the App immediately dismisses/silences the notification to prevent unwanted alerts.
-* **Data Handling:** The App inspects notification titles and body text in real-time on your device to execute the dismiss action. No notification content is read, stored permanently, or transmitted to any third party.
+* **Data Handling:** The App inspects notification titles and body text in real-time on your device to execute the dismiss action. Matching notification content may be stored in the local blocked-events log but is not transmitted to any third party by the App.
 
 ---
 
@@ -43,25 +43,24 @@ All application settings, including:
 * Local logs of blocked calls and SMS messages,
 * Your configured preferences (e.g., app theme, own phone number),
 
-are stored strictly in a secure **local SQLite database (Room DB)** and local private preferences on your Android device. 
+are stored strictly in a secure **local SQLite database (Room DB)** and local private preferences on your Android device.
 
 * **Android Sandbox:** Your data is protected by Android’s application sandbox, which prevents other apps on your device from accessing Area Code Blocker's database.
 * **No Server Storage:** We do not host, operate, or maintain any databases or servers that collect or store your personal blocking configurations, call logs, or SMS details.
 
 ---
 
-## 3. Third-Party Services and AI APIs
+## 3. Independent Platform Processing
 
-The App includes optional advanced integrations, such as the Google Gemini AI API, to assist with features like spam classification or smart filtering.
-* **API Access:** If you configure the App to use Gemini AI API calls, requests are made directly from your device to the Google Gemini API using the API key you provide.
-* **Data Scope:** Only the specific, user-initiated text content required for the AI query is sent. No personal identifier data, contacts lists, or unblocked call history is ever sent to the API.
-* **Google Privacy Policy:** Interactions with the Gemini API are governed by Google's Privacy Policy. We recommend reviewing their terms regarding data usage.
+Your device’s operating system, app store, device manufacturer, mobile carrier, and related platform services—including Google services where applicable—may independently process installation, security, diagnostics, crash, or usage information under their own terms and privacy policies.
+
+The developer does not control that independent processing. This statement does not mean that the App sends your contacts, caller details, message-notification content, rules, or blocked-event logs to those providers.
 
 ---
 
 ## 4. Data Sharing and Disclosure
 
-We do not sell, trade, rent, or lease any of your personal data. Because we do not collect or store your personal data on any external servers, it is physically impossible for us to share or disclose your data to third parties, law enforcement, or advertising agencies.
+We do not sell, trade, rent, or lease any of your personal data. The developer does not collect or store your personal data on developer-operated external servers and does not share it with advertising agencies.
 
 ---
 

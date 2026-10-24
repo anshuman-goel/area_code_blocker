@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 import com.example.data.entity.BlockedAreaCode
 import com.example.data.entity.BlockedLog
 import com.example.data.entity.BlockedKeyword
@@ -33,18 +34,24 @@ class BlockerViewModel(
             initialValue = emptyList(),
         )
 
-    val blockedLogs: StateFlow<List<BlockedLog>> = repository.allBlockedLogs
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList(),
-        )
+    val blockedLogs = repository.blockedLogs.cachedIn(viewModelScope)
+
+    val totalLogCount: StateFlow<Int> = repository.totalLogCount.asCountState()
+    val callLogCount: StateFlow<Int> = repository.callLogCount.asCountState()
+    val smsLogCount: StateFlow<Int> = repository.smsLogCount.asCountState()
 
     val blockedKeywords: StateFlow<List<BlockedKeyword>> = repository.allBlockedKeywords
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList(),
+        )
+
+    private fun kotlinx.coroutines.flow.Flow<Int>.asCountState(): StateFlow<Int> =
+        stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = 0,
         )
 
     private val _inputPhoneNumber = MutableStateFlow("")

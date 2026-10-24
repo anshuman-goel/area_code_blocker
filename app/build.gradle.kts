@@ -15,8 +15,8 @@ android {
     // Android 16 QPR2 (36.1) is a compile SDK extension; targetSdk remains API 36.
     //noinspection OldTargetApi
     targetSdk = 36
-    versionCode = 10
-    versionName = "1.0.9"
+    versionCode = 11
+    versionName = "1.0.10"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -84,7 +84,10 @@ dependencies {
   implementation(libs.androidx.lifecycle.runtime.compose)
   implementation(libs.androidx.lifecycle.runtime.ktx)
   implementation(libs.androidx.lifecycle.viewmodel.compose)
+  implementation(libs.androidx.paging.compose)
+  implementation(libs.androidx.paging.runtime)
   implementation(libs.androidx.room.ktx)
+  implementation(libs.androidx.room.paging)
   implementation(libs.androidx.room.runtime)
   implementation(libs.converter.moshi)
   implementation(libs.kotlinx.coroutines.android)
@@ -96,6 +99,7 @@ dependencies {
   testImplementation(libs.androidx.compose.ui.test.junit4)
   testImplementation(libs.androidx.core)
   testImplementation(libs.androidx.room.testing)
+  testImplementation(libs.androidx.paging.testing)
   testImplementation(libs.junit)
   testImplementation(libs.kotlinx.coroutines.test)
   testImplementation(libs.robolectric)
