@@ -17,7 +17,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -140,9 +142,12 @@ fun SettingsDialog(
             onDismissRequest = onDismiss,
             properties = DialogProperties(
                 usePlatformDefaultWidth = false,
+                decorFitsSystemWindows = false,
             ),
             modifier = Modifier
                 .fillMaxWidth(0.92f)
+                .safeDrawingPadding()
+                .imePadding()
                 .wrapContentHeight()
                 .testTag("settings_dialog_surface"),
             shape = RoundedCornerShape(28.dp),

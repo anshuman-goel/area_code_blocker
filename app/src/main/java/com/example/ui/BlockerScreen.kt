@@ -7,13 +7,13 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -140,13 +140,13 @@ fun BlockerScreen(
         ) { innerPadding ->
             LazyColumn(
                 modifier = Modifier
-                    .padding(innerPadding)
                     .fillMaxSize()
+                    .consumeWindowInsets(innerPadding)
                     .imePadding()
                     .background(MaterialTheme.colorScheme.background)
                     .testTag("main_lazy_column"),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(bottom = 80.dp),
+                contentPadding = innerPadding,
             ) {
                 item {
                     ProtectionStatusBanner(
@@ -193,6 +193,8 @@ fun BlockerScreen(
                         onDeleteLog = { viewModel.deleteLogById(it) },
                     )
                 }
+
+                item { Spacer(modifier = Modifier.height(80.dp)) }
             }
         }
     }
