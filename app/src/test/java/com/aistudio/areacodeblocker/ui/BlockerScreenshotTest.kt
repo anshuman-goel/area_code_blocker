@@ -1,21 +1,30 @@
 package com.aistudio.areacodeblocker.ui
 
 import android.app.Application
-import androidx.paging.PagingSource
-import androidx.paging.PagingState
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
-import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.unit.dp
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
 
 import androidx.test.core.app.ApplicationProvider
 import com.aistudio.areacodeblocker.BlockerTestRunner
 import com.example.ui.BlockerHomeScreen
+import com.example.ui.rulesTab
 import com.example.data.dao.BlockedAreaCodeDao
 import com.example.data.dao.BlockedKeywordDao
 import com.example.data.dao.BlockedLogDao
@@ -137,6 +146,38 @@ class BlockerScreenshotTest {
         composeTestRule.onNodeWithContentDescription("Open settings menu").performClick()
         composeTestRule.onNodeWithTag("settings_dialog_surface", useUnmergedTree = true).assertExists()
         composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/blocker_settings_menu.png")
+    }
+
+    @Test
+    fun rules_cards_are_in_requested_vertical_order() {
+        val viewModel = createViewModel()
+        val headings = listOf(
+            "Block by Region",
+            "Your Phone Number Link",
+            "Blocked SMS Keywords",
+            "Add Custom Area Code Prefix",
+            "Extract from Phone Number",
+        )
+        composeTestRule.setContent {
+            MyApplicationTheme {
+                LazyColumn(
+                    modifier = Modifier
+                        .height(250.dp)
+                        .testTag("rules_order_list"),
+                ) {
+                    rulesTab(
+                        viewModel = viewModel,
+                        onTriggerPhonePermission = {},
+                    )
+                }
+            }
+        }
+
+        headings.forEachIndexed { expectedIndex, heading ->
+            composeTestRule.onNodeWithTag("rules_order_list")
+                .performScrollToIndex(expectedIndex)
+            composeTestRule.onNodeWithText(heading).assertIsDisplayed()
+        }
     }
 
     @Test

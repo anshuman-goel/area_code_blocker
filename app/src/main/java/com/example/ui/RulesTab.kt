@@ -15,13 +15,24 @@ fun LazyListScope.rulesTab(
     onTriggerPhonePermission: () -> Unit,
 ) {
     item {
-        val inputPhone by viewModel.inputPhoneNumber.collectAsStateWithLifecycle()
-        val extractedAreaCode by viewModel.extractedAreaCode.collectAsStateWithLifecycle()
-        PhoneExtractionCard(
-            inputPhone = inputPhone,
-            extractedAreaCode = extractedAreaCode,
-            onValueChange = { viewModel.updateInputPhoneNumber(it) },
-        ) { viewModel.addAreaCode(it) }
+        // hoist selection indices to screen scope using the ViewModel
+        val selectedCountryIndex = viewModel.selectedCountryIndex.collectAsStateWithLifecycle().value
+        val selectedStateIndex = viewModel.selectedStateIndex.collectAsStateWithLifecycle().value
+        val silenceSmsFromBlockedAreaCodes =
+            viewModel.silenceSmsFromBlockedAreaCodes.collectAsStateWithLifecycle().value
+
+        RegionalBlockCard(
+            selectedCountryIndex = selectedCountryIndex,
+            selectedStateIndex = selectedStateIndex,
+            onSelectedCountryIndexChange = { viewModel.setSelectedCountryIndex(it) },
+            onSelectedStateIndexChange = { viewModel.setSelectedStateIndex(it) },
+            silenceSmsFromBlockedAreaCodes = silenceSmsFromBlockedAreaCodes,
+            onSilenceSmsFromBlockedAreaCodesChange =
+                viewModel::setSilenceSmsFromBlockedAreaCodes,
+            onBlockAreaCodes = { codes, label ->
+                viewModel.addAreaCodes(codes, label)
+            }
+        )
     }
 
     item {
@@ -30,7 +41,7 @@ fun LazyListScope.rulesTab(
         val numberDetectionFailed = stringResource(R.string.number_detection_failed)
         val userOwnNumber by viewModel.userOwnNumber.collectAsStateWithLifecycle()
         val blockedAreaCodes by viewModel.blockedAreaCodes.collectAsStateWithLifecycle()
-        
+
         OwnNumberCard(
             userOwnNumber = userOwnNumber,
             onValueChange = { viewModel.setUserOwnNumber(it) },
@@ -54,23 +65,11 @@ fun LazyListScope.rulesTab(
     }
 
     item {
-        // hoist selection indices to screen scope using the ViewModel
-        val selectedCountryIndex = viewModel.selectedCountryIndex.collectAsStateWithLifecycle().value
-        val selectedStateIndex = viewModel.selectedStateIndex.collectAsStateWithLifecycle().value
-        val silenceSmsFromBlockedAreaCodes =
-            viewModel.silenceSmsFromBlockedAreaCodes.collectAsStateWithLifecycle().value
-
-        RegionalBlockCard(
-            selectedCountryIndex = selectedCountryIndex,
-            selectedStateIndex = selectedStateIndex,
-            onSelectedCountryIndexChange = { viewModel.setSelectedCountryIndex(it) },
-            onSelectedStateIndexChange = { viewModel.setSelectedStateIndex(it) },
-            silenceSmsFromBlockedAreaCodes = silenceSmsFromBlockedAreaCodes,
-            onSilenceSmsFromBlockedAreaCodesChange =
-                viewModel::setSilenceSmsFromBlockedAreaCodes,
-            onBlockAreaCodes = { codes, label ->
-                viewModel.addAreaCodes(codes, label)
-            }
+        val blockedKeywords by viewModel.blockedKeywords.collectAsStateWithLifecycle()
+        SmsKeywordCard(
+            blockedKeywords = blockedKeywords,
+            onAddKeyword = { viewModel.addKeyword(it) },
+            onRemoveKeyword = { viewModel.removeKeyword(it) }
         )
     }
 
@@ -81,11 +80,12 @@ fun LazyListScope.rulesTab(
     }
 
     item {
-        val blockedKeywords by viewModel.blockedKeywords.collectAsStateWithLifecycle()
-        SmsKeywordCard(
-            blockedKeywords = blockedKeywords,
-            onAddKeyword = { viewModel.addKeyword(it) },
-            onRemoveKeyword = { viewModel.removeKeyword(it) }
-        )
+        val inputPhone by viewModel.inputPhoneNumber.collectAsStateWithLifecycle()
+        val extractedAreaCode by viewModel.extractedAreaCode.collectAsStateWithLifecycle()
+        PhoneExtractionCard(
+            inputPhone = inputPhone,
+            extractedAreaCode = extractedAreaCode,
+            onValueChange = { viewModel.updateInputPhoneNumber(it) },
+        ) { viewModel.addAreaCode(it) }
     }
 }
