@@ -154,7 +154,7 @@ class BlockerScreenshotTest {
         val headings = listOf(
             "Block by Region",
             "Your Phone Number Link",
-            "Blocked SMS Keywords",
+            "Keywords Silencing SMS/ Texts",
             "Add Custom Area Code Prefix",
             "Extract from Phone Number",
         )

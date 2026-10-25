@@ -105,7 +105,7 @@
     <string name="includes_area_codes">Includes: <xliff:g id="area_codes" example="512, 737">%1$s</xliff:g></string>
     <string name="unsupported_country">This country does not follow the standard area code pattern supported by this app.</string>
 
-    <string name="blocked_sms_keywords">Blocked SMS Keywords</string>
+    <string name="blocked_sms_keywords">Keywords Silencing SMS/ Texts</string>
     <string name="blocked_sms_keywords_description">Add specific words or phrases. Any incoming text message containing any of these keywords from non-contacts will be filtered.</string>
     <string name="keyword_example">e.g. lottery, crypto, claim</string>
     <string name="added_keyword">Added keyword: <xliff:g id="keyword" example="lottery">%1$s</xliff:g></string>
