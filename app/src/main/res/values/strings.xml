@@ -138,6 +138,7 @@
     <string name="listener_suspended_description">Authorize system settings, or cycle setting Off/On to force activation.</string>
     <string name="legal_and_about">Legal &amp; About</string>
     <string name="legal_and_about_description">Review the app\'s legal documents, open-source license, and source code.</string>
+    <string name="app_version">Version <xliff:g id="version_name" example="1.0.11">%1$s</xliff:g></string>
     <string name="open_source_license">Open-Source License</string>
     <string name="source_code">Source Code</string>
     <string name="data_sources_attributions">Data Sources &amp; Attributions</string>

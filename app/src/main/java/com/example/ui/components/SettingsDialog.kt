@@ -65,6 +65,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.R
 import com.example.service.SmsNotificationListenerService
 import com.example.ui.LegalLinks
+import com.example.util.AppVersion
 import com.example.util.PhoneUtils
 import com.example.viewmodel.BlockerViewModel
 
@@ -137,6 +138,7 @@ fun SettingsDialog(
     )
     val notificationSettingsOpenFailed = stringResource(R.string.notification_settings_open_failed)
     val noWebBrowser = stringResource(R.string.no_web_browser)
+    val versionName = remember(context) { AppVersion.name(context) }
     if (show) {
         AlertDialog(
             onDismissRequest = onDismiss,
@@ -375,6 +377,12 @@ fun SettingsDialog(
                             text = stringResource(R.string.legal_and_about_description),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                        )
+                        Text(
+                            text = stringResource(R.string.app_version, versionName),
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         FlowRow(modifier = Modifier.fillMaxWidth()) {
                             listOf(
