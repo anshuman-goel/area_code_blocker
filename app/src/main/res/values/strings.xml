@@ -68,7 +68,7 @@
     <string name="block_area_code">Block <xliff:g id="area_code" example="512">%1$s</xliff:g></string>
     <string name="blocked_your_area_code">Blocked your area code: <xliff:g id="area_code" example="512">%1$s</xliff:g></string>
     <string name="extract_from_phone_number">Extract from Phone Number</string>
-    <string name="extract_phone_description">Input a phone number to extract its area code instantly to block calls/texts from that region.</string>
+    <string name="extract_phone_description">Input a phone number to extract its area code instantly to block calls and silence message notifications from that region.</string>
     <string name="enter_phone_number">Enter Phone Number</string>
     <string name="phone_number_example" translatable="false">+1 (512) 555-0199</string>
     <string name="extracted_area_code">Extracted Area Code</string>
@@ -105,8 +105,8 @@
     <string name="includes_area_codes">Includes: <xliff:g id="area_codes" example="512, 737">%1$s</xliff:g></string>
     <string name="unsupported_country">This country does not follow the standard area code pattern supported by this app.</string>
 
-    <string name="blocked_sms_keywords">Blocked SMS Keywords</string>
-    <string name="blocked_sms_keywords_description">Add specific words or phrases. Any incoming text message containing any of these keywords from non-contacts will be filtered.</string>
+    <string name="blocked_sms_keywords">Keywords Silencing SMS/ Texts</string>
+    <string name="blocked_sms_keywords_description">Add specific words or phrases. Any incoming text message containing any of these keywords from non-contacts will be silenced.</string>
     <string name="keyword_example">e.g. lottery, crypto, claim</string>
     <string name="added_keyword">Added keyword: <xliff:g id="keyword" example="lottery">%1$s</xliff:g></string>
     <string name="active_keywords">Active Keywords (<xliff:g id="keyword_count" example="3">%1$d</xliff:g>)</string>
