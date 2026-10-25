@@ -32,7 +32,11 @@ class LocalizationRegressionTest {
     )
     val localeMetadata = File(projectRoot, "app/src/main/res/resources.properties").readText()
     assertTrue(
-      "The unqualified source strings use Play's generic English source language",
+      "The unqualified source locale must match Play Console's English (United States) source language",
+      localeMetadata.lineSequence().any { it.trim() == "unqualifiedResLocale=en-US" },
+    )
+    assertFalse(
+      "Generic English is ambiguous and can be mistaken for a Play translation target",
       localeMetadata.lineSequence().any { it.trim() == "unqualifiedResLocale=en" },
     )
   }
