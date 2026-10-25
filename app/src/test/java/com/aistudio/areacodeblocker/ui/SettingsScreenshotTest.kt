@@ -17,7 +17,9 @@ import com.example.data.entity.BlockedAreaCode
 import com.example.data.entity.BlockedKeyword
 import com.example.data.entity.BlockedLog
 import com.example.data.repository.BlockerRepository
+import com.example.R
 import com.example.ui.theme.MyApplicationTheme
+import com.example.util.AppVersion
 import com.example.viewmodel.BlockerViewModel
 import com.github.takahirom.roborazzi.RobolectricDeviceQualifiers
 import com.github.takahirom.roborazzi.captureRoboImage
@@ -100,6 +102,12 @@ class SettingsScreenshotTest {
 
         composeTestRule.onNodeWithTag("settings_about").performClick()
         composeTestRule.onNodeWithText("Legal & About").assertExists()
+        val application = ApplicationProvider.getApplicationContext<Application>()
+        val expectedVersionText = application.getString(
+            R.string.app_version,
+            AppVersion.name(application),
+        )
+        composeTestRule.onNodeWithText(expectedVersionText).assertExists()
         composeTestRule.onNodeWithText("Privacy Policy").assertExists()
         composeTestRule.onNodeWithText("Terms of Use").assertExists()
         composeTestRule.onNodeWithText("Open-Source License").assertExists()
